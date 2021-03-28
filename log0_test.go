@@ -39,7 +39,7 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("foo", "bar")},
+			KV:     []log0.KV{log0.StringString("foo", "bar")},
 		},
 		input: nil,
 		expected: `{
@@ -77,12 +77,12 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("string", "foo")},
+			KV:     []log0.KV{log0.StringString("string", "foo")},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message")},
 			Trunc:  120,
 		},
 		input: []byte("Hello, World!"),
-		kv:    []log0.KV{log0.Strings("string", "bar")},
+		kv:    []log0.KV{log0.StringString("string", "bar")},
 		expected: `{
 			"message":"Hello, World!",
 		  "string": "bar"
@@ -104,7 +104,7 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output:  &bytes.Buffer{},
-			KV:      []log0.KV{log0.Strings("message", "string value")},
+			KV:      []log0.KV{log0.StringString("message", "string value")},
 			Keys:    [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt"), log0.String("trail")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -121,7 +121,7 @@ var WriteTestCases = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello,\nWorld!"),
-		kv:    []log0.KV{log0.Strings("message", "string value")},
+		kv:    []log0.KV{log0.StringString("message", "string value")},
 		expected: `{
 			"message":"string value",
 			"excerpt":"Hello, World!",
@@ -133,7 +133,7 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("message", "string value")},
+			KV:     []log0.KV{log0.StringString("message", "string value")},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message")},
 			Trunc:  120,
 		},
@@ -145,7 +145,7 @@ var WriteTestCases = []struct {
 		name: `input is nil and "message" key with "string value"`,
 		line: line(),
 		log:  dummy(),
-		kv:   []log0.KV{log0.Strings("message", "string value")},
+		kv:   []log0.KV{log0.StringString("message", "string value")},
 		expected: `{
 			"message":"string value"
 		}`,
@@ -218,7 +218,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Original,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("message", "foo")},
+		kv: []log0.KV{log0.StringString("message", "foo")},
 		expected: `{
 			"message":"foo"
 		}`,
@@ -233,7 +233,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("message", "foo\n")},
+		kv: []log0.KV{log0.StringString("message", "foo\n")},
 		expected: `{
 			"message":"foo\n"
 		}`,
@@ -249,7 +249,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("message", "bar")},
+		kv:    []log0.KV{log0.StringString("message", "bar")},
 		expected: `{
 			"message":"bar",
 			"trail":"foo"
@@ -265,7 +265,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Original,
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar")},
+		kv:    []log0.KV{log0.StringString("message", "bar")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"foo",
@@ -283,7 +283,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar\n")},
+		kv:    []log0.KV{log0.StringString("message", "bar\n")},
 		expected: `{
 			"message":"bar\n",
 			"excerpt":"foo",
@@ -299,7 +299,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Original,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("excerpt", "foo")},
+		kv: []log0.KV{log0.StringString("excerpt", "foo")},
 		expected: `{
 			"excerpt":"foo"
 		}`,
@@ -314,7 +314,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("excerpt", "foo\n")},
+		kv: []log0.KV{log0.StringString("excerpt", "foo\n")},
 		expected: `{
 			"excerpt":"foo\n"
 		}`,
@@ -329,7 +329,7 @@ var WriteTestCases = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -346,7 +346,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -363,7 +363,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -380,7 +380,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar\n")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar\n")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -395,7 +395,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Original,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("message", "foo"), log0.Strings("excerpt", "bar")},
+		kv: []log0.KV{log0.StringString("message", "foo"), log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -411,7 +411,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("message", "foo\n"), log0.Strings("excerpt", "bar\n")},
+		kv: []log0.KV{log0.StringString("message", "foo\n"), log0.StringString("excerpt", "bar\n")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -427,7 +427,7 @@ var WriteTestCases = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("message", "bar"), log0.Strings("excerpt", "xyz")},
+		kv:    []log0.KV{log0.StringString("message", "bar"), log0.StringString("excerpt", "xyz")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -446,8 +446,8 @@ var WriteTestCases = []struct {
 		},
 		input: []byte("foo\n"),
 		kv: []log0.KV{
-			log0.Strings("message", "bar"),
-			log0.Strings("excerpt", "xyz"),
+			log0.StringString("message", "bar"),
+			log0.StringString("excerpt", "xyz"),
 		},
 		expected: `{
 			"message":"bar",
@@ -466,7 +466,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar\n"), log0.Strings("excerpt", "xyz\n")},
+		kv:    []log0.KV{log0.StringString("message", "bar\n"), log0.StringString("excerpt", "xyz\n")},
 		expected: `{
 			"message":"bar\n",
 			"excerpt":"xyz\n",
@@ -482,7 +482,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Excerpt,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("message", "foo")},
+		kv: []log0.KV{log0.StringString("message", "foo")},
 		expected: `{
 			"message":"foo"
 		}`,
@@ -497,7 +497,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("message", "foo\n")},
+		kv: []log0.KV{log0.StringString("message", "foo\n")},
 		expected: `{
 			"message":"foo\n"
 		}`,
@@ -513,7 +513,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("message", "bar")},
+		kv:    []log0.KV{log0.StringString("message", "bar")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"foo"
@@ -529,7 +529,7 @@ var WriteTestCases = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar")},
+		kv:    []log0.KV{log0.StringString("message", "bar")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"foo",
@@ -547,7 +547,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar\n")},
+		kv:    []log0.KV{log0.StringString("message", "bar\n")},
 		expected: `{
 			"message":"bar\n",
 			"excerpt":"foo",
@@ -563,7 +563,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Excerpt,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("excerpt", "foo")},
+		kv: []log0.KV{log0.StringString("excerpt", "foo")},
 		expected: `{
 			"excerpt":"foo"
 		}`,
@@ -578,7 +578,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("excerpt", "foo\n")},
+		kv: []log0.KV{log0.StringString("excerpt", "foo\n")},
 		expected: `{
 			"excerpt":"foo\n"
 		}`,
@@ -593,7 +593,7 @@ var WriteTestCases = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -610,7 +610,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -627,7 +627,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -644,7 +644,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("excerpt", "bar\n")},
+		kv:    []log0.KV{log0.StringString("excerpt", "bar\n")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -659,7 +659,7 @@ var WriteTestCases = []struct {
 			Key:    log0.Excerpt,
 			Trunc:  120,
 		},
-		kv: []log0.KV{log0.Strings("message", "foo"), log0.Strings("excerpt", "bar")},
+		kv: []log0.KV{log0.StringString("message", "foo"), log0.StringString("excerpt", "bar")},
 		expected: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -675,7 +675,7 @@ var WriteTestCases = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []log0.KV{log0.Strings("message", "foo\n"), log0.Strings("excerpt", "bar\n")},
+		kv: []log0.KV{log0.StringString("message", "foo\n"), log0.StringString("excerpt", "bar\n")},
 		expected: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -691,7 +691,7 @@ var WriteTestCases = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []log0.KV{log0.Strings("message", "bar"), log0.Strings("excerpt", "xyz")},
+		kv:    []log0.KV{log0.StringString("message", "bar"), log0.StringString("excerpt", "xyz")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -709,7 +709,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar"), log0.Strings("excerpt", "xyz")},
+		kv:    []log0.KV{log0.StringString("message", "bar"), log0.StringString("excerpt", "xyz")},
 		expected: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -727,7 +727,7 @@ var WriteTestCases = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []log0.KV{log0.Strings("message", "bar\n"), log0.Strings("excerpt", "xyz\n")},
+		kv:    []log0.KV{log0.StringString("message", "bar\n"), log0.StringString("excerpt", "xyz\n")},
 		expected: `{
 			"message":"bar\n",
 			"excerpt":"xyz\n",
@@ -760,7 +760,7 @@ var WriteTestCases = []struct {
 			Flag:   log.Llongfile,
 			Keys:   [4]encoding.TextMarshaler{log0.String("message")},
 		},
-		kv: []log0.KV{log0.Strings("foo", "bar")},
+		kv: []log0.KV{log0.StringString("foo", "bar")},
 		expected: `{
 			"foo":"bar"
 		}`,
@@ -811,9 +811,9 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("foo", "bar")},
+			KV:     []log0.KV{log0.StringString("foo", "bar")},
 		},
-		kv: []log0.KV{log0.Strings("foo", "baz")},
+		kv: []log0.KV{log0.StringString("foo", "baz")},
 		expected: `{
 			"foo":"baz"
 		}`,
@@ -823,11 +823,11 @@ var WriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("foo", "bar")},
+			KV:     []log0.KV{log0.StringString("foo", "bar")},
 		},
 		kv: []log0.KV{
-			log0.Strings("foo", "baz"),
-			log0.Strings("foo", "xyz"),
+			log0.StringString("foo", "baz"),
+			log0.StringString("foo", "xyz"),
 		},
 		expected: `{
 			"foo":"xyz"
@@ -900,7 +900,7 @@ var FprintWriteTestCases = []struct {
 			l1 := log0.GELF()
 			l1.Output = &bytes.Buffer{}
 			l := l1.Get(
-				log0.Strings("version", "1.1"),
+				log0.StringString("version", "1.1"),
 				log0.StringFunc("timestamp", func() log0.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return log0.Int64(t.Unix())
@@ -1046,7 +1046,7 @@ var FprintWriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("string", "foo")},
+			KV:     []log0.KV{log0.StringString("string", "foo")},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message")},
 		},
 		input: "Hello, World!",
@@ -1190,7 +1190,7 @@ var FprintWriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.Strings("excerpt", "Explicit string")},
+			KV:     []log0.KV{log0.StringString("excerpt", "Explicit string")},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1422,8 +1422,8 @@ var FprintWriteTestCases = []struct {
 			l1 := log0.GELF()
 			l1.Output = &bytes.Buffer{}
 			l := l1.Get(
-				log0.Strings("version", "1.1"),
-				log0.Strings("host", "example.tld"),
+				log0.StringString("version", "1.1"),
+				log0.StringString("host", "example.tld"),
 				log0.StringFunc("timestamp", func() log0.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return log0.Int64(t.Unix())
@@ -1447,8 +1447,8 @@ var FprintWriteTestCases = []struct {
 			l1.Output = &bytes.Buffer{}
 			l1.Flag = log.Llongfile
 			l := l1.Get(
-				log0.Strings("version", "1.1"),
-				log0.Strings("host", "example.tld"),
+				log0.StringString("version", "1.1"),
+				log0.StringString("host", "example.tld"),
 				log0.StringFunc("timestamp", func() log0.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return log0.Int64(t.Unix())
@@ -1703,7 +1703,7 @@ var NewTestCases = []struct {
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
 			KV: []log0.KV{
-				log0.Strings("foo", "bar"),
+				log0.StringString("foo", "bar"),
 			},
 		},
 		expected: `{
@@ -1716,8 +1716,8 @@ var NewTestCases = []struct {
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
 			KV: []log0.KV{
-				log0.Strings("foo", "bar"),
-				log0.Strings("baz", "xyz"),
+				log0.StringString("foo", "bar"),
+				log0.StringString("baz", "xyz"),
 			},
 		},
 		expected: `{
@@ -1732,7 +1732,7 @@ var NewTestCases = []struct {
 			Output: &bytes.Buffer{},
 		},
 		kv: []log0.KV{
-			log0.Strings("baz", "xyz"),
+			log0.StringString("baz", "xyz"),
 		},
 		expected: `{
 			"baz":"xyz"
@@ -1745,8 +1745,8 @@ var NewTestCases = []struct {
 			Output: &bytes.Buffer{},
 		},
 		kv: []log0.KV{
-			log0.Strings("foo", "bar"),
-			log0.Strings("baz", "xyz"),
+			log0.StringString("foo", "bar"),
+			log0.StringString("baz", "xyz"),
 		},
 		expected: `{
 			"foo":"bar",
@@ -1759,11 +1759,11 @@ var NewTestCases = []struct {
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
 			KV: []log0.KV{
-				log0.Strings("foo", "bar"),
+				log0.StringString("foo", "bar"),
 			},
 		},
 		kv: []log0.KV{
-			log0.Strings("baz", "xyz"),
+			log0.StringString("baz", "xyz"),
 		},
 		expected: `{
 			"foo":"bar",
@@ -1776,13 +1776,13 @@ var NewTestCases = []struct {
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
 			KV: []log0.KV{
-				log0.Strings("foo", "bar"),
-				log0.Strings("abc", "dfg"),
+				log0.StringString("foo", "bar"),
+				log0.StringString("abc", "dfg"),
 			},
 		},
 		kv: []log0.KV{
-			log0.Strings("baz", "xyz"),
-			log0.Strings("hjk", "lmn"),
+			log0.StringString("baz", "xyz"),
+			log0.StringString("hjk", "lmn"),
 		},
 		expected: `{
 			"foo":"bar",
@@ -1855,7 +1855,7 @@ var SeverityTestCases = []struct {
 			Output:   &bytes.Buffer{},
 			Severity: func(severity string) io.Writer { return nil },
 			KV: []log0.KV{
-				log0.Strings("foo", "bar"),
+				log0.StringString("foo", "bar"),
 			},
 		},
 		severities: []string{"7"},
@@ -1883,7 +1883,7 @@ var SeverityTestCases = []struct {
 			Output:   &bytes.Buffer{},
 			Severity: func(severity string) io.Writer { return nil },
 			KV: []log0.KV{
-				log0.Strings("severity", "42"),
+				log0.StringString("severity", "42"),
 			},
 		},
 		severities: []string{"7"},

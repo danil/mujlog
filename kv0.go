@@ -120,15 +120,8 @@ func StringRunesp(k string, v *[]rune) kvjt {
 	return kvjt{K: String(k), V: Runesp(v)}
 }
 
-func Strings(a ...string) kvjt {
-	if len(a) == 0 {
-		kv := String("")
-		return kvjt{K: kv, V: kv}
-	}
-	if len(a) == 1 {
-		return kvjt{K: String(a[0]), V: String("")}
-	}
-	return kvjt{K: String(a[0]), V: String(a[1])}
+func StringString(k string, v string) kvjt {
+	return kvjt{K: String(k), V: String(v)}
 }
 
 func StringStringp(k string, v *string) kvjt {

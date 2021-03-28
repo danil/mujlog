@@ -241,12 +241,10 @@ func (v errorV) MarshalJSON() ([]byte, error) {
 	if v.V == nil {
 		return []byte("null"), nil
 	}
-
 	p, err := v.MarshalText()
 	if err != nil {
 		return nil, err
 	}
-
 	return append([]byte(`"`), append(p, []byte(`"`)...)...), nil
 }
 

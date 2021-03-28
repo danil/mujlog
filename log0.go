@@ -388,7 +388,7 @@ func GELF() *Log {
 		// <https://docs.graylog.org/en/latest/pages/gelf.html#gelf-payload-specification>,
 		// <https://github.com/graylog-labs/gelf-rb/issues/41#issuecomment-198266505>.
 		KV: []KV{
-			Strings("version", "1.1"),
+			StringString("version", "1.1"),
 			StringFunc("timestamp", func() KV { return Int64(time.Now().Unix()) }),
 		},
 		Trunc: 120,

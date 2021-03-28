@@ -28,7 +28,7 @@ its extremely slow and allocates a lots of memory)
 Install
 -------
 
-    go get github.com/danil/log0@v0.133.0
+    go get github.com/danil/log0@v0.135.0
 
 Usage
 -----
