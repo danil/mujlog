@@ -108,10 +108,10 @@ var KVTestCases = []struct {
 		input: func() log0.KV {
 			b := true
 			b2 := &b
-			return log0.StringAny("any twice pointer to bool true", &b2)
+			return log0.StringAny("any twice/nested pointer to bool true", &b2)
 		}(),
 		expected: `{
-			"any twice pointer to bool true":true
+			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
@@ -129,10 +129,10 @@ var KVTestCases = []struct {
 		input: func() log0.KV {
 			b := true
 			b2 := &b
-			return log0.StringReflect("reflect bool twice pointer to true", &b2)
+			return log0.StringReflect("reflect bool twice/nested pointer to true", &b2)
 		}(),
 		expected: `{
-			"reflect bool twice pointer to true":true
+			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{
@@ -2023,10 +2023,10 @@ var KVTestCases = []struct {
 		input: func() log0.KV {
 			b := true
 			b2 := &b
-			return log0.TextAny(log0.String("any twice pointer to bool true"), &b2)
+			return log0.TextAny(log0.String("any twice/nested pointer to bool true"), &b2)
 		}(),
 		expected: `{
-			"any twice pointer to bool true":true
+			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
@@ -2044,10 +2044,10 @@ var KVTestCases = []struct {
 		input: func() log0.KV {
 			b := true
 			b2 := &b
-			return log0.TextReflect(log0.String("reflect bool twice pointer to true"), &b2)
+			return log0.TextReflect(log0.String("reflect bool twice/nested pointer to true"), &b2)
 		}(),
 		expected: `{
-			"reflect bool twice pointer to true":true
+			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{

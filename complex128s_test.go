@@ -6,6 +6,7 @@ package log0_test
 
 import (
 	"encoding/json"
+	"errors"
 	"runtime"
 	"testing"
 
@@ -21,6 +22,37 @@ var MarshalComplex128sTestCases = []marshalTestCase{
 		expectedJSON: `{
 			"complex128s":["1+23i","3+21i"]
 		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"slice without complex128": log0.Complex128s()},
+		expected:     "null",
+		expectedText: "null",
+		expectedJSON: `{
+			"slice without complex128":null
+		}`,
+	},
+	{
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var c, c2 complex128 = complex(1, 23), complex(3, 21)
+			return map[string]json.Marshaler{"slice of any complex128": log0.Anys(c, c2)}
+		}(),
+		expected:     "1+23i 3+21i",
+		expectedText: "1+23i 3+21i",
+		expectedJSON: `{
+			"slice of any complex128":["1+23i","3+21i"]
+		}`,
+	},
+	{
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var c, c2 complex128 = complex(1, 23), complex(3, 21)
+			return map[string]json.Marshaler{"slice of reflects of complex128 pointers": log0.Reflects(c, c2)}
+		}(),
+		expected:     "(1+23i) (3+21i)",
+		expectedText: "(1+23i) (3+21i)",
+		error:        errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 }
 

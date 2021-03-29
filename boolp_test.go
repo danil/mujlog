@@ -63,12 +63,12 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"any twice pointer to bool true": log0.Any(&b2)}
+			return map[string]json.Marshaler{"any twice/nested pointer to bool true": log0.Any(&b2)}
 		}(),
 		expected:     "true",
 		expectedText: "true",
 		expectedJSON: `{
-			"any twice pointer to bool true":true
+			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
@@ -88,12 +88,12 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"reflect bool twice pointer to true": log0.Reflect(&b2)}
+			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": log0.Reflect(&b2)}
 		}(),
 		expected:     "true",
 		expectedText: "true",
 		expectedJSON: `{
-			"reflect bool twice pointer to true":true
+			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{
@@ -125,12 +125,12 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"any twice pointer to bool true": log0.Any(&b2)}
+			return map[string]json.Marshaler{"any twice/nested pointer to bool true": log0.Any(&b2)}
 		}(),
 		expected:     "true",
 		expectedText: "true",
 		expectedJSON: `{
-			"any twice pointer to bool true":true
+			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
@@ -150,12 +150,12 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"reflect bool twice pointer to true": log0.Reflect(&b2)}
+			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": log0.Reflect(&b2)}
 		}(),
 		expected:     "true",
 		expectedText: "true",
 		expectedJSON: `{
-			"reflect bool twice pointer to true":true
+			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{

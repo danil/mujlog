@@ -36,6 +36,8 @@ func (v anyV) String() string {
 		return Complex64p(x).String()
 	case error:
 		return Error(x).String()
+	case *error:
+		return Errorp(x).String()
 	case float32:
 		return Float32(x).String()
 	case *float32:
@@ -134,6 +136,8 @@ func (v anyV) MarshalText() ([]byte, error) {
 		return Complex64p(x).MarshalText()
 	case error:
 		return Error(x).MarshalText()
+	case *error:
+		return Errorp(x).MarshalText()
 	case float32:
 		return Float32(x).MarshalText()
 	case *float32:
@@ -229,6 +233,8 @@ func (v anyV) MarshalJSON() ([]byte, error) {
 		return Complex64p(x).MarshalJSON()
 	case error:
 		return Error(x).MarshalJSON()
+	case *error:
+		return Errorp(x).MarshalJSON()
 	case float32:
 		return Float32(x).MarshalJSON()
 	case *float32:
