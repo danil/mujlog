@@ -5,267 +5,16 @@
 package log0_test
 
 import (
-	"encoding"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"runtime"
 	"testing"
 	"time"
 
-	"github.com/danil/equal4"
 	"github.com/danil/log0"
-	"github.com/kinbiko/jsonassert"
 )
 
-var MarshalTestCases = []struct {
-	line         int
-	input        map[string]json.Marshaler
-	expected     string
-	expectedText string
-	expectedJSON string
-	error        error
-	benchmark    bool
-}{
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bool true": log0.Bool(true)},
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"bool true":true
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bool false": log0.Bool(false)},
-		expected:     "false",
-		expectedText: "false",
-		expectedJSON: `{
-			"bool false":false
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any bool false": log0.Any(false)},
-		expected:     "false",
-		expectedText: "false",
-		expectedJSON: `{
-			"any bool false":false
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect bool false": log0.Any(false)},
-		expected:     "false",
-		expectedText: "false",
-		expectedJSON: `{
-			"reflect bool false":false
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := true
-			return map[string]json.Marshaler{"bool pointer to true": log0.Boolp(&b)}
-		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"bool pointer to true":true
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := false
-			return map[string]json.Marshaler{"bool pointer to false": log0.Boolp(&b)}
-		}(),
-		expected:     "false",
-		expectedText: "false",
-		expectedJSON: `{
-			"bool pointer to false":false
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bool nil pointer": log0.Boolp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
-			"bool nil pointer":null
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := true
-			return map[string]json.Marshaler{"any bool pointer to true": log0.Any(&b)}
-		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"any bool pointer to true":true
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := true
-			b2 := &b
-			return map[string]json.Marshaler{"any twice pointer to bool true": log0.Any(&b2)}
-		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"any twice pointer to bool true":true
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := true
-			return map[string]json.Marshaler{"reflect bool pointer to true": log0.Reflect(&b)}
-		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"reflect bool pointer to true":true
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			b := true
-			b2 := &b
-			return map[string]json.Marshaler{"reflect bool twice pointer to true": log0.Reflect(&b2)}
-		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
-			"reflect bool twice pointer to true":true
-		}`,
-	},
-	{
-		line: line(),
-		input: func() map[string]json.Marshaler {
-			var b *bool
-			return map[string]json.Marshaler{"reflect bool pointer to nil": log0.Reflect(b)}
-		}(),
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
-			"reflect bool pointer to nil":null
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes": log0.Bytes([]byte("Hello, Wörld!"))},
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
-			"bytes":"Hello, Wörld!"
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes with quote": log0.Bytes([]byte(`Hello, "World"!`))},
-		expected:     `Hello, \"World\"!`,
-		expectedText: `Hello, \"World\"!`,
-		expectedJSON: `{
-			"bytes with quote":"Hello, \"World\"!"
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes quote": log0.Bytes([]byte(`"Hello, World!"`))},
-		expected:     `\"Hello, World!\"`,
-		expectedText: `\"Hello, World!\"`,
-		expectedJSON: `{
-			"bytes quote":"\"Hello, World!\""
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes nested quote": log0.Bytes([]byte(`"Hello, "World"!"`))},
-		expected:     `\"Hello, \"World\"!\"`,
-		expectedText: `\"Hello, \"World\"!\"`,
-		expectedJSON: `{
-			"bytes nested quote":"\"Hello, \"World\"!\""
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes json": log0.Bytes([]byte(`{"foo":"bar"}`))},
-		expected:     `{\"foo\":\"bar\"}`,
-		expectedText: `{\"foo\":\"bar\"}`,
-		expectedJSON: `{
-			"bytes json":"{\"foo\":\"bar\"}"
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bytes json quote": log0.Bytes([]byte(`"{"foo":"bar"}"`))},
-		expected:     `\"{\"foo\":\"bar\"}\"`,
-		expectedText: `\"{\"foo\":\"bar\"}\"`,
-		expectedJSON: `{
-			"bytes json quote":"\"{\"foo\":\"bar\"}\""
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"empty bytes": log0.Bytes([]byte{})},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
-			"empty bytes":""
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil bytes": log0.Bytes(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
-			"nil bytes":null
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any bytes": log0.Any([]byte("Hello, Wörld!"))},
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
-			"any bytes":"Hello, Wörld!"
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any empty bytes": log0.Any([]byte{})},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
-			"any empty bytes":""
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect bytes": log0.Reflect([]byte("Hello, Wörld!"))},
-		expected:     "SGVsbG8sIFfDtnJsZCE=",
-		expectedText: "SGVsbG8sIFfDtnJsZCE=",
-		expectedJSON: `{
-			"reflect bytes":"SGVsbG8sIFfDtnJsZCE="
-		}`,
-	},
-	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect empty bytes": log0.Reflect([]byte{})},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
-			"reflect empty bytes":""
-		}`,
-	},
+var MarshalBytespTestCases = []marshalTestCase{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
@@ -455,6 +204,33 @@ var MarshalTestCases = []struct {
 		expectedText: "null",
 		expectedJSON: `{
 			"nil error":null
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"errors": log0.Errors(errors.New("something went wrong"), errors.New("wrong"))},
+		expected:     "something went wrong wrong",
+		expectedText: "something went wrong wrong",
+		expectedJSON: `{
+			"errors":["something went wrong","wrong"]
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"nil errors": log0.Errors(nil, nil)},
+		expected:     "",
+		expectedText: "",
+		expectedJSON: `{
+			"nil errors":[null,null]
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"without errors": log0.Errors()},
+		expected:     "null",
+		expectedText: "null",
+		expectedJSON: `{
+			"without errors":null
 		}`,
 	},
 	{
@@ -1293,6 +1069,42 @@ var MarshalTestCases = []struct {
 		expectedText: "\\u0000",
 		expectedJSON: `{
 			"string with zero byte":"\u0000"
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"strings": log0.Strings("Hello, Wörld!", "Hello, World!")},
+		expected:     "Hello, Wörld! Hello, World!",
+		expectedText: "Hello, Wörld! Hello, World!",
+		expectedJSON: `{
+			"strings":["Hello, Wörld!","Hello, World!"]
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"empty strings": log0.Strings("", "")},
+		expected:     " ",
+		expectedText: " ",
+		expectedJSON: `{
+			"empty strings":["",""]
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"strings with zero byte": log0.Strings(string(byte(0)), string(byte(0)))},
+		expected:     "\\u0000 \\u0000",
+		expectedText: "\\u0000 \\u0000",
+		expectedJSON: `{
+			"strings with zero byte":["\u0000","\u0000"]
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"without strings": log0.Strings()},
+		expected:     "",
+		expectedText: "",
+		expectedJSON: `{
+			"without strings":null
 		}`,
 	},
 	{
@@ -2227,66 +2039,7 @@ var MarshalTestCases = []struct {
 	},
 }
 
-func TestMarshal(t *testing.T) {
+func TestMarshalBytesp(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	for _, tc := range MarshalTestCases {
-		tc := tc
-		t.Run(fmt.Sprint(tc.input), func(t *testing.T) {
-			t.Parallel()
-			linkToExample := fmt.Sprintf("%s:%d", testFile, tc.line)
-
-			for k, v := range tc.input {
-				str, ok := v.(fmt.Stringer)
-				if !ok {
-					t.Errorf("%q does not implement the stringer interface", k)
-
-				} else {
-					s := str.String()
-					if s != tc.expected {
-						t.Errorf("%q unexpected string, expected: %q, recieved: %q %s", k, tc.expected, s, linkToExample)
-					}
-				}
-
-				txt, ok := v.(encoding.TextMarshaler)
-				if !ok {
-					t.Errorf("%q does not implement the text marshaler interface", k)
-
-				} else {
-					p, err := txt.MarshalText()
-					if err != nil {
-						t.Fatalf("%q encoding marshal text error: %s %s", k, err, linkToExample)
-					}
-
-					if string(p) != tc.expectedText {
-						t.Errorf("%q unexpected text, expected: %q, recieved: %q %s", k, tc.expectedText, string(p), linkToExample)
-					}
-				}
-			}
-
-			p, err := json.Marshal(tc.input)
-
-			if !equal4.ErrorEqual(err, tc.error) {
-				t.Fatalf("marshal error expected: %s, recieved: %s %s", tc.error, err, linkToExample)
-			}
-
-			if err == nil {
-				ja := jsonassert.New(testprinter{t: t, link: linkToExample})
-				ja.Assertf(string(p), tc.expectedJSON)
-			}
-		})
-	}
+	testMarshal(t, testFile, MarshalBytespTestCases)
 }
-
-// type testprinter struct {
-// 	t    *testing.T
-// 	link string
-// }
-
-// func (p testprinter) Errorf(msg string, args ...interface{}) {
-// 	p.t.Errorf(p.link+"\n"+msg, args...)
-// }
-
-// type Struct struct {
-// 	Name string
-// 	Age  int
-// }

@@ -24,6 +24,10 @@ func StringBool(k string, v bool) kvjt {
 	return kvjt{K: String(k), V: Bool(v)}
 }
 
+func StringBools(k string, v ...bool) kvjt {
+	return kvjt{K: String(k), V: Bools(v...)}
+}
+
 func StringBoolp(k string, v *bool) kvjt {
 	return kvjt{K: String(k), V: Boolp(v)}
 }
@@ -32,8 +36,16 @@ func StringBytes(k string, v []byte) kvjt {
 	return kvjt{K: String(k), V: Bytes(v)}
 }
 
+func StringBytess(k string, v ...[]byte) kvjt {
+	return kvjt{K: String(k), V: Bytess(v...)}
+}
+
 func StringBytesp(k string, v *[]byte) kvjt {
 	return kvjt{K: String(k), V: Bytesp(v)}
+}
+
+func StringBytessp(k string, v ...*[]byte) kvjt {
+	return kvjt{K: String(k), V: Bytessp(v...)}
 }
 
 func StringComplex128(k string, v complex128) kvjt {
@@ -54,6 +66,10 @@ func StringComplex64p(k string, v *complex64) kvjt {
 
 func StringError(k string, v error) kvjt {
 	return kvjt{K: String(k), V: Error(v)}
+}
+
+func StringErrors(k string, v ...error) kvjt {
+	return kvjt{K: String(k), V: Errors(v...)}
 }
 
 func StringFloat32(k string, v float32) kvjt {
@@ -122,6 +138,10 @@ func StringRunesp(k string, v *[]rune) kvjt {
 
 func StringString(k string, v string) kvjt {
 	return kvjt{K: String(k), V: String(v)}
+}
+
+func StringStrings(k string, v ...string) kvjt {
+	return kvjt{K: String(k), V: Strings(v...)}
 }
 
 func StringStringp(k string, v *string) kvjt {
