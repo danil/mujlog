@@ -6,8 +6,8 @@ package log0
 
 import "bytes"
 
-// Complex128sp returns stringer/JSON marshaler interface implementation for slice of pointers to the complex128 type.
-func Complex128sp(a ...*complex128) complex128sp { return complex128sp{A: a} }
+// Complex128ps returns stringer/JSON marshaler for the complex128 pointer slice type.
+func Complex128ps(a ...*complex128) complex128sp { return complex128sp{A: a} }
 
 type complex128sp struct{ A []*complex128 }
 

@@ -8,23 +8,23 @@ import (
 	"bytes"
 )
 
-// Bools returns stringer/JSON marshaler for the bool slice type.
-func Bools(s ...bool) boolS { return boolS{S: s} }
+// Float32s returns stringer/JSON marshaler for the float32 slice type.
+func Float32s(s ...float32) float32S { return float32S{S: s} }
 
-type boolS struct{ S []bool }
+type float32S struct{ S []float32 }
 
-func (s boolS) String() string {
+func (s float32S) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s boolS) MarshalText() ([]byte, error) {
+func (s float32S) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
 	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := boolV{V: v}.MarshalText()
+		b, err := float32V{V: v}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -36,14 +36,14 @@ func (s boolS) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s boolS) MarshalJSON() ([]byte, error) {
+func (s float32S) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := boolV{V: v}.MarshalJSON()
+		b, err := float32V{V: v}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

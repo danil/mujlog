@@ -13,59 +13,62 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalErrorsTestCases = []marshalTestCase{
+var MarshalErrorpsTestCases = []marshalTestCase{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"error slice": log0.Errors(errors.New("something went wrong"), errors.New("we have a problem"))},
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			err, err2 := errors.New("something went wrong"), errors.New("we have a problem")
+			return map[string]json.Marshaler{"error pointer slice": log0.Errorps(&err, &err2)}
+		}(),
 		expected:     "something went wrong we have a problem",
 		expectedText: "something went wrong we have a problem",
 		expectedJSON: `{
-			"error slice":["something went wrong","we have a problem"]
+			"error pointer slice":["something went wrong","we have a problem"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: map[string]json.Marshaler{"nil errors": log0.Errors(nil, nil)},
+		input: map[string]json.Marshaler{"nil error pointers": log0.Errorps(nil, nil)},
 		expectedJSON: `{
-			"nil errors":[null,null]
+			"nil error pointers":[null,null]
 		}`,
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"without errors": log0.Errors()},
+		input:        map[string]json.Marshaler{"without error pointers": log0.Errorps()},
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
-			"without errors":null
+			"without error pointers":null
 		}`,
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			err, err2 := errors.New("something went wrong"), errors.New("we have a problem")
-			return map[string]json.Marshaler{"slice of any errors": log0.Anys(err, err2)}
+			return map[string]json.Marshaler{"slice of any error pointers": log0.Anys(&err, &err2)}
 		}(),
 		expected:     "something went wrong we have a problem",
 		expectedText: "something went wrong we have a problem",
 		expectedJSON: `{
-			"slice of any errors":["something went wrong","we have a problem"]
+			"slice of any error pointers":["something went wrong","we have a problem"]
 		}`,
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			err, err2 := errors.New("something went wrong"), errors.New("we have a problem")
-			return map[string]json.Marshaler{"slice of reflect of errors": log0.Reflects(err, err2)}
+			return map[string]json.Marshaler{"slice of reflect of error pointers": log0.Reflects(&err, &err2)}
 		}(),
 		expected:     "{something went wrong} {we have a problem}",
 		expectedText: "{something went wrong} {we have a problem}",
 		expectedJSON: `{
-			"slice of reflect of errors":[{},{}]
+			"slice of reflect of error pointers":[{},{}]
 		}`,
 	},
 }
 
-func TestMarshalErrors(t *testing.T) {
+func TestMarshalErrorps(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalErrorsTestCases)
+	testMarshal(t, testFile, MarshalErrorpsTestCases)
 }

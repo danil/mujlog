@@ -49,7 +49,7 @@ func (s boolPS) MarshalJSON() ([]byte, error) {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := boolP{P: p}.MarshalText()
+		b, err := boolP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

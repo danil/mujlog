@@ -16,11 +16,11 @@ import (
 var MarshalComplex128sTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"complex128s": log0.Complex128s(complex(1, 23), complex(3, 21))},
+		input:        map[string]json.Marshaler{"complex128 slice": log0.Complex128s(complex(1, 23), complex(3, 21))},
 		expected:     "1+23i 3+21i",
 		expectedText: "1+23i 3+21i",
 		expectedJSON: `{
-			"complex128s":["1+23i","3+21i"]
+			"complex128 slice":["1+23i","3+21i"]
 		}`,
 	},
 	{
@@ -48,7 +48,7 @@ var MarshalComplex128sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex128 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of reflects of complex128 pointers": log0.Reflects(c, c2)}
+			return map[string]json.Marshaler{"slice of reflect of complex128 pointers": log0.Reflects(c, c2)}
 		}(),
 		expected:     "(1+23i) (3+21i)",
 		expectedText: "(1+23i) (3+21i)",
