@@ -10,8 +10,7 @@ import (
 	"time"
 )
 
-// Any returns stringer/JSON marshaler interface implementation for the any type.
-
+// Any returns stringer/JSON marshaler for any type.
 func Any(v interface{}) anyV { return anyV{V: v} }
 
 type anyV struct{ V interface{} }
@@ -26,6 +25,8 @@ func (v anyV) String() string {
 		return Bytes(x).String()
 	case *[]byte:
 		return Bytesp(x).String()
+	case [][]byte:
+		return Bytess(x...).String()
 	case complex128:
 		return Complex128(x).String()
 	case *complex128:
@@ -126,6 +127,8 @@ func (v anyV) MarshalText() ([]byte, error) {
 		return Bytes(x).MarshalText()
 	case *[]byte:
 		return Bytesp(x).MarshalText()
+	case [][]byte:
+		return Bytess(x...).MarshalText()
 	case complex128:
 		return Complex128(x).MarshalText()
 	case *complex128:
@@ -223,6 +226,8 @@ func (v anyV) MarshalJSON() ([]byte, error) {
 		return Bytes(x).MarshalJSON()
 	case *[]byte:
 		return Bytesp(x).MarshalJSON()
+	case [][]byte:
+		return Bytess(x...).MarshalJSON()
 	case complex128:
 		return Complex128(x).MarshalJSON()
 	case *complex128:

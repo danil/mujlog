@@ -4,7 +4,7 @@
 
 package log0
 
-// Raw returns stringer/JSON marshaler interface implementation for the raw byte slice.
+// Raw returns stringer/JSON marshaler for the raw byte slice.
 func Raw(v []byte) rawV { return rawV{V: v} }
 
 type rawV struct{ V []byte }

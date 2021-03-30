@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Durationp returns stringer/JSON marshaler interface implementation for the pointer to the time duration type.
+// Durationp returns stringer/JSON marshaler for the  time duration pointer type.
 func Durationp(p *time.Duration) durationP { return durationP{P: p} }
 
 type durationP struct{ P *time.Duration }

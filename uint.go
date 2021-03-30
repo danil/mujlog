@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uint returns stringer/JSON marshaler interface implementation for the uint type.
+// Uint returns stringer/JSON marshaler for the uint type.
 func Uint(v uint) uintV { return uintV{V: v} }
 
 type uintV struct{ V uint }

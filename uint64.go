@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uint64 returns stringer/JSON marshaler interface implementation for the uint64 type.
+// Uint64 returns stringer/JSON marshaler for the uint64 type.
 func Uint64(v uint64) uint64V { return uint64V{V: v} }
 
 type uint64V struct{ V uint64 }

@@ -4,7 +4,7 @@
 
 package log0
 
-// Uint32p returns stringer/JSON marshaler interface implementation for the pointer to the uint32 type.
+// Uint32p returns stringer/JSON marshaler for the uint32 pointer type.
 func Uint32p(p *uint32) uint32P { return uint32P{P: p} }
 
 type uint32P struct{ P *uint32 }

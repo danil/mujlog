@@ -4,7 +4,7 @@
 
 package log0
 
-// Boolp returns stringer/JSON marshaler interface implementation for the pointer to the bool type.
+// Boolp returns stringer/JSON marshaler for the bool pointer type.
 func Boolp(p *bool) boolP { return boolP{P: p} }
 
 type boolP struct{ P *bool }

@@ -1628,6 +1628,7 @@ var KVTestCases = []struct {
 			"uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
 		input: log0.StringAny("any uintptr", 42),
@@ -1635,6 +1636,7 @@ var KVTestCases = []struct {
 			"any uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
 		input: log0.StringReflect("reflect uintptr", 42),
@@ -3410,6 +3412,7 @@ var KVTestCases = []struct {
 			"uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
 		input: log0.TextAny(log0.String("any uintptr"), 42),
@@ -3417,6 +3420,7 @@ var KVTestCases = []struct {
 			"any uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
 		input: log0.TextReflect(log0.String("reflect uintptr"), 42),

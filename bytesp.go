@@ -4,26 +4,26 @@
 
 package log0
 
-// Bytesp returns stringer/JSON marshaler interface implementation for the pointer to the byte slice type.
-func Bytesp(p *[]byte) bytesP { return bytesP{P: p} }
+// Bytesp returns stringer/JSON marshaler for the pointer to byte slice type.
+func Bytesp(p *[]byte) byteSP { return byteSP{P: p} }
 
-type bytesP struct{ P *[]byte }
+type byteSP struct{ P *[]byte }
 
-func (p bytesP) String() string {
+func (p byteSP) String() string {
 	t, _ := p.MarshalText()
 	return string(t)
 }
 
-func (p bytesP) MarshalText() ([]byte, error) {
+func (p byteSP) MarshalText() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}
-	return bytesV{V: *p.P}.MarshalText()
+	return byteS{S: *p.P}.MarshalText()
 }
 
-func (p bytesP) MarshalJSON() ([]byte, error) {
+func (p byteSP) MarshalJSON() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}
-	return bytesV{V: *p.P}.MarshalJSON()
+	return byteS{S: *p.P}.MarshalJSON()
 }

@@ -8,17 +8,17 @@ import (
 	"bytes"
 )
 
-// Bools returns stringer/JSON marshaler interface implementation for the bool pointers slice type.
-func Boolsp(a ...*bool) boolsP { return boolsP{A: a} }
+// Bytesps returns stringer/JSON marshaler for slice of pointers to byte slice type.
+func Bytesps(a ...*[]byte) bytessP { return bytessP{A: a} }
 
-type boolsP struct{ A []*bool }
+type bytessP struct{ A []*[]byte }
 
-func (a boolsP) String() string {
+func (a bytessP) String() string {
 	t, _ := a.MarshalText()
 	return string(t)
 }
 
-func (a boolsP) MarshalText() ([]byte, error) {
+func (a bytessP) MarshalText() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}
@@ -27,7 +27,7 @@ func (a boolsP) MarshalText() ([]byte, error) {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := boolP{P: p}.MarshalText()
+		b, err := byteSP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +39,7 @@ func (a boolsP) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a boolsP) MarshalJSON() ([]byte, error) {
+func (a bytessP) MarshalJSON() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}
@@ -49,7 +49,7 @@ func (a boolsP) MarshalJSON() ([]byte, error) {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := boolP{P: p}.MarshalText()
+		b, err := byteSP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

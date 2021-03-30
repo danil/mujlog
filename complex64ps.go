@@ -4,30 +4,28 @@
 
 package log0
 
-import (
-	"bytes"
-)
+import "bytes"
 
-// Bytessp returns stringer/JSON marshaler interface implementation for the slice of byte pointer slices type.
-func Bytessp(a ...*[]byte) bytessP { return bytessP{A: a} }
+// Complex64ps returns stringer/JSON marshaler for the slice of complex64 pointers type.
+func Complex64ps(s ...*complex64) complex64ps { return complex64ps{S: s} }
 
-type bytessP struct{ A []*[]byte }
+type complex64ps struct{ S []*complex64 }
 
-func (a bytessP) String() string {
-	t, _ := a.MarshalText()
-	return string(t)
+func (s complex64ps) String() string {
+	b, _ := s.MarshalText()
+	return string(b)
 }
 
-func (a bytessP) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s complex64ps) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, p := range a.A {
+	for i, p := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := bytesP{P: p}.MarshalText()
+		b, err := complex64P{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -39,17 +37,17 @@ func (a bytessP) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a bytessP) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s complex64ps) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, p := range a.A {
+	for i, p := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := bytesP{P: p}.MarshalJSON()
+		b, err := complex64P{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

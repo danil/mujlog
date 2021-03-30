@@ -4,26 +4,26 @@
 
 package log0
 
-// Errorp returns stringer/JSON marshaler interface implementation for a pointer to a error type.
-func Errorp(p *error) errorp { return errorp{P: p} }
+// Errorp returns stringer/JSON marshaler for the error pointer type.
+func Errorp(p *error) errorP { return errorP{P: p} }
 
-type errorp struct{ P *error }
+type errorP struct{ P *error }
 
-func (p errorp) String() string {
+func (p errorP) String() string {
 	if p.P == nil {
 		return "null"
 	}
 	return errorV{V: *p.P}.String()
 }
 
-func (p errorp) MarshalText() ([]byte, error) {
+func (p errorP) MarshalText() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}
 	return errorV{V: *p.P}.MarshalText()
 }
 
-func (p errorp) MarshalJSON() ([]byte, error) {
+func (p errorP) MarshalJSON() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}

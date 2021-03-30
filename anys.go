@@ -8,20 +8,19 @@ import (
 	"bytes"
 )
 
-// Anys returns stringer/JSON marshaler interface implementation for the slice of any type.
+// Anys returns stringer/JSON marshaler for the slice of any type.
+func Anys(s ...interface{}) anyS { return anyS{S: s} }
 
-func Anys(a ...interface{}) anysV { return anysV{A: a} }
+type anyS struct{ S []interface{} }
 
-type anysV struct{ A []interface{} }
-
-func (a anysV) String() string {
-	b, _ := a.MarshalText()
+func (s anyS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a anysV) MarshalText() ([]byte, error) {
+func (s anyS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
@@ -37,10 +36,10 @@ func (a anysV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a anysV) MarshalJSON() ([]byte, error) {
+func (s anyS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

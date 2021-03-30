@@ -10,45 +10,45 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Runes returns stringer/JSON marshaler interface implementation for the rune slice type.
-func Runes(v []rune) runesV { return runesV{V: v} }
+// Runes returns stringer/JSON marshaler for the rune slice type.
+func Runes(s []rune) runeS { return runeS{S: s} }
 
-type runesV struct{ V []rune }
+type runeS struct{ S []rune }
 
-func (v runesV) String() string {
-	if v.V == nil {
+func (s runeS) String() string {
+	if s.S == nil {
 		return "null"
 	}
 	buf := bufPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	defer bufPool.Put(buf)
 
-	err := encode0.Runes(buf, v.V)
+	err := encode0.Runes(buf, s.S)
 	if err != nil {
 		return ""
 	}
 	return buf.String()
 }
 
-func (v runesV) MarshalText() ([]byte, error) {
-	if v.V == nil {
+func (s runeS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 
-	err := encode0.Runes(&buf, v.V)
+	err := encode0.Runes(&buf, s.S)
 	if err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
 }
 
-func (v runesV) MarshalJSON() ([]byte, error) {
-	if v.V == nil {
+func (s runeS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 
-	b, err := v.MarshalText()
+	b, err := s.MarshalText()
 	if err != nil {
 		return nil, err
 	}

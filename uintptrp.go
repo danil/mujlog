@@ -4,7 +4,7 @@
 
 package log0
 
-// Uintptrp returns stringer/JSON marshaler interface implementation for the pointer to the uintptr type.
+// Uintptrp returns stringer/JSON marshaler for the uintptr pointer type.
 func Uintptrp(p *uintptr) uintptrP { return uintptrP{P: p} }
 
 type uintptrP struct{ P *uintptr }

@@ -4,7 +4,7 @@
 
 package log0
 
-// Int8p returns stringer/JSON marshaler interface implementation for the pointer to the int8 type.
+// Int8p returns stringer/JSON marshaler for the int8 pointer type.
 func Int8p(p *int8) int8P { return int8P{P: p} }
 
 type int8P struct{ P *int8 }

@@ -1650,6 +1650,7 @@ var MarshalBytespTestCases = []marshalTestCase{
 			"uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:         line(),
 		input:        map[string]json.Marshaler{"any uintptr": log0.Any(42)},
@@ -1659,6 +1660,7 @@ var MarshalBytespTestCases = []marshalTestCase{
 			"any uintptr":42
 		}`,
 	},
+	// FIXME: use var x uintptr = 42
 	{
 		line:         line(),
 		input:        map[string]json.Marshaler{"reflect uintptr": log0.Reflect(42)},

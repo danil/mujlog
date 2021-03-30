@@ -6,22 +6,22 @@ package log0
 
 import "bytes"
 
-// Complex64s returns stringer/JSON marshaler interface implementation for the complex64 type.
-func Complex64s(a ...complex64) complex64sV { return complex64sV{A: a} }
+// Complex64s returns stringer/JSON marshaler for the complex64 type.
+func Complex64s(s ...complex64) complex64sV { return complex64sV{S: s} }
 
-type complex64sV struct{ A []complex64 }
+type complex64sV struct{ S []complex64 }
 
-func (a complex64sV) String() string {
-	b, _ := a.MarshalText()
+func (s complex64sV) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a complex64sV) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s complex64sV) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
@@ -37,13 +37,13 @@ func (a complex64sV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a complex64sV) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s complex64sV) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

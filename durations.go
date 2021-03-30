@@ -9,22 +9,22 @@ import (
 	"time"
 )
 
-// Durations returns stringer/JSON marshaler interface implementation for slice of time durations type.
-func Durations(a ...time.Duration) durationsV { return durationsV{A: a} }
+// Durations returns stringer/JSON marshaler for time duration slice type.
+func Durations(s ...time.Duration) durationS { return durationS{S: s} }
 
-type durationsV struct{ A []time.Duration }
+type durationS struct{ S []time.Duration }
 
-func (a durationsV) String() string {
-	b, _ := a.MarshalText()
+func (s durationS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a durationsV) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s durationS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
@@ -40,13 +40,13 @@ func (a durationsV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a durationsV) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s durationS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

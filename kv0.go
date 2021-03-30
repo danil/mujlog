@@ -45,7 +45,7 @@ func StringBytesp(k string, v *[]byte) kvjt {
 }
 
 func StringBytessp(k string, v ...*[]byte) kvjt {
-	return kvjt{K: String(k), V: Bytessp(v...)}
+	return kvjt{K: String(k), V: Bytesps(v...)}
 }
 
 func StringComplex128(k string, v complex128) kvjt {

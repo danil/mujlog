@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// Complex128 returns stringer/JSON marshaler interface implementation for the complex128 type.
+// Complex128 returns stringer/JSON marshaler for the complex128 type.
 func Complex128(v complex128) complex128V { return complex128V{V: v} }
 
 type complex128V struct{ V complex128 }

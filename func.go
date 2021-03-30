@@ -4,7 +4,7 @@
 
 package log0
 
-// Func returns stringer/JSON marshaler interface implementation for the custom func type.
+// Func returns stringer/JSON marshaler for the custom function type.
 func Func(v func() KV) funcV { return funcV{V: v} }
 
 type funcV struct{ V func() KV }

@@ -13,12 +13,12 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalDurationspTestCases = []marshalTestCase{
+var MarshalDurationpsTestCases = []marshalTestCase{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var d, d2 = 42 * time.Nanosecond, 42 * time.Second
-			return map[string]json.Marshaler{"slice of durations pointers": log0.Durationsp(&d, &d2)}
+			return map[string]json.Marshaler{"slice of durations pointers": log0.Durationps(&d, &d2)}
 		}(),
 		expected:     "42ns 42s",
 		expectedText: "42ns 42s",
@@ -28,7 +28,7 @@ var MarshalDurationspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil durations pointers": log0.Durationsp(nil, nil)},
+		input:        map[string]json.Marshaler{"slice of nil durations pointers": log0.Durationps(nil, nil)},
 		expected:     "null null",
 		expectedText: "null null",
 		expectedJSON: `{
@@ -37,7 +37,7 @@ var MarshalDurationspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice without durations pointers": log0.Durationsp()},
+		input:        map[string]json.Marshaler{"slice without durations pointers": log0.Durationps()},
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
@@ -70,7 +70,7 @@ var MarshalDurationspTestCases = []marshalTestCase{
 	},
 }
 
-func TestMarshalDurationsp(t *testing.T) {
+func TestMarshalDurationps(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalDurationspTestCases)
+	testMarshal(t, testFile, MarshalDurationpsTestCases)
 }

@@ -9,25 +9,25 @@ import (
 )
 
 // Bytess returns stringer/JSON marshaler interface implementation for the slice of byte slice type.
-func Bytess(a ...[]byte) bytessV { return bytessV{A: a} }
+func Bytess(s ...[]byte) byteSS { return byteSS{S: s} }
 
-type bytessV struct{ A [][]byte }
+type byteSS struct{ S [][]byte }
 
-func (a bytessV) String() string {
-	b, _ := a.MarshalText()
+func (s byteSS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a bytessV) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s byteSS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, v := range a.A {
+	for i, s := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := bytesV{V: v}.MarshalText()
+		b, err := byteS{S: s}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -39,17 +39,17 @@ func (a bytessV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a bytessV) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s byteSS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, s := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := bytesV{V: v}.MarshalJSON()
+		b, err := byteS{S: s}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

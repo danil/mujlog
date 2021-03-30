@@ -13,12 +13,12 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalComplex64spTestCases = []marshalTestCase{
+var MarshalComplex64psTestCases = []marshalTestCase{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of complex64 pointers": log0.Complex64sp(&c, &c2)}
+			return map[string]json.Marshaler{"slice of complex64 pointers": log0.Complex64ps(&c, &c2)}
 		}(),
 		expected:     "1+23i 3+21i",
 		expectedText: "1+23i 3+21i",
@@ -28,7 +28,7 @@ var MarshalComplex64spTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil complex64 pointers": log0.Complex64sp(nil, nil)},
+		input:        map[string]json.Marshaler{"slice of nil complex64 pointers": log0.Complex64ps(nil, nil)},
 		expected:     "null null",
 		expectedText: "null null",
 		expectedJSON: `{
@@ -37,7 +37,7 @@ var MarshalComplex64spTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice without complex64 pointers": log0.Complex64sp()},
+		input:        map[string]json.Marshaler{"slice without complex64 pointers": log0.Complex64ps()},
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
@@ -68,7 +68,7 @@ var MarshalComplex64spTestCases = []marshalTestCase{
 	},
 }
 
-func TestMarshalComplex64sp(t *testing.T) {
+func TestMarshalComplex64ps(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex64spTestCases)
+	testMarshal(t, testFile, MarshalComplex64psTestCases)
 }

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uint16 returns stringer/JSON marshaler interface implementation for the uint16 type.
+// Uint16 returns stringer/JSON marshaler for the uint16 type.
 func Uint16(v uint16) uint16V { return uint16V{V: v} }
 
 type uint16V struct{ V uint16 }

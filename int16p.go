@@ -4,7 +4,7 @@
 
 package log0
 
-// Int16p returns stringer/JSON marshaler interface implementation for the pointer to the int16 type.
+// Int16p returns stringer/JSON marshaler for the int16 pointer type.
 func Int16p(p *int16) int16P { return int16P{P: p} }
 
 type int16P struct{ P *int16 }

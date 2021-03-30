@@ -11,39 +11,39 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Strings returns stringer/JSON marshaler interface implementation for the string slice type.
-func Strings(a ...string) stringsV { return stringsV{A: a} }
+// Strings returns stringer/JSON marshaler for the string slice type.
+func Strings(s ...string) stringS { return stringS{S: s} }
 
-type stringsV struct{ A []string }
+type stringS struct{ S []string }
 
-func (a stringsV) String() string {
+func (s stringS) String() string {
 	buf := bufPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	defer bufPool.Put(buf)
 
-	err := encode0.String(buf, strings.Join(a.A, " "))
+	err := encode0.String(buf, strings.Join(s.S, " "))
 	if err != nil {
 		return ""
 	}
 	return buf.String()
 }
 
-func (a stringsV) MarshalText() ([]byte, error) {
+func (s stringS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
-	err := encode0.String(&buf, strings.Join(a.A, " "))
+	err := encode0.String(&buf, strings.Join(s.S, " "))
 	if err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
 }
 
-func (a stringsV) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s stringS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

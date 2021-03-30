@@ -10,23 +10,23 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Errors returns stringer/JSON marshaler interface implementation for the error slice type.
-func Errors(a ...error) errorsV { return errorsV{A: a} }
+// Errors returns stringer/JSON marshaler for the error slice type.
+func Errors(s ...error) errorS { return errorS{S: s} }
 
-type errorsV struct{ A []error }
+type errorS struct{ S []error }
 
-func (a errorsV) String() string {
-	b, _ := a.MarshalText()
+func (s errorS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a errorsV) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s errorS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if v == nil {
 			continue
 		}
@@ -41,13 +41,13 @@ func (a errorsV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a errorsV) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s errorS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

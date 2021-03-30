@@ -10,7 +10,7 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// String returns stringer/JSON marshaler interface implementation for the string type.
+// String returns stringer/JSON marshaler for the string type.
 func String(v string) stringV { return stringV{V: v} }
 
 type stringV struct{ V string }

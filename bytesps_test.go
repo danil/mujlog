@@ -12,12 +12,12 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalBytesspTestCases = []marshalTestCase{
+var MarshalBytespsTestCases = []marshalTestCase{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte("Hello, Wörld!"), []byte("Hello, World!")
-			return map[string]json.Marshaler{"slice of byte slice pointers": log0.Bytessp(&p, &p2)}
+			return map[string]json.Marshaler{"slice of byte slice pointers": log0.Bytesps(&p, &p2)}
 		}(),
 		expected:     "Hello, Wörld! Hello, World!",
 		expectedText: "Hello, Wörld! Hello, World!",
@@ -29,7 +29,7 @@ var MarshalBytesspTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte{}, []byte{}
-			return map[string]json.Marshaler{"slice of empty byte slice pointers": log0.Bytessp(&p, &p2)}
+			return map[string]json.Marshaler{"slice of empty byte slice pointers": log0.Bytesps(&p, &p2)}
 		}(),
 		expected:     " ",
 		expectedText: " ",
@@ -39,7 +39,7 @@ var MarshalBytesspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil byte slice pointers": log0.Bytessp(nil, nil)},
+		input:        map[string]json.Marshaler{"slice of nil byte slice pointers": log0.Bytesps(nil, nil)},
 		expected:     "null null",
 		expectedText: "null null",
 		expectedJSON: `{
@@ -48,7 +48,7 @@ var MarshalBytesspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"empty slice of byte slice pointers": log0.Bytessp()},
+		input:        map[string]json.Marshaler{"empty slice of byte slice pointers": log0.Bytesps()},
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
@@ -57,7 +57,7 @@ var MarshalBytesspTestCases = []marshalTestCase{
 	},
 }
 
-func TestMarshalBytessp(t *testing.T) {
+func TestMarshalBytesps(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBytesspTestCases)
+	testMarshal(t, testFile, MarshalBytespsTestCases)
 }

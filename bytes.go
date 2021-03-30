@@ -13,40 +13,36 @@ import (
 
 var bufPool = sync.Pool{New: func() interface{} { return new(bytes.Buffer) }}
 
-// Bytes returns stringer/JSON marshaler interface implementation for the byte slice type.
-func Bytes(v []byte) bytesV { return bytesV{V: v} }
+// Bytes returns stringer/JSON marshaler for slice of bytes type.
+func Bytes(s []byte) byteS { return byteS{S: s} }
 
-type bytesV struct{ V []byte }
+type byteS struct{ S []byte }
 
-func (v bytesV) String() string {
-	b, _ := v.MarshalText()
+func (s byteS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (v bytesV) MarshalText() ([]byte, error) {
-	if v.V == nil {
+func (s byteS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
-
 	var buf bytes.Buffer
 
-	err := encode0.Bytes(&buf, v.V)
+	err := encode0.Bytes(&buf, s.S)
 	if err != nil {
 		return nil, err
 	}
-
 	return buf.Bytes(), nil
 }
 
-func (v bytesV) MarshalJSON() ([]byte, error) {
-	if v.V == nil {
+func (s byteS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
-
-	b, err := v.MarshalText()
+	b, err := s.MarshalText()
 	if err != nil {
 		return nil, err
 	}
-
 	return append([]byte(`"`), append(b, []byte(`"`)...)...), nil
 }

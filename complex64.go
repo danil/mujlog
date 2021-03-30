@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// Complex64 returns stringer/JSON marshaler interface implementation for the complex64 type.
+// Complex64 returns stringer/JSON marshaler for the complex64 type.
 func Complex64(v complex64) complex64V { return complex64V{V: v} }
 
 type complex64V struct{ V complex64 }

@@ -4,7 +4,7 @@
 
 package log0
 
-// Complex128p returns stringer/JSON marshaler interface implementation for the pointer to the complex128 type.
+// Complex128p returns stringer/JSON marshaler for the complex128 pointer type.
 func Complex128p(p *complex128) complex128P { return complex128P{P: p} }
 
 type complex128P struct{ P *complex128 }

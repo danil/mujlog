@@ -24,20 +24,20 @@ var MarshalUintptrTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"any uintptr": log0.Any(42)},
+		input:        map[string]json.Marshaler{"any uintp": log0.Any(42)},
 		expected:     "42",
 		expectedText: "42",
 		expectedJSON: `{
-			"any uintptr":42
+			"any uintp":42
 		}`,
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"reflect uintptr": log0.Reflect(42)},
+		input:        map[string]json.Marshaler{"reflect uintp": log0.Reflect(42)},
 		expected:     "42",
 		expectedText: "42",
 		expectedJSON: `{
-			"reflect uintptr":42
+			"reflect uintp":42
 		}`,
 	},
 }

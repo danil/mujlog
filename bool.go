@@ -4,7 +4,7 @@
 
 package log0
 
-// Bool returns stringer/JSON marshaler interface implementation for the bool type.
+// Bool returns stringer/JSON marshaler for the bool type.
 func Bool(v bool) boolV { return boolV{V: v} }
 
 type boolV struct{ V bool }

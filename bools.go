@@ -9,18 +9,18 @@ import (
 )
 
 // Bools returns stringer/JSON marshaler interface implementation for the bool slice type.
-func Bools(a ...bool) boolsV { return boolsV{A: a} }
+func Bools(s ...bool) boolS { return boolS{S: s} }
 
-type boolsV struct{ A []bool }
+type boolS struct{ S []bool }
 
-func (a boolsV) String() string {
-	b, _ := a.MarshalText()
+func (s boolS) String() string {
+	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (a boolsV) MarshalText() ([]byte, error) {
+func (s boolS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
@@ -36,10 +36,10 @@ func (a boolsV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a boolsV) MarshalJSON() ([]byte, error) {
+func (s boolS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range a.A {
+	for i, v := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}

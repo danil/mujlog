@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// Float32 returns stringer/JSON marshaler interface implementation for the float32 type.
+// Float32 returns stringer/JSON marshaler for the float32 type.
 func Float32(v float32) float32V { return float32V{V: v} }
 
 type float32V struct{ V float32 }

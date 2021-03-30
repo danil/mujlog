@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uint32 returns stringer/JSON marshaler interface implementation for the uint32 type.
+// Uint32 returns stringer/JSON marshaler for the uint32 type.
 func Uint32(v uint32) uint32V { return uint32V{V: v} }
 
 type uint32V struct{ V uint32 }

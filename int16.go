@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Int16 returns stringer/JSON marshaler interface implementation for the int16 type.
+// Int16 returns stringer/JSON marshaler for the int16 type.
 func Int16(v int16) int16V { return int16V{V: v} }
 
 type int16V struct{ V int16 }

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Int8 returns stringer/JSON marshaler interface implementation for the int8 type.
+// Int8 returns stringer/JSON marshaler for the int8 type.
 func Int8(v int8) int8V { return int8V{V: v} }
 
 type int8V struct{ V int8 }

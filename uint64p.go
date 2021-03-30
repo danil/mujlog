@@ -4,7 +4,7 @@
 
 package log0
 
-// Uint64p returns stringer/JSON marshaler interface implementation for the pointer to the uint64 type.
+// Uint64p returns stringer/JSON marshaler for the uint64 pointer type.
 func Uint64p(p *uint64) uint64P { return uint64P{P: p} }
 
 type uint64P struct{ P *uint64 }

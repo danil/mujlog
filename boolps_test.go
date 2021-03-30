@@ -12,12 +12,12 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalBoolspTestCases = []marshalTestCase{
+var MarshalBoolpsTestCases = []marshalTestCase{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b, b2 := true, false
-			return map[string]json.Marshaler{"bool pointers to true and false": log0.Boolsp(&b, &b2)}
+			return map[string]json.Marshaler{"bool pointers to true and false": log0.Boolps(&b, &b2)}
 		}(),
 		expected:     "true false",
 		expectedText: "true false",
@@ -27,7 +27,7 @@ var MarshalBoolspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bool pointers to nil": log0.Boolsp(nil, nil)},
+		input:        map[string]json.Marshaler{"bool pointers to nil": log0.Boolps(nil, nil)},
 		expected:     "null null",
 		expectedText: "null null",
 		expectedJSON: `{
@@ -36,7 +36,7 @@ var MarshalBoolspTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"without bool pointers": log0.Boolsp()},
+		input:        map[string]json.Marshaler{"without bool pointers": log0.Boolps()},
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
@@ -45,7 +45,7 @@ var MarshalBoolspTestCases = []marshalTestCase{
 	},
 }
 
-func TestMarshalBoolsp(t *testing.T) {
+func TestMarshalBoolps(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBoolspTestCases)
+	testMarshal(t, testFile, MarshalBoolpsTestCases)
 }

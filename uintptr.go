@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uintptr returns stringer/JSON marshaler interface implementation for the uintptr type.
+// Uintptr returns stringer/JSON marshaler for the uintptr type.
 func Uintptr(v uintptr) uintptrV { return uintptrV{V: v} }
 
 type uintptrV struct{ V uintptr }

@@ -12,6 +12,7 @@ import (
 	"github.com/danil/log0"
 )
 
+// TODO: Add any/relfect test cases.
 var MarshalBytessTestCases = []marshalTestCase{
 	{
 		line:         line(),

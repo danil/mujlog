@@ -6,29 +6,28 @@ package log0
 
 import (
 	"bytes"
-	"time"
 )
 
-// Durationsp returns stringer/JSON marshaler interface implementation for slice of pointers to time duration type.
-func Durationsp(a ...*time.Duration) durationsp { return durationsp{A: a} }
+// Boolps returns stringer/JSON marshaler for slice of bool pointers type.
+func Boolps(s ...*bool) boolPS { return boolPS{S: s} }
 
-type durationsp struct{ A []*time.Duration }
+type boolPS struct{ S []*bool }
 
-func (a durationsp) String() string {
-	b, _ := a.MarshalText()
-	return string(b)
+func (s boolPS) String() string {
+	t, _ := s.MarshalText()
+	return string(t)
 }
 
-func (a durationsp) MarshalText() ([]byte, error) {
-	if a.A == nil {
+func (s boolPS) MarshalText() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, p := range a.A {
+	for i, p := range s.S {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := durationP{P: p}.MarshalText()
+		b, err := boolP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -40,17 +39,17 @@ func (a durationsp) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a durationsp) MarshalJSON() ([]byte, error) {
-	if a.A == nil {
+func (s boolPS) MarshalJSON() ([]byte, error) {
+	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, p := range a.A {
+	for i, p := range s.S {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := durationP{P: p}.MarshalJSON()
+		b, err := boolP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
