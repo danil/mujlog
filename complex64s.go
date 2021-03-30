@@ -7,16 +7,16 @@ package log0
 import "bytes"
 
 // Complex64s returns stringer/JSON marshaler for the complex64 type.
-func Complex64s(s ...complex64) complex64sV { return complex64sV{S: s} }
+func Complex64s(s ...complex64) complex64S { return complex64S{S: s} }
 
-type complex64sV struct{ S []complex64 }
+type complex64S struct{ S []complex64 }
 
-func (s complex64sV) String() string {
+func (s complex64S) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s complex64sV) MarshalText() ([]byte, error) {
+func (s complex64S) MarshalText() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}
@@ -37,7 +37,7 @@ func (s complex64sV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s complex64sV) MarshalJSON() ([]byte, error) {
+func (s complex64S) MarshalJSON() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}

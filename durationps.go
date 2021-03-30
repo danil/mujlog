@@ -10,16 +10,16 @@ import (
 )
 
 // Durationps returns stringer/JSON marshaler for the time duration pointer slice type.
-func Durationps(s ...*time.Duration) durationsp { return durationsp{S: s} }
+func Durationps(s ...*time.Duration) durationPS { return durationPS{S: s} }
 
-type durationsp struct{ S []*time.Duration }
+type durationPS struct{ S []*time.Duration }
 
-func (s durationsp) String() string {
+func (s durationPS) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s durationsp) MarshalText() ([]byte, error) {
+func (s durationPS) MarshalText() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}
@@ -40,7 +40,7 @@ func (s durationsp) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s durationsp) MarshalJSON() ([]byte, error) {
+func (s durationPS) MarshalJSON() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}

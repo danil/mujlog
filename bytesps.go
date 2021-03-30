@@ -9,16 +9,16 @@ import (
 )
 
 // Bytesps returns stringer/JSON marshaler for slice of pointers to byte slice type.
-func Bytesps(a ...*[]byte) bytessP { return bytessP{A: a} }
+func Bytesps(a ...*[]byte) byteSPS { return byteSPS{A: a} }
 
-type bytessP struct{ A []*[]byte }
+type byteSPS struct{ A []*[]byte }
 
-func (a bytessP) String() string {
+func (a byteSPS) String() string {
 	t, _ := a.MarshalText()
 	return string(t)
 }
 
-func (a bytessP) MarshalText() ([]byte, error) {
+func (a byteSPS) MarshalText() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}
@@ -39,7 +39,7 @@ func (a bytessP) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a bytessP) MarshalJSON() ([]byte, error) {
+func (a byteSPS) MarshalJSON() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}

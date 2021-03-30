@@ -10,16 +10,16 @@ import (
 
 // Reflects returns stringer/JSON marshaler uses reflection for the slice of some type.
 
-func Reflects(s ...interface{}) reflectsV { return reflectsV{S: s} }
+func Reflects(s ...interface{}) reflectS { return reflectS{S: s} }
 
-type reflectsV struct{ S []interface{} }
+type reflectS struct{ S []interface{} }
 
-func (s reflectsV) String() string {
+func (s reflectS) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s reflectsV) MarshalText() ([]byte, error) {
+func (s reflectS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
 	for i, v := range s.S {
 		if i != 0 {
@@ -37,7 +37,7 @@ func (s reflectsV) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s reflectsV) MarshalJSON() ([]byte, error) {
+func (s reflectS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {

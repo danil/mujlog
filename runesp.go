@@ -5,25 +5,25 @@
 package log0
 
 // Runesp returns stringer/JSON marshaler for the rune pointer slice type.
-func Runesp(p *[]rune) runesP { return runesP{P: p} }
+func Runesp(p *[]rune) runeSP { return runeSP{P: p} }
 
-type runesP struct{ P *[]rune }
+type runeSP struct{ P *[]rune }
 
-func (p runesP) String() string {
+func (p runeSP) String() string {
 	if p.P == nil {
 		return "null"
 	}
 	return runeS{S: *p.P}.String()
 }
 
-func (p runesP) MarshalText() ([]byte, error) {
+func (p runeSP) MarshalText() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}
 	return runeS{S: *p.P}.MarshalText()
 }
 
-func (p runesP) MarshalJSON() ([]byte, error) {
+func (p runeSP) MarshalJSON() ([]byte, error) {
 	if p.P == nil {
 		return []byte("null"), nil
 	}

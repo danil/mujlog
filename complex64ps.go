@@ -7,16 +7,16 @@ package log0
 import "bytes"
 
 // Complex64ps returns stringer/JSON marshaler for the slice of complex64 pointers type.
-func Complex64ps(s ...*complex64) complex64ps { return complex64ps{S: s} }
+func Complex64ps(s ...*complex64) complex64PS { return complex64PS{S: s} }
 
-type complex64ps struct{ S []*complex64 }
+type complex64PS struct{ S []*complex64 }
 
-func (s complex64ps) String() string {
+func (s complex64PS) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s complex64ps) MarshalText() ([]byte, error) {
+func (s complex64PS) MarshalText() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}
@@ -37,7 +37,7 @@ func (s complex64ps) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s complex64ps) MarshalJSON() ([]byte, error) {
+func (s complex64PS) MarshalJSON() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}

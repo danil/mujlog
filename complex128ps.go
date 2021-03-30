@@ -7,16 +7,16 @@ package log0
 import "bytes"
 
 // Complex128ps returns stringer/JSON marshaler for the complex128 pointer slice type.
-func Complex128ps(a ...*complex128) complex128sp { return complex128sp{A: a} }
+func Complex128ps(a ...*complex128) complex128PS { return complex128PS{A: a} }
 
-type complex128sp struct{ A []*complex128 }
+type complex128PS struct{ A []*complex128 }
 
-func (a complex128sp) String() string {
+func (a complex128PS) String() string {
 	b, _ := a.MarshalText()
 	return string(b)
 }
 
-func (a complex128sp) MarshalText() ([]byte, error) {
+func (a complex128PS) MarshalText() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}
@@ -37,7 +37,7 @@ func (a complex128sp) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (a complex128sp) MarshalJSON() ([]byte, error) {
+func (a complex128PS) MarshalJSON() ([]byte, error) {
 	if a.A == nil {
 		return []byte("null"), nil
 	}
