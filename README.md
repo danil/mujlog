@@ -8,17 +8,6 @@ JSON logging for Go.
 Source files are distributed under the BSD-style license
 found in the [LICENSE](./LICENSE) file.
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-
-* [About](#about)
-* [Install](#install)
-* [Usage](#usage)
-* [Use as GELF formater](#use-as-gelf-formater)
-* [Caveat: numeric types appears in the message as a string](#caveat-numeric-types-appears-in-the-message-as-a-string)
-* [Benchmark](#benchmark)
-
-<!-- markdown-toc end -->
-
 About
 -----
 
@@ -28,7 +17,7 @@ its extremely slow and allocates a lots of memory)
 Install
 -------
 
-    go get github.com/danil/log0@v0.147.0
+    go get github.com/danil/log0@v0.149.0
 
 Usage
 -----

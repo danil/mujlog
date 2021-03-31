@@ -23,8 +23,11 @@ var MarshalInt16TestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any int16": log0.Any(42)},
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var i int16 = 42
+			return map[string]json.Marshaler{"any int16": log0.Any(i)}
+		}(),
 		expected:     "42",
 		expectedText: "42",
 		expectedJSON: `{
@@ -32,8 +35,11 @@ var MarshalInt16TestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect int16": log0.Reflect(42)},
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var i int16 = 42
+			return map[string]json.Marshaler{"reflect int16": log0.Reflect(i)}
+		}(),
 		expected:     "42",
 		expectedText: "42",
 		expectedJSON: `{

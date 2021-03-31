@@ -15,11 +15,11 @@ import (
 var MarshalFloat32sTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"float slice": log0.Float32s(0.123456789, 0.987654321)},
+		input:        map[string]json.Marshaler{"float32 slice": log0.Float32s(0.123456789, 0.987654321)},
 		expected:     "0.12345679 0.9876543",
 		expectedText: "0.12345679 0.9876543",
 		expectedJSON: `{
-			"float slice":[0.123456789,0.987654321]
+			"float32 slice":[0.123456789,0.987654321]
 		}`,
 	},
 	{
@@ -32,21 +32,27 @@ var MarshalFloat32sTestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of any float32": log0.Anys(0.123456789, 0.987654321)},
-		expected:     "0.123456789 0.987654321",
-		expectedText: "0.123456789 0.987654321",
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var f, f2 float32 = 0.123456789, 0.987654321
+			return map[string]json.Marshaler{"slice of any float32": log0.Anys(f, f2)}
+		}(),
+		expected:     "0.12345679 0.9876543",
+		expectedText: "0.12345679 0.9876543",
 		expectedJSON: `{
 			"slice of any float32":[0.123456789, 0.987654321]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflects float32s": log0.Reflects(0.123456789, 0.987654321)},
-		expected:     "0.123456789 0.987654321",
-		expectedText: "0.123456789 0.987654321",
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var f, f2 float32 = 0.123456789, 0.987654321
+			return map[string]json.Marshaler{"slice of float32 reflects": log0.Reflects(f, f2)}
+		}(),
+		expected:     "0.12345679 0.9876543",
+		expectedText: "0.12345679 0.9876543",
 		expectedJSON: `{
-			"reflects float32s":[0.123456789, 0.987654321]
+			"slice of float32 reflects":[0.123456789, 0.987654321]
 		}`,
 	},
 }
