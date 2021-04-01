@@ -62,9 +62,9 @@ var MarshalComplex64psTestCases = []marshalTestCase{
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
 			return map[string]json.Marshaler{"slice of reflects of complex64 pointers": log0.Reflects(&c, &c2)}
 		}(),
-		expected:     "(1+23i) (3+21i)",
-		expectedText: "(1+23i) (3+21i)",
-		error:        errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
+		expected:      "(1+23i) (3+21i)",
+		expectedText:  "(1+23i) (3+21i)",
+		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
 	},
 }
 

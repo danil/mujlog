@@ -32,13 +32,13 @@ func (p testprinter) Errorf(msg string, args ...interface{}) {
 }
 
 type marshalTestCase struct {
-	line         int
-	input        map[string]json.Marshaler
-	expected     string
-	expectedText string
-	expectedJSON string
-	error        error
-	benchmark    bool
+	line          int
+	input         map[string]json.Marshaler
+	expected      string
+	expectedText  string
+	expectedJSON  string
+	expectedError error
+	benchmark     bool
 }
 
 func testMarshal(t *testing.T, testFile string, testCases []marshalTestCase) {
@@ -78,8 +78,8 @@ func testMarshal(t *testing.T, testFile string, testCases []marshalTestCase) {
 
 			p, err := json.Marshal(tc.input)
 
-			if !equal4.ErrorEqual(err, tc.error) {
-				t.Fatalf("marshal error expected: %s, recieved: %s %s", tc.error, err, linkToExample)
+			if !equal4.ErrorEqual(err, tc.expectedError) {
+				t.Fatalf("marshal error expected: %s, recieved: %s %s", tc.expectedError, err, linkToExample)
 			}
 
 			if err == nil {

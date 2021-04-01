@@ -51,18 +51,18 @@ var MarshalComplex64TestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect complex64": log0.Reflect(complex(1, 23))},
-		expected:     "(1+23i)",
-		expectedText: "(1+23i)",
-		error:        errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+		line:          line(),
+		input:         map[string]json.Marshaler{"reflect complex64": log0.Reflect(complex(1, 23))},
+		expected:      "(1+23i)",
+		expectedText:  "(1+23i)",
+		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect complex64": log0.Reflect(complex(3, 21))},
-		expected:     "(3+21i)",
-		expectedText: "(3+21i)",
-		error:        errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+		line:          line(),
+		input:         map[string]json.Marshaler{"reflect complex64": log0.Reflect(complex(3, 21))},
+		expected:      "(3+21i)",
+		expectedText:  "(3+21i)",
+		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 }
 
