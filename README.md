@@ -36,10 +36,10 @@ import (
 
 func main() {
     l := &log0.Log{
-        Output:  &bytes.Buffer{},
+        Output:  os.Stdout,
         Keys:    [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
-        Marks:   [3][]byte{[]byte("…")},
         Trunc:   12,
+        Marks:   [3][]byte{[]byte("…")},
         Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
     }
     log.SetFlags(0)
