@@ -15,7 +15,7 @@ import (
 var MarshalRunesTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"runes": log0.Runes([]rune("Hello, Wörld!"))},
+		input:        map[string]json.Marshaler{"runes": log0.Runes([]rune("Hello, Wörld!")...)},
 		expected:     "Hello, Wörld!",
 		expectedText: "Hello, Wörld!",
 		expectedJSON: `{
@@ -24,7 +24,7 @@ var MarshalRunesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"empty runes": log0.Runes([]rune{})},
+		input:        map[string]json.Marshaler{"empty runes": log0.Runes([]rune{}...)},
 		expected:     "",
 		expectedText: "",
 		expectedJSON: `{
@@ -32,8 +32,11 @@ var MarshalRunesTestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil runes": log0.Runes(nil)},
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var p []rune
+			return map[string]json.Marshaler{"nil runes": log0.Runes(p...)}
+		}(),
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{
@@ -42,7 +45,7 @@ var MarshalRunesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"rune slice with zero rune": log0.Runes([]rune{rune(0)})},
+		input:        map[string]json.Marshaler{"rune slice with zero rune": log0.Runes([]rune{rune(0)}...)},
 		expected:     "\\u0000",
 		expectedText: "\\u0000",
 		expectedJSON: `{

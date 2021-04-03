@@ -147,56 +147,59 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes", []byte("Hello, Wörld!")),
+		input: log0.StringBytes("bytes", []byte("Hello, Wörld!")...),
 		expected: `{
 			"bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes with quote", []byte(`Hello, "World"!`)),
+		input: log0.StringBytes("bytes with quote", []byte(`Hello, "World"!`)...),
 		expected: `{
 			"bytes with quote":"Hello, \"World\"!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes quote", []byte(`"Hello, World!"`)),
+		input: log0.StringBytes("bytes quote", []byte(`"Hello, World!"`)...),
 		expected: `{
 			"bytes quote":"\"Hello, World!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes nested quote", []byte(`"Hello, "World"!"`)),
+		input: log0.StringBytes("bytes nested quote", []byte(`"Hello, "World"!"`)...),
 		expected: `{
 			"bytes nested quote":"\"Hello, \"World\"!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes json", []byte(`{"foo":"bar"}`)),
+		input: log0.StringBytes("bytes json", []byte(`{"foo":"bar"}`)...),
 		expected: `{
 			"bytes json":"{\"foo\":\"bar\"}"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes json quote", []byte(`"{"foo":"bar"}"`)),
+		input: log0.StringBytes("bytes json quote", []byte(`"{"foo":"bar"}"`)...),
 		expected: `{
 			"bytes json quote":"\"{\"foo\":\"bar\"}\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("empty bytes", []byte{}),
+		input: log0.StringBytes("empty bytes", []byte{}...),
 		expected: `{
 			"empty bytes":""
 		}`,
 	},
 	{
-		line:  line(),
-		input: log0.StringBytes("nil bytes", nil),
+		line: line(),
+		input: func() log0.KV {
+			var p []byte
+			return log0.StringBytes("nil bytes", p...)
+		}(),
 		expected: `{
 			"nil bytes":null
 		}`,
@@ -1019,28 +1022,31 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("runes", []rune("Hello, Wörld!")),
+		input: log0.StringRunes("runes", []rune("Hello, Wörld!")...),
 		expected: `{
 			"runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("empty runes", []rune{}),
+		input: log0.StringRunes("empty runes", []rune{}...),
 		expected: `{
 			"empty runes":""
 		}`,
 	},
 	{
-		line:  line(),
-		input: log0.StringRunes("nil runes", nil),
+		line: line(),
+		input: func() log0.KV {
+			var p []rune
+			return log0.StringRunes("nil runes", p...)
+		}(),
 		expected: `{
 			"nil runes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("rune slice with zero rune", []rune{rune(0)}),
+		input: log0.StringRunes("rune slice with zero rune", []rune{rune(0)}...),
 		expected: `{
 			"rune slice with zero rune":"\u0000"
 		}`,
@@ -2064,56 +2070,59 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes"), []byte("Hello, Wörld!")),
+		input: log0.TextBytes(log0.String("bytes"), []byte("Hello, Wörld!")...),
 		expected: `{
 			"bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes with quote"), []byte(`Hello, "World"!`)),
+		input: log0.TextBytes(log0.String("bytes with quote"), []byte(`Hello, "World"!`)...),
 		expected: `{
 			"bytes with quote":"Hello, \"World\"!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes quote"), []byte(`"Hello, World!"`)),
+		input: log0.TextBytes(log0.String("bytes quote"), []byte(`"Hello, World!"`)...),
 		expected: `{
 			"bytes quote":"\"Hello, World!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes nested quote"), []byte(`"Hello, "World"!"`)),
+		input: log0.TextBytes(log0.String("bytes nested quote"), []byte(`"Hello, "World"!"`)...),
 		expected: `{
 			"bytes nested quote":"\"Hello, \"World\"!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes json"), []byte(`{"foo":"bar"}`)),
+		input: log0.TextBytes(log0.String("bytes json"), []byte(`{"foo":"bar"}`)...),
 		expected: `{
 			"bytes json":"{\"foo\":\"bar\"}"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes json quote"), []byte(`"{"foo":"bar"}"`)),
+		input: log0.TextBytes(log0.String("bytes json quote"), []byte(`"{"foo":"bar"}"`)...),
 		expected: `{
 			"bytes json quote":"\"{\"foo\":\"bar\"}\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("empty bytes"), []byte{}),
+		input: log0.TextBytes(log0.String("empty bytes"), []byte{}...),
 		expected: `{
 			"empty bytes":""
 		}`,
 	},
 	{
-		line:  line(),
-		input: log0.TextBytes(log0.String("nil bytes"), nil),
+		line: line(),
+		input: func() log0.KV {
+			var p []byte
+			return log0.TextBytes(log0.String("nil bytes"), p...)
+		}(),
 		expected: `{
 			"nil bytes":null
 		}`,
@@ -2818,28 +2827,31 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("runes"), []rune("Hello, Wörld!")),
+		input: log0.TextRunes(log0.String("runes"), []rune("Hello, Wörld!")...),
 		expected: `{
 			"runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("empty runes"), []rune{}),
+		input: log0.TextRunes(log0.String("empty runes"), []rune{}...),
 		expected: `{
 			"empty runes":""
 		}`,
 	},
 	{
-		line:  line(),
-		input: log0.TextRunes(log0.String("nil runes"), nil),
+		line: line(),
+		input: func() log0.KV {
+			var p []rune
+			return log0.TextRunes(log0.String("nil runes"), p...)
+		}(),
 		expected: `{
 			"nil runes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("rune slice with zero rune"), []rune{rune(0)}),
+		input: log0.TextRunes(log0.String("rune slice with zero rune"), []rune{rune(0)}...),
 		expected: `{
 			"rune slice with zero rune":"\u0000"
 		}`,

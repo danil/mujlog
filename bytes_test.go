@@ -15,7 +15,7 @@ import (
 var MarshalBytesTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes": log0.Bytes([]byte("Hello, Wörld!"))},
+		input:        map[string]json.Marshaler{"bytes": log0.Bytes([]byte("Hello, Wörld!")...)},
 		expected:     "Hello, Wörld!",
 		expectedText: "Hello, Wörld!",
 		expectedJSON: `{
@@ -24,7 +24,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes with quote": log0.Bytes([]byte(`Hello, "World"!`))},
+		input:        map[string]json.Marshaler{"bytes with quote": log0.Bytes([]byte(`Hello, "World"!`)...)},
 		expected:     `Hello, \"World\"!`,
 		expectedText: `Hello, \"World\"!`,
 		expectedJSON: `{
@@ -33,7 +33,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes quote": log0.Bytes([]byte(`"Hello, World!"`))},
+		input:        map[string]json.Marshaler{"bytes quote": log0.Bytes([]byte(`"Hello, World!"`)...)},
 		expected:     `\"Hello, World!\"`,
 		expectedText: `\"Hello, World!\"`,
 		expectedJSON: `{
@@ -42,7 +42,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes nested quote": log0.Bytes([]byte(`"Hello, "World"!"`))},
+		input:        map[string]json.Marshaler{"bytes nested quote": log0.Bytes([]byte(`"Hello, "World"!"`)...)},
 		expected:     `\"Hello, \"World\"!\"`,
 		expectedText: `\"Hello, \"World\"!\"`,
 		expectedJSON: `{
@@ -51,7 +51,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes json": log0.Bytes([]byte(`{"foo":"bar"}`))},
+		input:        map[string]json.Marshaler{"bytes json": log0.Bytes([]byte(`{"foo":"bar"}`)...)},
 		expected:     `{\"foo\":\"bar\"}`,
 		expectedText: `{\"foo\":\"bar\"}`,
 		expectedJSON: `{
@@ -60,7 +60,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"bytes json quote": log0.Bytes([]byte(`"{"foo":"bar"}"`))},
+		input:        map[string]json.Marshaler{"bytes json quote": log0.Bytes([]byte(`"{"foo":"bar"}"`)...)},
 		expected:     `\"{\"foo\":\"bar\"}\"`,
 		expectedText: `\"{\"foo\":\"bar\"}\"`,
 		expectedJSON: `{
@@ -69,7 +69,7 @@ var MarshalBytesTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"empty bytes": log0.Bytes([]byte{})},
+		input:        map[string]json.Marshaler{"empty bytes": log0.Bytes([]byte{}...)},
 		expected:     "",
 		expectedText: "",
 		expectedJSON: `{
@@ -77,8 +77,11 @@ var MarshalBytesTestCases = []marshalTestCase{
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil bytes": log0.Bytes(nil)},
+		line: line(),
+		input: func() map[string]json.Marshaler {
+			var p []byte
+			return map[string]json.Marshaler{"nil bytes": log0.Bytes(p...)}
+		}(),
 		expected:     "null",
 		expectedText: "null",
 		expectedJSON: `{

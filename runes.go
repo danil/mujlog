@@ -11,7 +11,7 @@ import (
 )
 
 // Runes returns stringer/JSON marshaler for the rune slice type.
-func Runes(s []rune) runeS { return runeS{S: s} }
+func Runes(s ...rune) runeS { return runeS{S: s} }
 
 type runeS struct{ S []rune }
 

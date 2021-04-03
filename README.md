@@ -17,7 +17,7 @@ its extremely slow and allocates a lots of memory)
 Install
 -------
 
-    go get github.com/danil/log0@v0.151.0
+    go get github.com/danil/log0@v0.153.0
 
 Usage
 -----
@@ -35,12 +35,12 @@ import (
 )
 
 func main() {
-    l := log0.Log{
-        Output: os.Stdout,
-        Trunc: 12,
-        Keys: [4]json.Marshaler{log0.String("message"), log0.String("excerpt")},
-        Marks: [3][]byte{[]byte("…")},
-        Replace: [][]byte{[]byte("\n"), []byte(" ")},
+    l := &log0.Log{
+        Output:  &bytes.Buffer{},
+        Keys:    [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
+        Marks:   [3][]byte{[]byte("…")},
+        Trunc:   12,
+        Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
     }
     log.SetFlags(0)
     log.SetOutput(l)
@@ -107,7 +107,7 @@ import (
 func main() {
     l := log0.Log{
         Output: os.Stdout,
-        Keys: [4]json.Marshaler{log0.String("message")},
+        Keys:   [4]encoding.TextMarshaler{log0.String("message")},
     }
     log.SetFlags(0)
     log.SetOutput(l)

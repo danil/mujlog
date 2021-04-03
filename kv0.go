@@ -32,8 +32,8 @@ func StringBoolp(k string, v *bool) kvjt {
 	return kvjt{K: String(k), V: Boolp(v)}
 }
 
-func StringBytes(k string, v []byte) kvjt {
-	return kvjt{K: String(k), V: Bytes(v)}
+func StringBytes(k string, v ...byte) kvjt {
+	return kvjt{K: String(k), V: Bytes(v...)}
 }
 
 func StringBytess(k string, v ...[]byte) kvjt {
@@ -128,8 +128,8 @@ func StringInt8p(k string, v *int8) kvjt {
 	return kvjt{K: String(k), V: Int8p(v)}
 }
 
-func StringRunes(k string, v []rune) kvjt {
-	return kvjt{K: String(k), V: Runes(v)}
+func StringRunes(k string, v ...rune) kvjt {
+	return kvjt{K: String(k), V: Runes(v...)}
 }
 
 func StringRunesp(k string, v *[]rune) kvjt {
@@ -236,8 +236,8 @@ func TextBoolp(k encoding.TextMarshaler, v *bool) kvjt {
 	return kvjt{K: k, V: Boolp(v)}
 }
 
-func TextBytes(k encoding.TextMarshaler, v []byte) kvjt {
-	return kvjt{K: k, V: Bytes(v)}
+func TextBytes(k encoding.TextMarshaler, v ...byte) kvjt {
+	return kvjt{K: k, V: Bytes(v...)}
 }
 
 func TextBytesp(k encoding.TextMarshaler, v *[]byte) kvjt {
@@ -320,8 +320,8 @@ func TextInt8p(k encoding.TextMarshaler, v *int8) kvjt {
 	return kvjt{K: k, V: Int8p(v)}
 }
 
-func TextRunes(k encoding.TextMarshaler, v []rune) kvjt {
-	return kvjt{K: k, V: Runes(v)}
+func TextRunes(k encoding.TextMarshaler, v ...rune) kvjt {
+	return kvjt{K: k, V: Runes(v...)}
 }
 
 func TextRunesp(k encoding.TextMarshaler, v *[]rune) kvjt {

@@ -220,25 +220,25 @@ func (l Log) json(src []byte) ([]byte, error) {
 
 	if bytes.Equal(src, excerpt) && src != nil {
 		if l.Key == Excerpt {
-			tmpKV[excerptKey] = Bytes(src)
+			tmpKV[excerptKey] = Bytes(src...)
 
 		} else {
 			if tmpKV[originalKey] == nil {
-				tmpKV[originalKey] = Bytes(src)
+				tmpKV[originalKey] = Bytes(src...)
 			} else if len(src) != 0 {
-				tmpKV[trailKey] = Bytes(src)
+				tmpKV[trailKey] = Bytes(src...)
 			}
 		}
 
 	} else if !bytes.Equal(src, excerpt) {
 		if tmpKV[originalKey] == nil {
-			tmpKV[originalKey] = Bytes(src)
+			tmpKV[originalKey] = Bytes(src...)
 		} else if tmpKV[originalKey] != nil && len(src) != 0 {
-			tmpKV[trailKey] = Bytes(src)
+			tmpKV[trailKey] = Bytes(src...)
 		}
 
 		if tmpKV[excerptKey] == nil && len(excerpt) != 0 {
-			tmpKV[excerptKey] = Bytes(excerpt)
+			tmpKV[excerptKey] = Bytes(excerpt...)
 		}
 	}
 
@@ -255,7 +255,7 @@ func (l Log) json(src []byte) ([]byte, error) {
 	}
 
 	if file != 0 {
-		tmpKV[fileKey] = Bytes(src[:file])
+		tmpKV[fileKey] = Bytes(src[:file]...)
 	}
 
 	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(tmpKV)

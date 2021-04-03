@@ -22,7 +22,7 @@ func (v anyV) String() string {
 	case *bool:
 		return Boolp(x).String()
 	case []byte:
-		return Bytes(x).String()
+		return Bytes(x...).String()
 	case *[]byte:
 		return Bytesp(x).String()
 	case [][]byte:
@@ -68,7 +68,7 @@ func (v anyV) String() string {
 	case *int8:
 		return Int8p(x).String()
 	case []rune:
-		return Runes(x).String()
+		return Runes(x...).String()
 	case *[]rune:
 		return Runesp(x).String()
 	case string:
@@ -124,7 +124,7 @@ func (v anyV) MarshalText() ([]byte, error) {
 	case *bool:
 		return Boolp(x).MarshalText()
 	case []byte:
-		return Bytes(x).MarshalText()
+		return Bytes(x...).MarshalText()
 	case *[]byte:
 		return Bytesp(x).MarshalText()
 	case [][]byte:
@@ -170,7 +170,7 @@ func (v anyV) MarshalText() ([]byte, error) {
 	case *int8:
 		return Int8p(x).MarshalText()
 	case []rune:
-		return Runes(x).MarshalText()
+		return Runes(x...).MarshalText()
 	case *[]rune:
 		return Runesp(x).MarshalText()
 	case string:
@@ -223,7 +223,7 @@ func (v anyV) MarshalJSON() ([]byte, error) {
 	case *bool:
 		return Boolp(x).MarshalJSON()
 	case []byte:
-		return Bytes(x).MarshalJSON()
+		return Bytes(x...).MarshalJSON()
 	case *[]byte:
 		return Bytesp(x).MarshalJSON()
 	case [][]byte:
@@ -269,7 +269,7 @@ func (v anyV) MarshalJSON() ([]byte, error) {
 	case *int8:
 		return Int8p(x).MarshalJSON()
 	case []rune:
-		return Runes(x).MarshalJSON()
+		return Runes(x...).MarshalJSON()
 	case *[]rune:
 		return Runesp(x).MarshalJSON()
 	case string:

@@ -738,7 +738,7 @@ var WriteTestCases = []struct {
 		name: `bytes is nil and bytes "message" key with json`,
 		line: line(),
 		log:  dummy(),
-		kv:   []log0.KV{log0.StringBytes("message", []byte(`{"foo":"bar"}`))},
+		kv:   []log0.KV{log0.StringBytes("message", []byte(`{"foo":"bar"}`)...)},
 		expected: `{
 			"message":"{\"foo\":\"bar\"}"
 		}`,
@@ -1175,7 +1175,7 @@ var FprintWriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.StringBytes("excerpt", []byte("Explicit byte slice"))},
+			KV:     []log0.KV{log0.StringBytes("excerpt", []byte("Explicit byte slice")...)},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1250,7 +1250,7 @@ var FprintWriteTestCases = []struct {
 		line: line(),
 		log: &log0.Log{
 			Output: &bytes.Buffer{},
-			KV:     []log0.KV{log0.StringRunes("excerpt", []rune("Explicit rune slice"))},
+			KV:     []log0.KV{log0.StringRunes("excerpt", []rune("Explicit rune slice")...)},
 			Keys:   [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
 			Trunc:  120,
 		},
