@@ -2967,21 +2967,21 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.Texts(log0.String("string"), log0.String("Hello, Wörld!")),
+		input: log0.TextText(log0.String("string"), log0.String("Hello, Wörld!")),
 		expected: `{
 			"string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.Texts(log0.String("empty string"), log0.String("")),
+		input: log0.TextText(log0.String("empty string"), log0.String("")),
 		expected: `{
 			"empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.Texts(log0.String("string with zero byte"), log0.String((string(byte(0))))),
+		input: log0.TextText(log0.String("string with zero byte"), log0.String((string(byte(0))))),
 		expected: `{
 			"string with zero byte":"\u0000"
 		}`,

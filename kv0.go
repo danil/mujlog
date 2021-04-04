@@ -328,15 +328,8 @@ func TextRunesp(k encoding.TextMarshaler, v *[]rune) kvjt {
 	return kvjt{K: k, V: Runesp(v)}
 }
 
-func Texts(a ...encoding.TextMarshaler) kvjt {
-	if len(a) == 0 {
-		kv := String("")
-		return kvjt{K: kv, V: kv}
-	}
-	if len(a) == 1 {
-		return kvjt{K: a[0], V: String("")}
-	}
-	return kvjt{K: a[0], V: Text(a[1])}
+func TextText(k, v encoding.TextMarshaler) kvjt {
+	return kvjt{K: k, V: Text(v)}
 }
 
 func TextString(k encoding.TextMarshaler, v string) kvjt {
