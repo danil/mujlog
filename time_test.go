@@ -16,29 +16,29 @@ import (
 var MarshalTimeTestTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"time": time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)},
-		expected:     "1970-01-01 00:00:00.000000042 +0000 UTC",
-		expectedText: "1970-01-01T00:00:00.000000042Z",
+		input:        map[string]json.Marshaler{"time": time.Date(1970, time.January, 1, 2, 3, 4, 42, time.UTC)},
+		expected:     "1970-01-01 02:03:04.000000042 +0000 UTC",
+		expectedText: "1970-01-01T02:03:04.000000042Z",
 		expectedJSON: `{
-			"time":"1970-01-01T00:00:00.000000042Z"
+			"time":"1970-01-01T02:03:04.000000042Z"
 		}`,
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"any time": log0.Any(time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC))},
-		expected:     `1970-01-01 00:00:00.000000042 +0000 UTC`,
-		expectedText: `1970-01-01T00:00:00.000000042Z`,
+		input:        map[string]json.Marshaler{"any time": log0.Any(time.Date(1970, time.January, 1, 2, 3, 4, 42, time.UTC))},
+		expected:     `1970-01-01 02:03:04.000000042 +0000 UTC`,
+		expectedText: `1970-01-01T02:03:04.000000042Z`,
 		expectedJSON: `{
-			"any time":"1970-01-01T00:00:00.000000042Z"
+			"any time":"1970-01-01T02:03:04.000000042Z"
 		}`,
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"reflect time": log0.Reflect(time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC))},
-		expected:     "1970-01-01 00:00:00.000000042 +0000 UTC",
-		expectedText: "1970-01-01 00:00:00.000000042 +0000 UTC",
+		input:        map[string]json.Marshaler{"reflect time": log0.Reflect(time.Date(1970, time.January, 1, 2, 3, 4, 42, time.UTC))},
+		expected:     "1970-01-01 02:03:04.000000042 +0000 UTC",
+		expectedText: "1970-01-01 02:03:04.000000042 +0000 UTC",
 		expectedJSON: `{
-			"reflect time":"1970-01-01T00:00:00.000000042Z"
+			"reflect time":"1970-01-01T02:03:04.000000042Z"
 		}`,
 	},
 }
