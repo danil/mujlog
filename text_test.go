@@ -24,6 +24,24 @@ var MarshalTestTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
+		input:        map[string]json.Marshaler{"text json": log0.Text(log0.String(`{"foo":"bar"}`))},
+		expected:     `{\"foo\":\"bar\"}`,
+		expectedText: `{\"foo\":\"bar\"}`,
+		expectedJSON: `{
+			"text json":"{\"foo\":\"bar\"}"
+		}`,
+	},
+	{
+		line:         line(),
+		input:        map[string]json.Marshaler{"text with zero byte": log0.Text(log0.String("Hello, Wörld!\x00"))},
+		expected:     "Hello, Wörld!\\u0000",
+		expectedText: "Hello, Wörld!\\u0000",
+		expectedJSON: `{
+			"text with zero byte":"Hello, Wörld!\u0000"
+		}`,
+	},
+	{
+		line:         line(),
 		input:        map[string]json.Marshaler{"empty text": log0.Text(log0.String(""))},
 		expected:     "",
 		expectedText: "",
@@ -33,11 +51,11 @@ var MarshalTestTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"text with zero byte": log0.Text(log0.String(string(byte(0))))},
-		expected:     "\\u0000",
-		expectedText: "\\u0000",
+		input:        map[string]json.Marshaler{"text nil": log0.Text(nil)},
+		expected:     "",
+		expectedText: "",
 		expectedJSON: `{
-			"text with zero byte":"\u0000"
+			"text nil":null
 		}`,
 	},
 }

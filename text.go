@@ -17,6 +17,9 @@ func Text(v encoding.TextMarshaler) textV { return textV{V: v} }
 type textV struct{ V encoding.TextMarshaler }
 
 func (v textV) String() string {
+	if v.V == nil {
+		return ""
+	}
 	b, err := v.V.MarshalText()
 	if err != nil {
 		return ""
@@ -33,6 +36,9 @@ func (v textV) String() string {
 }
 
 func (v textV) MarshalText() ([]byte, error) {
+	if v.V == nil {
+		return []byte{}, nil
+	}
 	b, err := v.V.MarshalText()
 	if err != nil {
 		return nil, err
@@ -47,6 +53,9 @@ func (v textV) MarshalText() ([]byte, error) {
 }
 
 func (v textV) MarshalJSON() ([]byte, error) {
+	if v.V == nil {
+		return []byte("null"), nil
+	}
 	b, err := v.MarshalText()
 	if err != nil {
 		return nil, err
