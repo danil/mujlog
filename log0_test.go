@@ -1930,3 +1930,21 @@ func TestSeverity(t *testing.T) {
 		})
 	}
 }
+
+func TestJSONer(t *testing.T) {
+	l0 := &log0.Log{
+		Output:  &bytes.Buffer{},
+		Keys:    [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
+		Marks:   [3][]byte{[]byte("…")},
+		Trunc:   12,
+		Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
+	}
+	l := l0.Get(log0.StringString("foo", "bar"))
+	testLine, testFile, _, _ := runtime.Caller(0)
+	ja := jsonassert.New(testprinter{t: t, link: fmt.Sprintf("%s:%d", testFile, testLine)})
+	ja.Assertf(string(l.(log0.JSONer).JSON()), `{"foo":"bar"}`)
+	ja.Assertf(
+		string(l.(log0.JSONer).JSON([]byte("Hello,\nWorld!")...)),
+		`{"foo":"bar","excerpt":"Hello, World…","message":"Hello,\nWorld!"}`,
+	)
+}

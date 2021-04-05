@@ -1,5 +1,4 @@
-log0
-=====
+# log0
 
 [![Build Status](https://cloud.drone.io/api/badges/danil/log0/status.svg)](https://cloud.drone.io/danil/log0)
 [![Go Reference](https://pkg.go.dev/badge/github.com/danil/log0.svg)](https://pkg.go.dev/github.com/danil/log0)
@@ -8,19 +7,16 @@ JSON logging for Go.
 Source files are distributed under the BSD-style license
 found in the [LICENSE](./LICENSE) file.
 
-About
------
+## About
 
 The software is considered to be at a alpha level of readiness -
 its extremely slow and allocates a lots of memory)
 
-Install
--------
+## Install
 
-    go get github.com/danil/log0@v0.159.0
+    go get github.com/danil/log0@v0.161.0
 
-Usage
------
+## Usage
 
 Set log0 as global logger
 
@@ -58,8 +54,7 @@ Output:
 }
 ```
 
-Use as GELF formater
---------------------
+## Use as GELF formater
 
 ```go
 package main
@@ -91,8 +86,7 @@ Output:
 }
 ```
 
-Caveat: numeric types appears in the message as a string
---------------------------------------------------------
+## Caveat: numeric types appears in the message as a string
 
 ```go
 package main
@@ -133,15 +127,14 @@ Output 2:
 }
 ```
 
-Benchmark
----------
+## Benchmark
 
 ```
 go test -bench=. ./...
 goos: linux
 goarch: amd64
 pkg: github.com/danil/log0
-cpu: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz
-BenchmarkLog0/io.Writer_77-8         	  305386	      3763 ns/op
-BenchmarkLog0/fmt.Fprint_io.Writer_1127-8         	  115713	      9703 ns/op
+cpu: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
+BenchmarkLog0/io.Writer_77-8         	  331507	      3500 ns/op
+BenchmarkLog0/fmt.Fprint_io.Writer_1127-8         	  141404	      8286 ns/op
 ```

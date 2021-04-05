@@ -111,33 +111,79 @@ func (l *Log) Write(src []byte) (int, error) {
 	if l.Output == nil {
 		return 0, nil
 	}
-	j, err := l.json(src)
+	return l.write(src)
+}
+
+var mapPool = sync.Pool{New: func() interface{} { m := make(map[string]json.Marshaler); return &m }}
+
+type JSONer interface {
+	JSON(message ...byte) (json []byte)
+}
+
+func (l *Log) JSON(src ...byte) []byte {
+	dst := *mapPool.Get().(*map[string]json.Marshaler)
+	for k := range dst {
+		delete(dst, k)
+	}
+	defer mapPool.Put(&dst)
+
+	excerpt := *excerptPool.Get().(*[]byte)
+	excerpt = excerpt[:0]
+	defer excerptPool.Put(&excerpt)
+
+	err := l.copy(dst, src, excerpt)
+	if err != nil {
+		return nil
+	}
+	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(dst)
+	if err != nil {
+		return nil
+	}
+	return p
+}
+
+func (l Log) write(src []byte) (int, error) {
+	dst := *mapPool.Get().(*map[string]json.Marshaler)
+	for k := range dst {
+		delete(dst, k)
+	}
+	defer mapPool.Put(&dst)
+
+	excerpt := *excerptPool.Get().(*[]byte)
+	excerpt = excerpt[:0]
+	defer excerptPool.Put(&excerpt)
+
+	err := l.copy(dst, src, excerpt)
 	if err != nil {
 		return 0, err
 	}
-	return l.Output.Write(j)
+
+	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(dst)
+	if err != nil {
+		return 0, err
+	}
+
+	num, err := l.Output.Write(p)
+	if err != nil {
+		return num, err
+	}
+
+	n, err := l.Output.Write([]byte{'\n'})
+	num += n
+	return num, err
 }
 
 var asciiSpace = [256]uint8{'\t': 1, '\n': 1, '\v': 1, '\f': 1, '\r': 1, ' ': 1}
 
-var (
-	mapPool     = sync.Pool{New: func() interface{} { m := make(map[string]json.Marshaler); return &m }}
-	excerptPool = sync.Pool{New: func() interface{} { return new([]byte) }}
-)
+var excerptPool = sync.Pool{New: func() interface{} { return new([]byte) }}
 
-func (l Log) json(src []byte) ([]byte, error) {
-	tmpKV := *mapPool.Get().(*map[string]json.Marshaler)
-	for k := range tmpKV {
-		delete(tmpKV, k)
-	}
-	defer mapPool.Put(&tmpKV)
-
+func (l Log) copy(dst map[string]json.Marshaler, src []byte, excerpt []byte) error {
 	for _, kv := range l.KV {
 		p, err := kv.MarshalText()
 		if err != nil {
-			return nil, err
+			return err
 		}
-		tmpKV[string(p)] = kv
+		dst[string(p)] = kv
 	}
 
 	var tail, file int
@@ -163,7 +209,7 @@ func (l Log) json(src []byte) ([]byte, error) {
 	} else {
 		p, err := l.Keys[Original].MarshalText()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		originalKey = string(p)
 	}
@@ -175,17 +221,13 @@ func (l Log) json(src []byte) ([]byte, error) {
 	} else {
 		p, err := l.Keys[Excerpt].MarshalText()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		excerptKey = string(p)
 	}
 
-	excerpt := *excerptPool.Get().(*[]byte)
-	excerpt = excerpt[:0]
-	defer excerptPool.Put(&excerpt)
-
-	if tmpKV[excerptKey] == nil {
-		if src != nil && tail == len(src) && tmpKV[originalKey] == nil {
+	if dst[excerptKey] == nil {
+		if src != nil && tail == len(src) && dst[originalKey] == nil {
 			excerpt = append(excerpt, l.Marks[Empty]...)
 
 		} else if tail != len(src) {
@@ -199,7 +241,7 @@ func (l Log) json(src []byte) ([]byte, error) {
 			excerpt = append(excerpt, make([]byte, n)...)
 			n, err := l.Truncate(excerpt, src[tail:])
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			excerpt = excerpt[:n]
@@ -213,32 +255,32 @@ func (l Log) json(src []byte) ([]byte, error) {
 	} else {
 		p, err := l.Keys[Trail].MarshalText()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		trailKey = string(p)
 	}
 
 	if bytes.Equal(src, excerpt) && src != nil {
 		if l.Key == Excerpt {
-			tmpKV[excerptKey] = Bytes(src...)
+			dst[excerptKey] = Bytes(src...)
 
 		} else {
-			if tmpKV[originalKey] == nil {
-				tmpKV[originalKey] = Bytes(src...)
+			if dst[originalKey] == nil {
+				dst[originalKey] = Bytes(src...)
 			} else if len(src) != 0 {
-				tmpKV[trailKey] = Bytes(src...)
+				dst[trailKey] = Bytes(src...)
 			}
 		}
 
 	} else if !bytes.Equal(src, excerpt) {
-		if tmpKV[originalKey] == nil {
-			tmpKV[originalKey] = Bytes(src...)
-		} else if tmpKV[originalKey] != nil && len(src) != 0 {
-			tmpKV[trailKey] = Bytes(src...)
+		if dst[originalKey] == nil {
+			dst[originalKey] = Bytes(src...)
+		} else if dst[originalKey] != nil && len(src) != 0 {
+			dst[trailKey] = Bytes(src...)
 		}
 
-		if tmpKV[excerptKey] == nil && len(excerpt) != 0 {
-			tmpKV[excerptKey] = Bytes(excerpt...)
+		if dst[excerptKey] == nil && len(excerpt) != 0 {
+			dst[excerptKey] = Bytes(excerpt...)
 		}
 	}
 
@@ -249,21 +291,16 @@ func (l Log) json(src []byte) ([]byte, error) {
 	} else {
 		p, err := l.Keys[File].MarshalText()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		fileKey = string(p)
 	}
 
 	if file != 0 {
-		tmpKV[fileKey] = Bytes(src[:file]...)
+		dst[fileKey] = Bytes(src[:file]...)
 	}
 
-	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(tmpKV)
-	if err != nil {
-		return nil, err
-	}
-
-	return append(p, '\n'), nil
+	return nil
 }
 
 // lastIndexFunc is the same as bytes.LastIndexFunc except that if
