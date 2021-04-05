@@ -4,31 +4,28 @@
 
 package log0
 
-import (
-	"bytes"
-	"encoding"
-)
+import "bytes"
 
-// Texts returns stringer/JSON marshaler for the text marshaler slice type.
-func Texts(s ...encoding.TextMarshaler) textS { return textS{S: s} }
+// Stringps returns stringer/JSON marshaler for the string pointer slice type.
+func Stringps(a ...*string) stringPS { return stringPS{A: a} }
 
-type textS struct{ S []encoding.TextMarshaler }
+type stringPS struct{ A []*string }
 
-func (s textS) String() string {
-	b, _ := s.MarshalText()
+func (a stringPS) String() string {
+	b, _ := a.MarshalText()
 	return string(b)
 }
 
-func (s textS) MarshalText() ([]byte, error) {
-	if s.S == nil {
+func (a stringPS) MarshalText() ([]byte, error) {
+	if a.A == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
-	for i, v := range s.S {
+	for i, p := range a.A {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		b, err := textV{V: v}.MarshalText()
+		b, err := stringP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -40,17 +37,17 @@ func (s textS) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s textS) MarshalJSON() ([]byte, error) {
-	if s.S == nil {
+func (a stringPS) MarshalJSON() ([]byte, error) {
+	if a.A == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range s.S {
+	for i, p := range a.A {
 		if i != 0 {
 			buf.WriteString(",")
 		}
-		b, err := textV{V: v}.MarshalJSON()
+		b, err := stringP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}
