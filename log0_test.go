@@ -1827,75 +1827,75 @@ func TestNew(t *testing.T) {
 	}
 }
 
-var SeverityTestCases = []struct {
-	name       string
-	line       int
-	log        log0.Logger
-	severities []string
-	kv         []log0.KV
-	expected   string
-	benchmark  bool
+var SeverityLevelTestCases = []struct {
+	name      string
+	line      int
+	log       log0.Logger
+	levels    []string
+	kv        []log0.KV
+	expected  string
+	benchmark bool
 }{
 	{
-		name: "just severity 7",
+		name: "just level 7",
 		line: line(),
 		log: &log0.Log{
-			Output:   &bytes.Buffer{},
-			Severity: func(severity string) io.Writer { return nil },
+			Output: &bytes.Buffer{},
+			Level:  func(level string) io.Writer { return nil },
 		},
-		severities: []string{"7"},
+		levels: []string{"7"},
 		expected: `{
-			"severity":"7"
+			"level":"7"
 		}`,
 	},
 	{
-		name: "just severity 7 next to the key-value pair",
+		name: "just level 7 next to the key-value pair",
 		line: line(),
 		log: &log0.Log{
-			Output:   &bytes.Buffer{},
-			Severity: func(severity string) io.Writer { return nil },
+			Output: &bytes.Buffer{},
+			Level:  func(level string) io.Writer { return nil },
 			KV: []log0.KV{
 				log0.StringString("foo", "bar"),
 			},
 		},
-		severities: []string{"7"},
+		levels: []string{"7"},
 		expected: `{
 			"foo":"bar",
-			"severity":"7"
+			"level":"7"
 		}`,
 	},
 	{
-		name: "two consecutive severities call 7 and 6",
+		name: "two consecutive levels call 7 and 6",
 		line: line(),
 		log: &log0.Log{
-			Output:   &bytes.Buffer{},
-			Severity: func(severity string) io.Writer { return nil },
+			Output: &bytes.Buffer{},
+			Level:  func(level string) io.Writer { return nil },
 		},
-		severities: []string{"7", "6"},
+		levels: []string{"7", "6"},
 		expected: `{
-			"severity":"6"
+			"level":"6"
 		}`,
 	},
 	{
-		name: "severity 7 overwrites severity 42 from key-value pair",
+		name: "level 7 overwrites level 42 from key-value pair",
 		line: line(),
 		log: &log0.Log{
-			Output:   &bytes.Buffer{},
-			Severity: func(severity string) io.Writer { return nil },
+			Output: &bytes.Buffer{},
+			Level:  func(level string) io.Writer { return nil },
 			KV: []log0.KV{
-				log0.StringString("severity", "42"),
+				log0.StringString("level", "42"),
 			},
 		},
-		severities: []string{"7"},
+		levels: []string{"7"},
 		expected: `{
-			"severity":"7"
+			"level":"7"
 		}`,
 	},
 }
 
-func TestSeverity(t *testing.T) {
+func TestSeverityLevel(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	for _, tc := range SeverityTestCases {
+	for _, tc := range SeverityLevelTestCases {
 		tc := tc
 		t.Run(fmt.Sprintf("with %s %d", tc.name, tc.line), func(t *testing.T) {
 			t.Parallel()
@@ -1916,8 +1916,8 @@ func TestSeverity(t *testing.T) {
 			l := tc.log.Get(tc.kv...)
 			defer l.Put()
 
-			for _, sev := range tc.severities {
-				l = l.Get(log0.StringSeverity("severity", sev))
+			for _, sev := range tc.levels {
+				l = l.Get(log0.StringLevel("level", sev))
 			}
 
 			_, err := l.Write(nil)
@@ -1931,7 +1931,7 @@ func TestSeverity(t *testing.T) {
 	}
 }
 
-func TestJSONer(t *testing.T) {
+func TestEncode(t *testing.T) {
 	l0 := &log0.Log{
 		Output:  &bytes.Buffer{},
 		Keys:    [4]encoding.TextMarshaler{log0.String("message"), log0.String("excerpt")},
@@ -1939,12 +1939,16 @@ func TestJSONer(t *testing.T) {
 		Trunc:   12,
 		Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 	}
-	l := l0.Get(log0.StringString("foo", "bar"))
+
 	testLine, testFile, _, _ := runtime.Caller(0)
 	ja := jsonassert.New(testprinter{t: t, link: fmt.Sprintf("%s:%d", testFile, testLine)})
-	ja.Assertf(string(l.(log0.JSONer).JSON()), `{"foo":"bar"}`)
+
+	l := l0.Get(log0.StringString("foo", "bar"))
+
+	ja.Assertf(string(l.(log0.Encoder).Encode()), `{"foo":"bar"}`)
+
 	ja.Assertf(
-		string(l.(log0.JSONer).JSON([]byte("Hello,\nWorld!")...)),
-		`{"foo":"bar","excerpt":"Hello, World…","message":"Hello,\nWorld!"}`,
+		string(l.(log0.Encoder).Encode(log0.StringString("greeting", "Hello,\nWorld!"))),
+		`{"foo":"bar","greeting":"Hello,\nWorld!"}`,
 	)
 }

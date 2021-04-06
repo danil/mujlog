@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"encoding"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"sync"
@@ -19,6 +18,32 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 )
+
+const (
+	Original = iota
+	Excerpt
+	Trail
+	File
+)
+
+const (
+	Trunc = iota
+	Empty
+	Blank
+)
+
+// Log is a JSON logger/writer.
+type Log struct {
+	Output  io.Writer                             // Output is a destination for output.
+	Flag    int                                   // Flag is a log properties.
+	KV      []KV                                  // KV is a key-values.
+	Level   func(level string) (output io.Writer) // Level function receives severity level and returns a output writer for a severity level.
+	Keys    [4]encoding.TextMarshaler             // Keys: 0 = original message; 1 = message excerpt; 2 = message trail; 3 = file path.
+	Key     uint8                                 // Key is a default/sticky message key: all except 1 = original message; 1 = message excerpt.
+	Trunc   int                                   // Trunc is a maximum length of an excerpt, after which it is truncated.
+	Marks   [3][]byte                             // Marks: 0 = truncate; 1 = empty; 2 = blank.
+	Replace [][2][]byte                           // Replace ia a pairs of byte slices to replace in the message excerpt.
+}
 
 type Logger interface {
 	io.Writer
@@ -36,46 +61,61 @@ type KV interface {
 	json.Marshaler
 }
 
-// KVS is a key-value pair with severity.
-type KVS interface {
-	encoding.TextMarshaler
-	json.Marshaler
-	fmt.Stringer
+// KeyValuer provides key-values slice.
+type KeyValuer interface {
+	KeyValues() []KV
 }
 
-const (
-	Original = iota
-	Excerpt
-	Trail
-	File
-)
+func (l *Log) KeyValues() []KV {
+	return l.KV
+}
 
-const (
-	Trunc = iota
-	Empty
-	Blank
-)
+var mapPool = sync.Pool{New: func() interface{} { m := make(map[string]json.Marshaler); return &m }}
 
-// Log is a JSON logger/writer.
-type Log struct {
-	Output   io.Writer                                // Output is a destination for output.
-	Flag     int                                      // Flag is a log properties.
-	KV       []KV                                     // KV is a key-values.
-	Severity func(severity string) (output io.Writer) // Severity function receives severity level and returns a output writer for a severity level.
-	Keys     [4]encoding.TextMarshaler                // Keys: 0 = original message; 1 = message excerpt; 2 = message trail; 3 = file path.
-	Key      uint8                                    // Key is a default/sticky message key: all except 1 = original message; 1 = message excerpt.
-	Trunc    int                                      // Trunc is a maximum length of an excerpt, after which it is truncated.
-	Marks    [3][]byte                                // Marks: 0 = truncate; 1 = empty; 2 = blank.
-	Replace  [][2][]byte                              // Replace ia a pairs of byte slices to replace in the message excerpt.
+type Encoder interface {
+	Encode(...KV) []byte
+}
+
+func (l *Log) Encode(kv ...KV) []byte {
+	m := *mapPool.Get().(*map[string]json.Marshaler)
+	for k := range m {
+		delete(m, k)
+	}
+	defer mapPool.Put(&m)
+
+	excerpt := *excerptPool.Get().(*[]byte)
+	excerpt = excerpt[:0]
+	defer excerptPool.Put(&excerpt)
+
+	l0 := l.Get(kv...)
+
+	for _, x := range l0.(KeyValuer).KeyValues() {
+		p, err := x.MarshalText()
+		if err != nil {
+			return nil
+		}
+		m[string(p)] = x
+	}
+
+	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(m)
+	if err != nil {
+		return nil
+	}
+	return p
+}
+
+// Leveler provides severity level.
+type Leveler interface {
+	Level() string
 }
 
 var logPool = sync.Pool{New: func() interface{} { return new(Log) }}
 
 // Get returns copy of the logger with additional key-values.
-// If first key-value pair implements the KVS interface and the Severity field
-// of the Log is not null then calls the function from Severity field
-// with the severity level as argument which obtained from KVS interface.
-// Then the function from Severity field returns writer for output of the logger.
+// If first key-value pair implements the Leveler interface and the Level field
+// of the Log is not null then calls the function from Level field
+// with the severity level as argument which obtained from Leveler interface.
+// Then the function from Level field returns writer for output of the logger.
 // Copy of the original key-values has the priority lower
 // than the priority of the newer key-values.
 func (l *Log) Get(kv ...KV) Logger {
@@ -83,17 +123,17 @@ func (l *Log) Get(kv ...KV) Logger {
 	l0.Output = l.Output
 	l0.Flag = l.Flag
 	l0.KV = append(l0.KV[:0], append(l.KV, kv...)...)
-	l0.Severity = l.Severity
+	l0.Level = l.Level
 	l0.Keys = l.Keys
 	l0.Key = l.Key
 	l0.Trunc = l.Trunc
 	l0.Marks = l.Marks
 	l0.Replace = append(l0.Replace[:0], l.Replace...)
 
-	if l0.Severity != nil && len(kv) > 0 {
-		s, ok := kv[0].(KVS)
+	if l0.Level != nil && len(kv) > 0 {
+		s, ok := kv[0].(Leveler)
 		if ok {
-			out := l0.Severity(s.String())
+			out := l0.Level(s.Level())
 			if out != nil {
 				l0.Output = out
 			}
@@ -114,34 +154,6 @@ func (l *Log) Write(src []byte) (int, error) {
 	return l.write(src)
 }
 
-var mapPool = sync.Pool{New: func() interface{} { m := make(map[string]json.Marshaler); return &m }}
-
-type JSONer interface {
-	JSON(message ...byte) (json []byte)
-}
-
-func (l *Log) JSON(src ...byte) []byte {
-	dst := *mapPool.Get().(*map[string]json.Marshaler)
-	for k := range dst {
-		delete(dst, k)
-	}
-	defer mapPool.Put(&dst)
-
-	excerpt := *excerptPool.Get().(*[]byte)
-	excerpt = excerpt[:0]
-	defer excerptPool.Put(&excerpt)
-
-	err := l.copy(dst, src, excerpt)
-	if err != nil {
-		return nil
-	}
-	p, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(dst)
-	if err != nil {
-		return nil
-	}
-	return p
-}
-
 func (l Log) write(src []byte) (int, error) {
 	dst := *mapPool.Get().(*map[string]json.Marshaler)
 	for k := range dst {
@@ -153,7 +165,7 @@ func (l Log) write(src []byte) (int, error) {
 	excerpt = excerpt[:0]
 	defer excerptPool.Put(&excerpt)
 
-	err := l.copy(dst, src, excerpt)
+	err := l.excerpt(dst, excerpt, src...)
 	if err != nil {
 		return 0, err
 	}
@@ -177,7 +189,7 @@ var asciiSpace = [256]uint8{'\t': 1, '\n': 1, '\v': 1, '\f': 1, '\r': 1, ' ': 1}
 
 var excerptPool = sync.Pool{New: func() interface{} { return new([]byte) }}
 
-func (l Log) copy(dst map[string]json.Marshaler, src []byte, excerpt []byte) error {
+func (l Log) excerpt(dst map[string]json.Marshaler, excerpt []byte, src ...byte) error {
 	for _, kv := range l.KV {
 		p, err := kv.MarshalText()
 		if err != nil {
