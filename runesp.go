@@ -4,7 +4,7 @@
 
 package log0
 
-// Runesp returns stringer/JSON marshaler for the rune pointer slice type.
+// Runesp returns stringer/JSON/text marshaler for the rune pointer slice type.
 func Runesp(p *[]rune) runeSP { return runeSP{P: p} }
 
 type runeSP struct{ P *[]rune }

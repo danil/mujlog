@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// Durations returns stringer/JSON marshaler for time duration slice type.
+// Durations returns stringer/JSON/text marshaler for time duration slice type.
 func Durations(s ...time.Duration) durationS { return durationS{S: s} }
 
 type durationS struct{ S []time.Duration }

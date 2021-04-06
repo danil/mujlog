@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Complex128ps returns stringer/JSON marshaler for the complex128 pointer slice type.
+// Complex128ps returns stringer/JSON/text marshaler for the complex128 pointer slice type.
 func Complex128ps(a ...*complex128) complex128PS { return complex128PS{A: a} }
 
 type complex128PS struct{ A []*complex128 }

@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Ints returns stringer/JSON marshaler for the int slice type.
+// Ints returns stringer/JSON/text marshaler for the int slice type.
 func Ints(s ...int) intS { return intS{S: s} }
 
 type intS struct{ S []int }

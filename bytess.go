@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Bytess returns stringer/JSON marshaler for the slice of byte slice type.
+// Bytess returns stringer/JSON/text marshaler for the slice of byte slice type.
 func Bytess(s ...[]byte) byteSS { return byteSS{S: s} }
 
 type byteSS struct{ S [][]byte }

@@ -4,7 +4,7 @@
 
 package log0
 
-// Errorp returns stringer/JSON marshaler for the error pointer type.
+// Errorp returns stringer/JSON/text marshaler for the error pointer type.
 func Errorp(p *error) errorP { return errorP{P: p} }
 
 type errorP struct{ P *error }

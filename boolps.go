@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Boolps returns stringer/JSON marshaler for slice of bool pointers type.
+// Boolps returns stringer/JSON/text marshaler for slice of bool pointers type.
 func Boolps(s ...*bool) boolPS { return boolPS{S: s} }
 
 type boolPS struct{ S []*bool }

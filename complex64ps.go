@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Complex64ps returns stringer/JSON marshaler for the slice of complex64 pointers type.
+// Complex64ps returns stringer/JSON/text marshaler for the slice of complex64 pointers type.
 func Complex64ps(s ...*complex64) complex64PS { return complex64PS{S: s} }
 
 type complex64PS struct{ S []*complex64 }

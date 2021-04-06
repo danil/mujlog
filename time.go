@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Time returns stringer/JSON marshaler for the time type.
+// Time returns stringer/JSON/text marshaler for the time type.
 func Time(v time.Time) timeV { return timeV{V: v} }
 
 type timeV struct{ V time.Time }

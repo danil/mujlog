@@ -4,7 +4,7 @@
 
 package log0
 
-// Stringp returns stringer/JSON marshaler for the string pointer type.
+// Stringp returns stringer/JSON/text marshaler for the string pointer type.
 func Stringp(p *string) stringP { return stringP{P: p} }
 
 type stringP struct{ P *string }

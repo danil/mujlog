@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Rawps returns stringer/JSON marshaler for the slice of byte slice pointers type.
+// Rawps returns stringer/JSON/text marshaler for the slice of byte slice pointers type.
 func Rawps(s ...*[]byte) rawPS { return rawPS{S: s} }
 
 type rawPS struct{ S []*[]byte }

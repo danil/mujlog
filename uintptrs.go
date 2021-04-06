@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Uintptrs returns stringer/JSON marshaler for the uintptr slice type.
+// Uintptrs returns stringer/JSON/text marshaler for the uintptr slice type.
 func Uintptrs(s ...uintptr) uintptrS { return uintptrS{S: s} }
 
 type uintptrS struct{ S []uintptr }

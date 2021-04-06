@@ -4,7 +4,7 @@
 
 package log0
 
-// Uintp returns stringer/JSON marshaler for the uint pointer type.
+// Uintp returns stringer/JSON/text marshaler for the uint pointer type.
 func Uintp(p *uint) uintP { return uintP{P: p} }
 
 type uintP struct{ P *uint }

@@ -4,7 +4,7 @@
 
 package log0
 
-// Complex64p returns stringer/JSON marshaler for the complex64 pointer type.
+// Complex64p returns stringer/JSON/text marshaler for the complex64 pointer type.
 func Complex64p(p *complex64) complex64P { return complex64P{P: p} }
 
 type complex64P struct{ P *complex64 }

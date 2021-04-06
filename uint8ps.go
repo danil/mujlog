@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Uint8ps returns stringer/JSON marshaler for the uint8 pointer slice type.
+// Uint8ps returns stringer/JSON/text marshaler for the uint8 pointer slice type.
 func Uint8ps(a ...*uint8) uint8PS { return uint8PS{A: a} }
 
 type uint8PS struct{ A []*uint8 }

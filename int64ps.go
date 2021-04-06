@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Int64ps returns stringer/JSON marshaler for the int64 pointer slice type.
+// Int64ps returns stringer/JSON/text marshaler for the int64 pointer slice type.
 func Int64ps(a ...*int64) int64PS { return int64PS{A: a} }
 
 type int64PS struct{ A []*int64 }

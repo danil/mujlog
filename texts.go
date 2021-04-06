@@ -9,7 +9,7 @@ import (
 	"encoding"
 )
 
-// Texts returns stringer/JSON marshaler for the text marshaler slice type.
+// Texts returns stringer/JSON/text marshaler for the text marshaler slice type.
 func Texts(s ...encoding.TextMarshaler) textS { return textS{S: s} }
 
 type textS struct{ S []encoding.TextMarshaler }

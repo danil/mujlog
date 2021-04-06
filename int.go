@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Int returns stringer/JSON marshaler for the int type.
+// Int returns stringer/JSON/text marshaler for the int type.
 func Int(v int) intV { return intV{V: v} }
 
 type intV struct{ V int }

@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Float64s returns stringer/JSON marshaler for the float64 slice type.
+// Float64s returns stringer/JSON/text marshaler for the float64 slice type.
 func Float64s(s ...float64) float64S { return float64S{S: s} }
 
 type float64S struct{ S []float64 }

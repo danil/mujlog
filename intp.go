@@ -4,7 +4,7 @@
 
 package log0
 
-// Intp returns stringer/JSON marshaler for the int pointer type.
+// Intp returns stringer/JSON/text marshaler for the int pointer type.
 func Intp(p *int) intP { return intP{P: p} }
 
 type intP struct{ P *int }

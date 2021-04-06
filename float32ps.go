@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Float32ps returns stringer/JSON marshaler for the float32 pointer slice type.
+// Float32ps returns stringer/JSON/text marshaler for the float32 pointer slice type.
 func Float32ps(a ...*float32) float32PS { return float32PS{A: a} }
 
 type float32PS struct{ A []*float32 }

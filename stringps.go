@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Stringps returns stringer/JSON marshaler for the string pointer slice type.
+// Stringps returns stringer/JSON/text marshaler for the string pointer slice type.
 func Stringps(a ...*string) stringPS { return stringPS{A: a} }
 
 type stringPS struct{ A []*string }

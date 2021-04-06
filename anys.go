@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Anys returns stringer/JSON marshaler for the slice of any type.
+// Anys returns stringer/JSON/text marshaler for the slice of any type.
 func Anys(s ...interface{}) anyS { return anyS{S: s} }
 
 type anyS struct{ S []interface{} }

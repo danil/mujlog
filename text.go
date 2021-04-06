@@ -11,7 +11,7 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Text returns stringer/JSON marshaler for the encoding.TextMarshaler type.
+// Text returns stringer/JSON/text marshaler for the encoding.TextMarshaler type.
 func Text(v encoding.TextMarshaler) textV { return textV{V: v} }
 
 type textV struct{ V encoding.TextMarshaler }

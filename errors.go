@@ -10,7 +10,7 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Errors returns stringer/JSON marshaler for the error slice type.
+// Errors returns stringer/JSON/text marshaler for the error slice type.
 func Errors(s ...error) errorS { return errorS{S: s} }
 
 type errorS struct{ S []error }

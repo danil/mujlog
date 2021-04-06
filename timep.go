@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Timep returns stringer/JSON marshaler for the time pointer type.
+// Timep returns stringer/JSON/text marshaler for the time pointer type.
 func Timep(p *time.Time) timeP { return timeP{P: p} }
 
 type timeP struct{ P *time.Time }

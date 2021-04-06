@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Complex64s returns stringer/JSON marshaler for the complex64 type.
+// Complex64s returns stringer/JSON/text marshaler for the complex64 type.
 func Complex64s(s ...complex64) complex64S { return complex64S{S: s} }
 
 type complex64S struct{ S []complex64 }

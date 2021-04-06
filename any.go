@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Any returns stringer/JSON marshaler for any type.
+// Any returns stringer/JSON/text marshaler for any type.
 func Any(v interface{}) anyV { return anyV{V: v} }
 
 type anyV struct{ V interface{} }

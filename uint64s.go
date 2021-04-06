@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Uint64s returns stringer/JSON marshaler for the uint64 slice type.
+// Uint64s returns stringer/JSON/text marshaler for the uint64 slice type.
 func Uint64s(s ...uint64) uint64S { return uint64S{S: s} }
 
 type uint64S struct{ S []uint64 }

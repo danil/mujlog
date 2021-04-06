@@ -4,7 +4,7 @@
 
 package log0
 
-// Int64p returns stringer/JSON marshaler for the int64 pointer type.
+// Int64p returns stringer/JSON/text marshaler for the int64 pointer type.
 func Int64p(p *int64) int64P { return int64P{P: p} }
 
 type int64P struct{ P *int64 }

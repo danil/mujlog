@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Uint8 returns stringer/JSON marshaler for the uint8 type.
+// Uint8 returns stringer/JSON/text marshaler for the uint8 type.
 func Uint8(v uint8) uint8V { return uint8V{V: v} }
 
 type uint8V struct{ V uint8 }

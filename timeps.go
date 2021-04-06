@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// Timeps returns stringer/JSON marshaler for the time pointer slice type.
+// Timeps returns stringer/JSON/text marshaler for the time pointer slice type.
 func Timeps(a ...*time.Time) timePS { return timePS{A: a} }
 
 type timePS struct{ A []*time.Time }

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Float64 returns stringer/JSON marshaler for the float64 type.
+// Float64 returns stringer/JSON/text marshaler for the float64 type.
 func Float64(v float64) float64V { return float64V{V: v} }
 
 type float64V struct{ V float64 }

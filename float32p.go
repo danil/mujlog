@@ -4,7 +4,7 @@
 
 package log0
 
-// Float32p returns stringer/JSON marshaler for the float32 pointer type.
+// Float32p returns stringer/JSON/text marshaler for the float32 pointer type.
 func Float32p(p *float32) float32P { return float32P{P: p} }
 
 type float32P struct{ P *float32 }

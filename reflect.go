@@ -12,7 +12,7 @@ import (
 	"reflect"
 )
 
-// Reflect returns stringer/JSON marshaler uses reflection.
+// Reflect returns stringer/JSON/text marshaler uses reflection.
 
 func Reflect(v interface{}) reflectV { return reflectV{V: v} }
 

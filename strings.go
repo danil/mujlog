@@ -11,7 +11,7 @@ import (
 	"github.com/danil/log0/encode0"
 )
 
-// Strings returns stringer/JSON marshaler for the string slice type.
+// Strings returns stringer/JSON/text marshaler for the string slice type.
 func Strings(s ...string) stringS { return stringS{S: s} }
 
 type stringS struct{ S []string }

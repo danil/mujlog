@@ -4,7 +4,7 @@
 
 package log0
 
-// Float64p returns stringer/JSON marshaler for the  float64 pointer type.
+// Float64p returns stringer/JSON/text marshaler for the  float64 pointer type.
 func Float64p(p *float64) float64P { return float64P{P: p} }
 
 type float64P struct{ P *float64 }

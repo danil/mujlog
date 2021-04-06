@@ -4,7 +4,7 @@
 
 package log0
 
-// Rawp returns stringer/JSON marshaler for the raw byte slice pointer.
+// Rawp returns stringer/JSON/text marshaler for the raw byte slice pointer.
 func Rawp(p *[]byte) rawP { return rawP{P: p} }
 
 type rawP struct{ P *[]byte }

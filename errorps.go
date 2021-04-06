@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Errorps returns stringer/JSON marshaler for the slice of error pointers type.
+// Errorps returns stringer/JSON/text marshaler for the slice of error pointers type.
 func Errorps(s ...*error) errorPS { return errorPS{S: s} }
 
 type errorPS struct{ S []*error }

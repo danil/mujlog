@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Int32s returns stringer/JSON marshaler for the int32 slice type.
+// Int32s returns stringer/JSON/text marshaler for the int32 slice type.
 func Int32s(s ...int32) int32S { return int32S{S: s} }
 
 type int32S struct{ S []int32 }

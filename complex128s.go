@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Complex128s returns stringer/JSON marshaler for the complex128 slice type.
+// Complex128s returns stringer/JSON/text marshaler for the complex128 slice type.
 func Complex128s(s ...complex128) complex128S { return complex128S{S: s} }
 
 type complex128S struct{ S []complex128 }

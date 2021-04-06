@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Int32ps returns stringer/JSON marshaler for the int32 pointer slice type.
+// Int32ps returns stringer/JSON/text marshaler for the int32 pointer slice type.
 func Int32ps(a ...*int32) int32PS { return int32PS{A: a} }
 
 type int32PS struct{ A []*int32 }

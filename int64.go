@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Int64 returns stringer/JSON marshaler for the int64 type.
+// Int64 returns stringer/JSON/text marshaler for the int64 type.
 func Int64(v int64) int64V { return int64V{V: v} }
 
 type int64V struct{ V int64 }

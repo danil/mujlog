@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Uint16ps returns stringer/JSON marshaler for the uint16 pointer slice type.
+// Uint16ps returns stringer/JSON/text marshaler for the uint16 pointer slice type.
 func Uint16ps(a ...*uint16) uint16PS { return uint16PS{A: a} }
 
 type uint16PS struct{ A []*uint16 }

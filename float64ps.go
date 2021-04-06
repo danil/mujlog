@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Float64ps returns stringer/JSON marshaler for the float64 pointer slice type.
+// Float64ps returns stringer/JSON/text marshaler for the float64 pointer slice type.
 func Float64ps(a ...*float64) float64PS { return float64PS{A: a} }
 
 type float64PS struct{ A []*float64 }

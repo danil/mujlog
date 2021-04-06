@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 )
 
-// JSONs returns stringer/JSON marshaler for the JSON marshaler slice type.
+// JSONs returns stringer/JSON/text marshaler for the JSON marshaler slice type.
 func JSONs(s ...json.Marshaler) jsonS { return jsonS{S: s} }
 
 type jsonS struct{ S []json.Marshaler }

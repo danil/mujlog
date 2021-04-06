@@ -4,7 +4,7 @@
 
 package log0
 
-// Bytesp returns stringer/JSON marshaler for the pointer to byte slice type.
+// Bytesp returns stringer/JSON/text marshaler for the pointer to byte slice type.
 func Bytesp(p *[]byte) byteSP { return byteSP{P: p} }
 
 type byteSP struct{ P *[]byte }

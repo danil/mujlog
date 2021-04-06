@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// Int32 returns stringer/JSON marshaler for the int32 type.
+// Int32 returns stringer/JSON/text marshaler for the int32 type.
 func Int32(v int32) int32V { return int32V{V: v} }
 
 type int32V struct{ V int32 }

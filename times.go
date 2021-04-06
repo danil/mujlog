@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// Times returns stringer/JSON marshaler for the slice of byte slice type.
+// Times returns stringer/JSON/text marshaler for the slice of byte slice type.
 func Times(s ...time.Time) timeS { return timeS{S: s} }
 
 type timeS struct{ S []time.Time }

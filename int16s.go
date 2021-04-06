@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Int16s returns stringer/JSON marshaler for the int16 slice type.
+// Int16s returns stringer/JSON/text marshaler for the int16 slice type.
 func Int16s(s ...int16) int16S { return int16S{S: s} }
 
 type int16S struct{ S []int16 }

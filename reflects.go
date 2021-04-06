@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Reflects returns stringer/JSON marshaler uses reflection for the slice of some type.
+// Reflects returns stringer/JSON/text marshaler uses reflection for the slice of some type.
 
 func Reflects(s ...interface{}) reflectS { return reflectS{S: s} }
 

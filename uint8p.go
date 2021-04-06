@@ -4,7 +4,7 @@
 
 package log0
 
-// Uint8p returns stringer/JSON marshaler for the uint8 pointer type.
+// Uint8p returns stringer/JSON/text marshaler for the uint8 pointer type.
 func Uint8p(p *uint8) uint8P { return uint8P{P: p} }
 
 type uint8P struct{ P *uint8 }

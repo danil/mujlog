@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Intps returns stringer/JSON marshaler for the int pointer slice type.
+// Intps returns stringer/JSON/text marshaler for the int pointer slice type.
 func Intps(a ...*int) intPS { return intPS{A: a} }
 
 type intPS struct{ A []*int }

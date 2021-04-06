@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Raws returns stringer/JSON marshaler for the slice of byte slice type.
+// Raws returns stringer/JSON/text marshaler for the slice of byte slice type.
 func Raws(s ...[]byte) rawS { return rawS{S: s} }
 
 type rawS struct{ S [][]byte }

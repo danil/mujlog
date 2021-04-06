@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Int8s returns stringer/JSON marshaler for the int8 slice type.
+// Int8s returns stringer/JSON/text marshaler for the int8 slice type.
 func Int8s(s ...int8) int8S { return int8S{S: s} }
 
 type int8S struct{ S []int8 }

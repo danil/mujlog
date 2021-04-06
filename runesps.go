@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Runesps returns stringer/JSON marshaler for slice of pointers to rune slice type.
+// Runesps returns stringer/JSON/text marshaler for slice of pointers to rune slice type.
 func Runesps(a ...*[]rune) runeSPS { return runeSPS{A: a} }
 
 type runeSPS struct{ A []*[]rune }

@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Float32s returns stringer/JSON marshaler for the float32 slice type.
+// Float32s returns stringer/JSON/text marshaler for the float32 slice type.
 func Float32s(s ...float32) float32S { return float32S{S: s} }
 
 type float32S struct{ S []float32 }

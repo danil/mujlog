@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Bytesps returns stringer/JSON marshaler for slice of pointers to byte slice type.
+// Bytesps returns stringer/JSON/text marshaler for slice of pointers to byte slice type.
 func Bytesps(a ...*[]byte) byteSPS { return byteSPS{A: a} }
 
 type byteSPS struct{ A []*[]byte }

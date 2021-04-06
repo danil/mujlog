@@ -6,7 +6,7 @@ package log0
 
 import "bytes"
 
-// Uintptrps returns stringer/JSON marshaler for the slice of a pointer to a uintptr type.
+// Uintptrps returns stringer/JSON/text marshaler for the slice of a pointer to a uintptr type.
 func Uintptrps(a ...*uintptr) uintptrPS { return uintptrPS{A: a} }
 
 type uintptrPS struct{ A []*uintptr }

@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Bools returns stringer/JSON marshaler for the bool slice type.
+// Bools returns stringer/JSON/text marshaler for the bool slice type.
 func Bools(s ...bool) boolS { return boolS{S: s} }
 
 type boolS struct{ S []bool }
