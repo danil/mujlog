@@ -25,18 +25,20 @@ func (s errorS) MarshalText() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
+	var tail bool
 
-	for i, v := range s.S {
+	for _, v := range s.S {
 		if v == nil {
 			continue
 		}
-		if i != 0 {
+		if tail {
 			buf.WriteString(" ")
 		}
 		err := encode0.String(&buf, v.Error())
 		if err != nil {
 			return nil, err
 		}
+		tail = true
 	}
 	return buf.Bytes(), nil
 }
@@ -48,12 +50,12 @@ func (s errorS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := errorV{V: v}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {

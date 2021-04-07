@@ -24,12 +24,12 @@ func (s rawPS) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 	for i, p := range s.S {
-		if i != 0 {
-			buf.WriteString(" ")
-		}
 		b, err := rawP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(" ")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
@@ -46,12 +46,12 @@ func (s rawPS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, p := range s.S {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := rawP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {

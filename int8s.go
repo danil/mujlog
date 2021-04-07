@@ -21,12 +21,12 @@ func (s int8S) String() string {
 func (s int8S) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
 	for i, v := range s.S {
-		if i != 0 {
-			buf.WriteString(" ")
-		}
 		b, err := int8V{V: v}.MarshalText()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(" ")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
@@ -40,12 +40,12 @@ func (s int8S) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := int8V{V: v}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {

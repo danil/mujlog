@@ -37,7 +37,7 @@ func (v textV) String() string {
 
 func (v textV) MarshalText() ([]byte, error) {
 	if v.V == nil {
-		return []byte{}, nil
+		return nil, nil
 	}
 	b, err := v.V.MarshalText()
 	if err != nil {

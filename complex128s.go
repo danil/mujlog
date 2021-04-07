@@ -24,12 +24,12 @@ func (s complex128S) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 	for i, v := range s.S {
-		if i != 0 {
-			buf.WriteString(" ")
-		}
 		b, err := complex128V{V: v}.MarshalText()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(" ")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
@@ -46,12 +46,12 @@ func (s complex128S) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := complex128V{V: v}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {

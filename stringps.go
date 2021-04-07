@@ -22,12 +22,12 @@ func (a stringPS) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 	for i, p := range a.A {
-		if i != 0 {
-			buf.WriteString(" ")
-		}
 		b, err := stringP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(" ")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
@@ -44,12 +44,12 @@ func (a stringPS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, p := range a.A {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := stringP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {

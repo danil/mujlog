@@ -25,12 +25,12 @@ func (a timePS) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 	for i, p := range a.A {
-		if i != 0 {
-			buf.WriteString(" ")
-		}
 		b, err := timeP{P: p}.MarshalText()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(" ")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
@@ -47,12 +47,12 @@ func (a timePS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, p := range a.A {
-		if i != 0 {
-			buf.WriteString(",")
-		}
 		b, err := timeP{P: p}.MarshalJSON()
 		if err != nil {
 			return nil, err
+		}
+		if i != 0 {
+			buf.WriteString(",")
 		}
 		_, err = buf.Write(b)
 		if err != nil {
