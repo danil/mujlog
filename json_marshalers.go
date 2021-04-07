@@ -9,35 +9,37 @@ import (
 	"encoding/json"
 )
 
-// JSONs returns stringer/JSON/text marshaler for the JSON marshaler slice type.
-func JSONs(s ...json.Marshaler) jsonS { return jsonS{S: s} }
+// JSONMarshalers returns stringer/JSON/text marshaler for the JSON marshaler slice type.
+func JSONMarshalers(s ...json.Marshaler) jsonMarshalerS { return jsonMarshalerS{S: s} }
 
-type jsonS struct{ S []json.Marshaler }
+type jsonMarshalerS struct{ S []json.Marshaler }
 
-func (s jsonS) String() string {
+func (s jsonMarshalerS) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s jsonS) MarshalText() ([]byte, error) {
+func (s jsonMarshalerS) MarshalText() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}
 	return s.MarshalJSON()
 }
 
-func (s jsonS) MarshalJSON() ([]byte, error) {
+func (s jsonMarshalerS) MarshalJSON() ([]byte, error) {
 	if s.S == nil {
 		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteString("[")
-	for i, v := range s.S {
-		if i != 0 {
+	var tail bool
+	for _, v := range s.S {
+		if tail {
 			buf.WriteString(",")
 		}
 		if v == nil {
 			buf.WriteString("null")
+			tail = true
 			continue
 		}
 		b, err := v.MarshalJSON()
@@ -48,6 +50,7 @@ func (s jsonS) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+		tail = true
 	}
 	buf.WriteString("]")
 	return buf.Bytes(), nil

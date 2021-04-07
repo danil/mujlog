@@ -13,19 +13,19 @@ import (
 	"github.com/danil/log0"
 )
 
-var MarshalJSONsTestCases = []marshalTestCase{
+var MarshalJSONMarshalersTestCases = []marshalTestCase{
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"time slice": log0.JSONs(time.Date(1970, time.January, 1, 2, 3, 4, 42, time.UTC), time.Date(1970, time.December, 5, 4, 3, 2, 1, time.UTC))},
+		input:        map[string]json.Marshaler{"json slice": log0.JSONMarshalers(time.Date(1970, time.January, 1, 2, 3, 4, 42, time.UTC), time.Date(1970, time.December, 5, 4, 3, 2, 1, time.UTC))},
 		expected:     `["1970-01-01T02:03:04.000000042Z","1970-12-05T04:03:02.000000001Z"]`,
 		expectedText: `["1970-01-01T02:03:04.000000042Z","1970-12-05T04:03:02.000000001Z"]`,
 		expectedJSON: `{
-			"time slice":["1970-01-01T02:03:04.000000042Z", "1970-12-05T04:03:02.000000001Z"]
+			"json slice":["1970-01-01T02:03:04.000000042Z", "1970-12-05T04:03:02.000000001Z"]
 		}`,
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"without jsons": log0.JSONs()},
+		input:        map[string]json.Marshaler{"without jsons": log0.JSONMarshalers()},
 		expected:     `null`,
 		expectedText: `null`,
 		expectedJSON: `{
@@ -34,7 +34,7 @@ var MarshalJSONsTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice of empty jsons": log0.JSONs(log0.String(""), log0.String(""))},
+		input:        map[string]json.Marshaler{"slice of empty jsons": log0.JSONMarshalers(log0.String(""), log0.String(""))},
 		expected:     `["",""]`,
 		expectedText: `["",""]`,
 		expectedJSON: `{
@@ -43,7 +43,7 @@ var MarshalJSONsTestCases = []marshalTestCase{
 	},
 	{
 		line:         line(),
-		input:        map[string]json.Marshaler{"slice of json nils": log0.JSONs(nil, nil)},
+		input:        map[string]json.Marshaler{"slice of json nils": log0.JSONMarshalers(nil, nil)},
 		expected:     `[null,null]`,
 		expectedText: `[null,null]`,
 		expectedJSON: `{
@@ -52,7 +52,7 @@ var MarshalJSONsTestCases = []marshalTestCase{
 	},
 }
 
-func TestMarshalJSONs(t *testing.T) {
+func TestMarshalJSONMarshalers(t *testing.T) {
 	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalJSONsTestCases)
+	testMarshal(t, testFile, MarshalJSONMarshalersTestCases)
 }

@@ -193,7 +193,7 @@ func (v anyV) String() string {
 		b, _ := x.MarshalJSON()
 		return string(b)
 	case []json.Marshaler:
-		return JSONs(x...).String()
+		return JSONMarshalers(x...).String()
 	default:
 		return Reflect(x).String()
 	}
@@ -376,7 +376,7 @@ func (v anyV) MarshalText() ([]byte, error) {
 	case json.Marshaler:
 		return x.MarshalJSON()
 	case []json.Marshaler:
-		return JSONs(x...).MarshalText()
+		return JSONMarshalers(x...).MarshalText()
 	default:
 		return Reflect(x).MarshalText()
 	}
@@ -559,7 +559,7 @@ func (v anyV) MarshalJSON() ([]byte, error) {
 	case json.Marshaler:
 		return x.MarshalJSON()
 	case []json.Marshaler:
-		return JSONs(x...).MarshalJSON()
+		return JSONMarshalers(x...).MarshalJSON()
 	default:
 		return Reflect(x).MarshalJSON()
 	}
