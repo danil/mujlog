@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/danil/log0"
+	"github.com/kvlog/log0"
 )
 
 var MarshalTimesTestCases = []marshalTestCase{

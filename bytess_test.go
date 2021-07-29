@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/danil/log0"
+	"github.com/kvlog/log0"
 )
 
 // TODO: Add any/relfect test cases.

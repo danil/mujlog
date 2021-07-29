@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/danil/equal4"
-	"github.com/danil/log0"
+	"github.com/kvlog/log0"
 	"github.com/kinbiko/jsonassert"
 )
 

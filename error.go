@@ -7,7 +7,7 @@ package log0
 import (
 	"bytes"
 
-	"github.com/danil/log0/encode0"
+	"github.com/kvlog/log0/encode0"
 )
 
 // Error returns stringer/JSON/text marshaler for the error type.

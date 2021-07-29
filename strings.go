@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/danil/log0/encode0"
+	"github.com/kvlog/log0/encode0"
 )
 
 // Strings returns stringer/JSON/text marshaler for the string slice type.

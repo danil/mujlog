@@ -1,7 +1,7 @@
 # log0
 
-[![Build Status](https://cloud.drone.io/api/badges/danil/log0/status.svg)](https://cloud.drone.io/danil/log0)
-[![Go Reference](https://pkg.go.dev/badge/github.com/danil/log0.svg)](https://pkg.go.dev/github.com/danil/log0)
+[![Build Status](https://cloud.drone.io/api/badges/kvlog/log0/status.svg)](https://cloud.drone.io/kvlog/log0)
+[![Go Reference](https://pkg.go.dev/badge/github.com/kvlog/log0.svg)](https://pkg.go.dev/github.com/kvlog/log0)
 
 JSON logging for Go.  
 Source files are distributed under the BSD-style license
@@ -14,7 +14,7 @@ its extremely slow and allocates a lots of memory)
 
 ## Install
 
-    go get github.com/danil/log0@v0.171.0
+    go get github.com/kvlog/log0@v0.172.0
 
 ## Usage
 
@@ -27,7 +27,7 @@ import (
     "os"
     "log"
 
-    "github.com/danil/log0"
+    "github.com/kvlog/log0"
 )
 
 func main() {
@@ -63,7 +63,7 @@ import (
     "log"
     "os"
 
-    "github.com/danil/log0"
+    "github.com/kvlog/log0"
 )
 
 func main() {
@@ -95,7 +95,7 @@ import (
     "log"
     "os"
 
-    "github.com/danil/log0"
+    "github.com/kvlog/log0"
 )
 
 func main() {
@@ -133,8 +133,10 @@ Output 2:
 go test -bench=. ./...
 goos: linux
 goarch: amd64
-pkg: github.com/danil/log0
-cpu: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
-BenchmarkLog0/io.Writer_77-8         	  321078	      3598 ns/op
-BenchmarkLog0/fmt.Fprint_io.Writer_1127-8         	  139057	      8645 ns/op
+pkg: github.com/kvlog/log0
+cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+BenchmarkLog0/io.Writer_77-8         	  163160	      7221 ns/op	    1722 B/op	      53 allocs/op
+BenchmarkLog0/fmt.Fprint_io.Writer_1127-8         	  102769	     12399 ns/op	    3401 B/op	      61 allocs/op
+PASS
+ok  	github.com/kvlog/log0	3.835s
 ```

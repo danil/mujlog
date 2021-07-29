@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"sync"
 
-	"github.com/danil/log0/encode0"
+	"github.com/kvlog/log0/encode0"
 )
 
 var bufPool = sync.Pool{New: func() interface{} { return new(bytes.Buffer) }}

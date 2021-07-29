@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding"
 
-	"github.com/danil/log0/encode0"
+	"github.com/kvlog/log0/encode0"
 )
 
 // Text returns stringer/JSON/text marshaler for the encoding.TextMarshaler type.
