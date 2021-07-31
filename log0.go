@@ -47,12 +47,12 @@ type Log struct {
 
 type Logger interface {
 	io.Writer
-	// Get returns copy of the logger with an additional key-values.
+	// Tee returns copy of the logger with an additional key-values.
 	// Copy of the original key-values should have a lower priority
 	// than the priority of the newer key-values.
-	Get(...KV) Logger
-	// Put puts the logger into the sync pool.
-	Put()
+	Tee(...KV) Logger
+	// Close puts the logger into the sync pool.
+	Close() error
 }
 
 // KV is a key-value pair.
@@ -87,7 +87,7 @@ func (l *Log) Encode(kv ...KV) []byte {
 	excerpt = excerpt[:0]
 	defer excerptPool.Put(&excerpt)
 
-	l0 := l.Get(kv...)
+	l0 := l.Tee(kv...)
 
 	for _, x := range l0.(KeyValuer).KeyValues() {
 		p, err := x.MarshalText()
@@ -111,14 +111,14 @@ type Leveler interface {
 
 var logPool = sync.Pool{New: func() interface{} { return new(Log) }}
 
-// Get returns copy of the logger with additional key-values.
+// Tee returns copy of the logger with additional key-values.
 // If first key-value pair implements the Leveler interface and the Level field
 // of the Log is not null then calls the function from Level field
 // with the severity level as argument which obtained from Leveler interface.
 // Then the function from Level field returns writer for output of the logger.
 // Copy of the original key-values has the priority lower
 // than the priority of the newer key-values.
-func (l *Log) Get(kv ...KV) Logger {
+func (l *Log) Tee(kv ...KV) Logger {
 	l0 := logPool.Get().(*Log)
 	l0.Output = l.Output
 	l0.Flag = l.Flag
@@ -143,8 +143,11 @@ func (l *Log) Get(kv ...KV) Logger {
 	return l0
 }
 
-// Put puts a log into sync pool.
-func (l *Log) Put() { logPool.Put(l) }
+// Close puts a log into sync pool.
+func (l *Log) Close() error {
+	logPool.Put(l)
+	return nil
+}
 
 // Write implements io.Writer. Do nothing if log does not have output.
 func (l *Log) Write(src []byte) (int, error) {

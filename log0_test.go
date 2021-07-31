@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kvlog/log0"
 	"github.com/kinbiko/jsonassert"
+	"github.com/kvlog/log0"
 )
 
 var WriteTestCases = []struct {
@@ -855,8 +855,8 @@ func TestWrite(t *testing.T) {
 
 			*buf = bytes.Buffer{}
 
-			l := tc.log.Get(tc.kv...)
-			defer l.Put()
+			l := tc.log.Tee(tc.kv...)
+			defer l.Close()
 
 			_, err := l.Write(tc.input)
 			if err != nil {
@@ -899,7 +899,7 @@ var FprintWriteTestCases = []struct {
 		log: func() log0.Logger {
 			l1 := log0.GELF()
 			l1.Output = &bytes.Buffer{}
-			l := l1.Get(
+			l := l1.Tee(
 				log0.StringString("version", "1.1"),
 				log0.StringFunc("timestamp", func() log0.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
@@ -1421,7 +1421,7 @@ var FprintWriteTestCases = []struct {
 		log: func() log0.Logger {
 			l1 := log0.GELF()
 			l1.Output = &bytes.Buffer{}
-			l := l1.Get(
+			l := l1.Tee(
 				log0.StringString("version", "1.1"),
 				log0.StringString("host", "example.tld"),
 				log0.StringFunc("timestamp", func() log0.KV {
@@ -1446,7 +1446,7 @@ var FprintWriteTestCases = []struct {
 			l1 := log0.GELF()
 			l1.Output = &bytes.Buffer{}
 			l1.Flag = log.Llongfile
-			l := l1.Get(
+			l := l1.Tee(
 				log0.StringString("version", "1.1"),
 				log0.StringString("host", "example.tld"),
 				log0.StringFunc("timestamp", func() log0.KV {
@@ -1502,12 +1502,12 @@ func BenchmarkLog0(b *testing.B) {
 		}
 		b.Run(fmt.Sprintf("io.Writer %d", tc.line), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				l := tc.log.Get(tc.kv...)
+				l := tc.log.Tee(tc.kv...)
 				_, err := l.Write(tc.input)
 				if err != nil {
 					fmt.Println(err)
 				}
-				l.Put()
+				l.Close()
 			}
 		})
 	}
@@ -1813,8 +1813,8 @@ func TestNew(t *testing.T) {
 
 			*buf = bytes.Buffer{}
 
-			l := tc.log.Get(tc.kv...)
-			defer l.Put()
+			l := tc.log.Tee(tc.kv...)
+			defer l.Close()
 
 			_, err := l.Write(nil)
 			if err != nil {
@@ -1913,11 +1913,11 @@ func TestSeverityLevel(t *testing.T) {
 
 			*buf = bytes.Buffer{}
 
-			l := tc.log.Get(tc.kv...)
-			defer l.Put()
+			l := tc.log.Tee(tc.kv...)
+			defer l.Close()
 
 			for _, sev := range tc.levels {
-				l = l.Get(log0.StringLevel("level", sev))
+				l = l.Tee(log0.StringLevel("level", sev))
 			}
 
 			_, err := l.Write(nil)
@@ -1943,7 +1943,7 @@ func TestEncode(t *testing.T) {
 	testLine, testFile, _, _ := runtime.Caller(0)
 	ja := jsonassert.New(testprinter{t: t, link: fmt.Sprintf("%s:%d", testFile, testLine)})
 
-	l := l0.Get(log0.StringString("foo", "bar"))
+	l := l0.Tee(log0.StringString("foo", "bar"))
 
 	ja.Assertf(string(l.(log0.Encoder).Encode()), `{"foo":"bar"}`)
 

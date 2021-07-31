@@ -14,7 +14,7 @@ its extremely slow and allocates a lots of memory)
 
 ## Install
 
-    go get github.com/kvlog/log0@v0.172.0
+    go get github.com/kvlog/log0@v0.173.0
 
 ## Usage
 
