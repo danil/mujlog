@@ -2,44 +2,43 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalFloat64psTestCases = []marshalTestCase{
+var MarshalFloat64psTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 float64 = 0.123456789, 0.987654321
-			return map[string]json.Marshaler{"float64 pointer slice": log0.Float64ps(&f, &f2)}
+			return map[string]json.Marshaler{"float64 pointer slice": plog.Float64ps(&f, &f2)}
 		}(),
-		expected:     "0.123456789 0.987654321",
-		expectedText: "0.123456789 0.987654321",
-		expectedJSON: `{
+		want:     "0.123456789 0.987654321",
+		wantText: "0.123456789 0.987654321",
+		wantJSON: `{
 			"float64 pointer slice":[0.123456789,0.987654321]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil float64 pointers": log0.Float64ps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil float64 pointers": plog.Float64ps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil float64 pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without float64 pointers": log0.Float64ps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without float64 pointers": plog.Float64ps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without float64 pointers":null
 		}`,
 	},
@@ -47,11 +46,11 @@ var MarshalFloat64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 float64 = 0.123456789, 0.987654321
-			return map[string]json.Marshaler{"slice of any float64 pointers": log0.Anys(&f, &f2)}
+			return map[string]json.Marshaler{"slice of any float64 pointers": plog.Anys(&f, &f2)}
 		}(),
-		expected:     "0.123456789 0.987654321",
-		expectedText: "0.123456789 0.987654321",
-		expectedJSON: `{
+		want:     "0.123456789 0.987654321",
+		wantText: "0.123456789 0.987654321",
+		wantJSON: `{
 			"slice of any float64 pointers":[0.123456789,0.987654321]
 		}`,
 	},
@@ -59,17 +58,16 @@ var MarshalFloat64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 float64 = 0.123456789, 0.987654321
-			return map[string]json.Marshaler{"slice of reflects of float64 pointers": log0.Reflects(&f, &f2)}
+			return map[string]json.Marshaler{"slice of reflects of float64 pointers": plog.Reflects(&f, &f2)}
 		}(),
-		expected:     "0.123456789 0.987654321",
-		expectedText: "0.123456789 0.987654321",
-		expectedJSON: `{
+		want:     "0.123456789 0.987654321",
+		wantText: "0.123456789 0.987654321",
+		wantJSON: `{
 			"slice of reflects of float64 pointers":[0.123456789,0.987654321]
 		}`,
 	},
 }
 
 func TestMarshalFloat64ps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalFloat64psTestCases)
+	testMarshal(t, MarshalFloat64psTests)
 }

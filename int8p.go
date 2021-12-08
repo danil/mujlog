@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Int8p returns stringer/JSON/text marshaler for the int8 pointer type.
 func Int8p(p *int8) int8P { return int8P{P: p} }

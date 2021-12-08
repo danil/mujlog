@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package log0 is a JSON logging.
-package log0
+// Package plog is a JSON logging.
+package plog
 
 import (
 	"bytes"

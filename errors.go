@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"bytes"
 
-	"github.com/kvlog/log0/encode0"
+	"github.com/pprint/plog/pencode"
 )
 
 // Errors returns stringer/JSON/text marshaler for the error slice type.
@@ -34,7 +34,7 @@ func (s errorS) MarshalText() ([]byte, error) {
 		if tail {
 			buf.WriteString(" ")
 		}
-		err := encode0.String(&buf, v.Error())
+		err := pencode.String(&buf, v.Error())
 		if err != nil {
 			return nil, err
 		}

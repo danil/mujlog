@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"bytes"
 	"strings"
 
-	"github.com/kvlog/log0/encode0"
+	"github.com/pprint/plog/pencode"
 )
 
 // Strings returns stringer/JSON/text marshaler for the string slice type.
@@ -21,7 +21,7 @@ func (s stringS) String() string {
 	buf.Reset()
 	defer bufPool.Put(buf)
 
-	err := encode0.String(buf, strings.Join(s.S, " "))
+	err := pencode.String(buf, strings.Join(s.S, " "))
 	if err != nil {
 		return ""
 	}
@@ -30,7 +30,7 @@ func (s stringS) String() string {
 
 func (s stringS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
-	err := encode0.String(&buf, strings.Join(s.S, " "))
+	err := pencode.String(&buf, strings.Join(s.S, " "))
 	if err != nil {
 		return nil, err
 	}

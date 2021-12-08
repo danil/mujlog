@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"bytes"
 
-	"github.com/kvlog/log0/encode0"
+	"github.com/pprint/plog/pencode"
 )
 
 // Runes returns stringer/JSON/text marshaler for the rune slice type.
@@ -23,7 +23,7 @@ func (s runeS) String() string {
 	buf.Reset()
 	defer bufPool.Put(buf)
 
-	err := encode0.Runes(buf, s.S)
+	err := pencode.Runes(buf, s.S)
 	if err != nil {
 		return ""
 	}
@@ -36,7 +36,7 @@ func (s runeS) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 
-	err := encode0.Runes(&buf, s.S)
+	err := pencode.Runes(&buf, s.S)
 	if err != nil {
 		return nil, err
 	}

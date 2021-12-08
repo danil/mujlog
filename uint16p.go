@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Uint16p returns stringer/JSON/text marshaler for the uint16 pointer type.
 func Uint16p(p *uint16) uint16P { return uint16P{P: p} }

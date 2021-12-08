@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Raw returns stringer/JSON/text marshaler for the raw byte slice.
 func Raw(v []byte) rawV { return rawV{V: v} }

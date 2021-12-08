@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Bytesp returns stringer/JSON/text marshaler for the pointer to byte slice type.
 func Bytesp(p *[]byte) byteSP { return byteSP{P: p} }

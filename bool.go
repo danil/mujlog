@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Bool returns stringer/JSON/text marshaler for the bool type.
 func Bool(v bool) boolV { return boolV{V: v} }

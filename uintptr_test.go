@@ -2,47 +2,45 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUintptrTestCases = []marshalTestCase{
+var MarshalUintptrTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"uintptr": log0.Uintptr(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"uintptr": plog.Uintptr(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uintptr":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any uintp": log0.Any(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any uintp": plog.Any(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uintp":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect uintp": log0.Reflect(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect uintp": plog.Reflect(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uintp":42
 		}`,
 	},
 }
 
 func TestMarshalUintptr(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUintptrTestCases)
+	testMarshal(t, MarshalUintptrTests)
 }

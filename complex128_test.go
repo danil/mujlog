@@ -2,46 +2,44 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalComplex128TestCases = []marshalTestCase{
+var MarshalComplex128Tests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"complex128": log0.Complex128(complex(1, 23))},
-		expected:     "1+23i",
-		expectedText: "1+23i",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"complex128": plog.Complex128(complex(1, 23))},
+		want:     "1+23i",
+		wantText: "1+23i",
+		wantJSON: `{
 			"complex128":"1+23i"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any complex128": log0.Any(complex(1, 23))},
-		expected:     "1+23i",
-		expectedText: "1+23i",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any complex128": plog.Any(complex(1, 23))},
+		want:     "1+23i",
+		wantText: "1+23i",
+		wantJSON: `{
 			"any complex128":"1+23i"
 		}`,
 	},
 	{
-		line:          line(),
-		input:         map[string]json.Marshaler{"reflect complex128": log0.Reflect(complex(1, 23))},
-		expected:      "(1+23i)",
-		expectedText:  "(1+23i)",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+		line:      line(),
+		input:     map[string]json.Marshaler{"reflect complex128": plog.Reflect(complex(1, 23))},
+		want:      "(1+23i)",
+		wantText:  "(1+23i)",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 }
 
 func TestMarshalComplex128(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex128TestCases)
+	testMarshal(t, MarshalComplex128Tests)
 }

@@ -2,56 +2,54 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalStringsTestCases = []marshalTestCase{
+var MarshalStringsTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"strings": log0.Strings("Hello, Wörld!", "Hello, World!")},
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"strings": plog.Strings("Hello, Wörld!", "Hello, World!")},
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"strings":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"empty strings": log0.Strings("", "")},
-		expected:     " ",
-		expectedText: " ",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"empty strings": plog.Strings("", "")},
+		want:     " ",
+		wantText: " ",
+		wantJSON: `{
 			"empty strings":["",""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"strings with zero byte": log0.Strings(string(byte(0)), string(byte(0)))},
-		expected:     "\\u0000 \\u0000",
-		expectedText: "\\u0000 \\u0000",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"strings with zero byte": plog.Strings(string(byte(0)), string(byte(0)))},
+		want:     "\\u0000 \\u0000",
+		wantText: "\\u0000 \\u0000",
+		wantJSON: `{
 			"strings with zero byte":["\u0000","\u0000"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"without strings": log0.Strings()},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"without strings": plog.Strings()},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"without strings":null
 		}`,
 	},
 }
 
 func TestMarshalStrings(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalStringsTestCases)
+	testMarshal(t, MarshalStringsTests)
 }

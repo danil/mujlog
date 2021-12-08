@@ -2,56 +2,54 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalBoolsTestCases = []marshalTestCase{
+var MarshalBoolsTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bools true false": log0.Bools(true, false)},
-		expected:     "true false",
-		expectedText: "true false",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"bools true false": plog.Bools(true, false)},
+		want:     "true false",
+		wantText: "true false",
+		wantJSON: `{
 			"bools true false":[true,false]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"without bools": log0.Bools()},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"without bools": plog.Bools()},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"without bools":[]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any bools": log0.Anys(true, false)},
-		expected:     "true false",
-		expectedText: "true false",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any bools": plog.Anys(true, false)},
+		want:     "true false",
+		wantText: "true false",
+		wantJSON: `{
 			"any bools":[true, false]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflects bools": log0.Reflects(true, false)},
-		expected:     "true false",
-		expectedText: "true false",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflects bools": plog.Reflects(true, false)},
+		want:     "true false",
+		wantText: "true false",
+		wantJSON: `{
 			"reflects bools":[true, false]
 		}`,
 	},
 }
 
 func TestMarshalBools(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBoolsTestCases)
+	testMarshal(t, MarshalBoolsTests)
 }

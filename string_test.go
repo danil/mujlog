@@ -2,101 +2,99 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalStringTestCases = []marshalTestCase{
+var MarshalStringTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"string": log0.String("Hello, Wörld!")},
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"string": plog.String("Hello, Wörld!")},
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"string":"Hello, Wörld!"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"empty string": log0.String("")},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"empty string": plog.String("")},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"empty string":""
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"string with zero byte": log0.String(string(byte(0)))},
-		expected:     "\\u0000",
-		expectedText: "\\u0000",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"string with zero byte": plog.String(string(byte(0)))},
+		want:     "\\u0000",
+		wantText: "\\u0000",
+		wantJSON: `{
 			"string with zero byte":"\u0000"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any string": log0.Any("Hello, Wörld!")},
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any string": plog.Any("Hello, Wörld!")},
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"any string":"Hello, Wörld!"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any empty string": log0.Any("")},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any empty string": plog.Any("")},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"any empty string":""
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any string with zero byte": log0.Any(string(byte(0)))},
-		expected:     "\\u0000",
-		expectedText: "\\u0000",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any string with zero byte": plog.Any(string(byte(0)))},
+		want:     "\\u0000",
+		wantText: "\\u0000",
+		wantJSON: `{
 			"any string with zero byte":"\u0000"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect string": log0.Reflect("Hello, Wörld!")},
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect string": plog.Reflect("Hello, Wörld!")},
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"reflect string":"Hello, Wörld!"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect empty string": log0.Reflect("")},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect empty string": plog.Reflect("")},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"reflect empty string":""
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect string with zero byte": log0.Reflect(string(byte(0)))},
-		expected:     "\u0000",
-		expectedText: "\u0000",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect string with zero byte": plog.Reflect(string(byte(0)))},
+		want:     "\u0000",
+		wantText: "\u0000",
+		wantJSON: `{
 			"reflect string with zero byte":"\u0000"
 		}`,
 	},
 }
 
 func TestMarshalString(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalStringTestCases)
+	testMarshal(t, MarshalStringTests)
 }

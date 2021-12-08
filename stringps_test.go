@@ -2,44 +2,43 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalStringpsTestCases = []marshalTestCase{
+var MarshalStringpsTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 string = "Hello, Wörld!", "Hello, World!"
-			return map[string]json.Marshaler{"string pointer slice": log0.Stringps(&f, &f2)}
+			return map[string]json.Marshaler{"string pointer slice": plog.Stringps(&f, &f2)}
 		}(),
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"string pointer slice":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil string pointers": log0.Stringps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil string pointers": plog.Stringps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil string pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without string pointers": log0.Stringps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without string pointers": plog.Stringps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without string pointers":null
 		}`,
 	},
@@ -47,11 +46,11 @@ var MarshalStringpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 string = "Hello, Wörld!", "Hello, World!"
-			return map[string]json.Marshaler{"slice of any string pointers": log0.Anys(&f, &f2)}
+			return map[string]json.Marshaler{"slice of any string pointers": plog.Anys(&f, &f2)}
 		}(),
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"slice of any string pointers":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
@@ -59,17 +58,16 @@ var MarshalStringpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 string = "Hello, Wörld!", "Hello, World!"
-			return map[string]json.Marshaler{"slice of reflects of string pointers": log0.Reflects(&f, &f2)}
+			return map[string]json.Marshaler{"slice of reflects of string pointers": plog.Reflects(&f, &f2)}
 		}(),
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"slice of reflects of string pointers":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 }
 
 func TestMarshalStringps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalStringpsTestCases)
+	testMarshal(t, MarshalStringpsTests)
 }

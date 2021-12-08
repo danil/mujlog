@@ -2,32 +2,31 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalComplex64sTestCases = []marshalTestCase{
+var MarshalComplex64sTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of complex64s": log0.Complex64s(complex(1, 23), complex(3, 21))},
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of complex64s": plog.Complex64s(complex(1, 23), complex(3, 21))},
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of complex64s":["1+23i","3+21i"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without complex64s": log0.Complex64s()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without complex64s": plog.Complex64s()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without complex64s":null
 		}`,
 	},
@@ -35,11 +34,11 @@ var MarshalComplex64sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of any complex64s": log0.Anys(c, c2)}
+			return map[string]json.Marshaler{"slice of any complex64s": plog.Anys(c, c2)}
 		}(),
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of any complex64s":["1+23i","3+21i"]
 		}`,
 	},
@@ -47,17 +46,16 @@ var MarshalComplex64sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of reflect complex64": log0.Anys(c, c2)}
+			return map[string]json.Marshaler{"slice of reflect complex64": plog.Anys(c, c2)}
 		}(),
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of reflect complex64":["1+23i","3+21i"]
 		}`,
 	},
 }
 
 func TestMarshalComplex64s(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex64sTestCases)
+	testMarshal(t, MarshalComplex64sTests)
 }

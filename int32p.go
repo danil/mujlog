@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Int32p returns stringer/JSON/text marshaler for the int32 pointer type.
 func Int32p(p *int32) int32P { return int32P{P: p} }

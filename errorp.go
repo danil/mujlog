@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Errorp returns stringer/JSON/text marshaler for the error pointer type.
 func Errorp(p *error) errorP { return errorP{P: p} }

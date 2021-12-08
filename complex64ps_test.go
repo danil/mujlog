@@ -2,45 +2,44 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalComplex64psTestCases = []marshalTestCase{
+var MarshalComplex64psTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of complex64 pointers": log0.Complex64ps(&c, &c2)}
+			return map[string]json.Marshaler{"slice of complex64 pointers": plog.Complex64ps(&c, &c2)}
 		}(),
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of complex64 pointers":["1+23i","3+21i"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil complex64 pointers": log0.Complex64ps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil complex64 pointers": plog.Complex64ps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil complex64 pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without complex64 pointers": log0.Complex64ps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without complex64 pointers": plog.Complex64ps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without complex64 pointers":null
 		}`,
 	},
@@ -48,11 +47,11 @@ var MarshalComplex64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of any complex64 pointers": log0.Anys(&c, &c2)}
+			return map[string]json.Marshaler{"slice of any complex64 pointers": plog.Anys(&c, &c2)}
 		}(),
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of any complex64 pointers":["1+23i","3+21i"]
 		}`,
 	},
@@ -60,15 +59,14 @@ var MarshalComplex64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex64 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of reflects of complex64 pointers": log0.Reflects(&c, &c2)}
+			return map[string]json.Marshaler{"slice of reflects of complex64 pointers": plog.Reflects(&c, &c2)}
 		}(),
-		expected:      "(1+23i) (3+21i)",
-		expectedText:  "(1+23i) (3+21i)",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
+		want:      "(1+23i) (3+21i)",
+		wantText:  "(1+23i) (3+21i)",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
 	},
 }
 
 func TestMarshalComplex64ps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex64psTestCases)
+	testMarshal(t, MarshalComplex64psTests)
 }

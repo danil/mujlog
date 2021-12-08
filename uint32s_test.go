@@ -2,32 +2,31 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint32sTestCases = []marshalTestCase{
+var MarshalUint32sTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"uint32 slice": log0.Uint32s(42, 77)},
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"uint32 slice": plog.Uint32s(42, 77)},
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"uint32 slice":[42,77]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without uint32": log0.Uint32s()},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without uint32": plog.Uint32s()},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"slice without uint32":[]
 		}`,
 	},
@@ -35,11 +34,11 @@ var MarshalUint32sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i, i2 uint32 = 42, 77
-			return map[string]json.Marshaler{"slice of any uint32": log0.Anys(i, i2)}
+			return map[string]json.Marshaler{"slice of any uint32": plog.Anys(i, i2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of any uint32":[42,77]
 		}`,
 	},
@@ -47,17 +46,16 @@ var MarshalUint32sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i, i2 uint32 = 42, 77
-			return map[string]json.Marshaler{"slice of uint32 reflects": log0.Reflects(i, i2)}
+			return map[string]json.Marshaler{"slice of uint32 reflects": plog.Reflects(i, i2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of uint32 reflects":[42,77]
 		}`,
 	},
 }
 
 func TestMarshalUint32s(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint32sTestCases)
+	testMarshal(t, MarshalUint32sTests)
 }

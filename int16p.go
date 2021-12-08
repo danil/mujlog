@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Int16p returns stringer/JSON/text marshaler for the int16 pointer type.
 func Int16p(p *int16) int16P { return int16P{P: p} }

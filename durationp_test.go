@@ -2,36 +2,35 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 	"time"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalDurationpTestCases = []marshalTestCase{
+var MarshalDurationpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			d := 42 * time.Nanosecond
-			return map[string]json.Marshaler{"duration pointer": log0.Durationp(&d)}
+			return map[string]json.Marshaler{"duration pointer": plog.Durationp(&d)}
 		}(),
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"duration pointer":"42ns"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil duration pointer": log0.Durationp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil duration pointer": plog.Durationp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil duration pointer":null
 		}`,
 	},
@@ -39,11 +38,11 @@ var MarshalDurationpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			d := 42 * time.Nanosecond
-			return map[string]json.Marshaler{"any duration pointer": log0.Any(&d)}
+			return map[string]json.Marshaler{"any duration pointer": plog.Any(&d)}
 		}(),
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"any duration pointer":"42ns"
 		}`,
 	},
@@ -51,17 +50,16 @@ var MarshalDurationpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			d := 42 * time.Nanosecond
-			return map[string]json.Marshaler{"reflect duration pointer": log0.Reflect(&d)}
+			return map[string]json.Marshaler{"reflect duration pointer": plog.Reflect(&d)}
 		}(),
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"reflect duration pointer":42
 		}`,
 	},
 }
 
 func TestDurationpMarshal(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalDurationpTestCases)
+	testMarshal(t, MarshalDurationpTests)
 }

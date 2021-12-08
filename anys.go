@@ -2,26 +2,26 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"bytes"
 )
 
 // Anys returns stringer/JSON/text marshaler for the slice of any type.
-func Anys(s ...interface{}) anyS { return anyS{S: s} }
+func Anys(s ...interface{}) AnyS { return AnyS{S: s} }
 
-type anyS struct{ S []interface{} }
+type AnyS struct{ S []interface{} }
 
-func (s anyS) String() string {
+func (s AnyS) String() string {
 	b, _ := s.MarshalText()
 	return string(b)
 }
 
-func (s anyS) MarshalText() ([]byte, error) {
+func (s AnyS) MarshalText() ([]byte, error) {
 	var buf bytes.Buffer
 	for i, v := range s.S {
-		b, err := anyV{V: v}.MarshalText()
+		b, err := AnyV{V: v}.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -36,11 +36,11 @@ func (s anyS) MarshalText() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s anyS) MarshalJSON() ([]byte, error) {
+func (s AnyS) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("[")
 	for i, v := range s.S {
-		b, err := anyV{V: v}.MarshalJSON()
+		b, err := AnyV{V: v}.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}

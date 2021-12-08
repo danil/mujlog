@@ -2,44 +2,43 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint8psTestCases = []marshalTestCase{
+var MarshalUint8psTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint8 = 42, 77
-			return map[string]json.Marshaler{"uint8 pointer slice": log0.Uint8ps(&f, &f2)}
+			return map[string]json.Marshaler{"uint8 pointer slice": plog.Uint8ps(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"uint8 pointer slice":[42,77]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil uint8 pointers": log0.Uint8ps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil uint8 pointers": plog.Uint8ps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil uint8 pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without uint8 pointers": log0.Uint8ps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without uint8 pointers": plog.Uint8ps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without uint8 pointers":null
 		}`,
 	},
@@ -47,11 +46,11 @@ var MarshalUint8psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint8 = 42, 77
-			return map[string]json.Marshaler{"slice of any uint8 pointers": log0.Anys(&f, &f2)}
+			return map[string]json.Marshaler{"slice of any uint8 pointers": plog.Anys(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of any uint8 pointers":[42,77]
 		}`,
 	},
@@ -59,17 +58,16 @@ var MarshalUint8psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint8 = 42, 77
-			return map[string]json.Marshaler{"slice of reflects of uint8 pointers": log0.Reflects(&f, &f2)}
+			return map[string]json.Marshaler{"slice of reflects of uint8 pointers": plog.Reflects(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of reflects of uint8 pointers":[42,77]
 		}`,
 	},
 }
 
 func TestMarshalUint8ps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint8psTestCases)
+	testMarshal(t, MarshalUint8psTests)
 }

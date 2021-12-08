@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Uint32p returns stringer/JSON/text marshaler for the uint32 pointer type.
 func Uint32p(p *uint32) uint32P { return uint32P{P: p} }

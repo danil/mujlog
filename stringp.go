@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Stringp returns stringer/JSON/text marshaler for the string pointer type.
 func Stringp(p *string) stringP { return stringP{P: p} }

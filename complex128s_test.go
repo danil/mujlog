@@ -2,33 +2,32 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalComplex128sTestCases = []marshalTestCase{
+var MarshalComplex128sTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"complex128 slice": log0.Complex128s(complex(1, 23), complex(3, 21))},
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"complex128 slice": plog.Complex128s(complex(1, 23), complex(3, 21))},
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"complex128 slice":["1+23i","3+21i"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without complex128": log0.Complex128s()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without complex128": plog.Complex128s()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without complex128":null
 		}`,
 	},
@@ -36,11 +35,11 @@ var MarshalComplex128sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex128 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of any complex128": log0.Anys(c, c2)}
+			return map[string]json.Marshaler{"slice of any complex128": plog.Anys(c, c2)}
 		}(),
-		expected:     "1+23i 3+21i",
-		expectedText: "1+23i 3+21i",
-		expectedJSON: `{
+		want:     "1+23i 3+21i",
+		wantText: "1+23i 3+21i",
+		wantJSON: `{
 			"slice of any complex128":["1+23i","3+21i"]
 		}`,
 	},
@@ -48,15 +47,14 @@ var MarshalComplex128sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c, c2 complex128 = complex(1, 23), complex(3, 21)
-			return map[string]json.Marshaler{"slice of reflect of complex128 pointers": log0.Reflects(c, c2)}
+			return map[string]json.Marshaler{"slice of reflect of complex128 pointers": plog.Reflects(c, c2)}
 		}(),
-		expected:      "(1+23i) (3+21i)",
-		expectedText:  "(1+23i) (3+21i)",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+		want:      "(1+23i) (3+21i)",
+		wantText:  "(1+23i) (3+21i)",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 }
 
 func TestMarshalComplex128s(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex128sTestCases)
+	testMarshal(t, MarshalComplex128sTests)
 }

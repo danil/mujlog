@@ -2,1826 +2,1824 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"runtime"
 	"testing"
 	"time"
 
-	"github.com/danil/equal4"
-	"github.com/kvlog/log0"
 	"github.com/kinbiko/jsonassert"
+	"github.com/pprint/plog"
 )
 
-var KVTestCases = []struct {
-	line      int
-	input     log0.KV
-	expected  string
+var KVTests = []struct {
+	line      string
+	input     plog.KV
+	want      string
 	error     error
 	benchmark bool
 }{
 	{
 		line:  line(),
-		input: log0.StringBool("bool true", true),
-		expected: `{
+		input: plog.StringBool("bool true", true),
+		want: `{
 			"bool true":true
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBool("bool false", false),
-		expected: `{
+		input: plog.StringBool("bool false", false),
+		want: `{
 			"bool false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBools("bools true false", true, false),
-		expected: `{
+		input: plog.StringBools("bools true false", true, false),
+		want: `{
 			"bools true false":[true,false]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBools("without bools"),
-		expected: `{
+		input: plog.StringBools("without bools"),
+		want: `{
 			"without bools":[]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any bool false", false),
-		expected: `{
+		input: plog.StringAny("any bool false", false),
+		want: `{
 			"any bool false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect bool false", false),
-		expected: `{
+		input: plog.StringReflect("reflect bool false", false),
+		want: `{
 			"reflect bool false":false
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.StringBoolp("bool pointer to true", &b)
+			return plog.StringBoolp("bool pointer to true", &b)
 		}(),
-		expected: `{
+		want: `{
 			"bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := false
-			return log0.StringBoolp("bool pointer to false", &b)
+			return plog.StringBoolp("bool pointer to false", &b)
 		}(),
-		expected: `{
+		want: `{
 			"bool pointer to false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBoolp("bool nil pointer", nil),
-		expected: `{
+		input: plog.StringBoolp("bool nil pointer", nil),
+		want: `{
 			"bool nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.StringAny("any bool pointer to true", &b)
+			return plog.StringAny("any bool pointer to true", &b)
 		}(),
-		expected: `{
+		want: `{
 			"any bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
 			b2 := &b
-			return log0.StringAny("any twice/nested pointer to bool true", &b2)
+			return plog.StringAny("any twice/nested pointer to bool true", &b2)
 		}(),
-		expected: `{
+		want: `{
 			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.StringReflect("reflect bool pointer to true", &b)
+			return plog.StringReflect("reflect bool pointer to true", &b)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
 			b2 := &b
-			return log0.StringReflect("reflect bool twice/nested pointer to true", &b2)
+			return plog.StringReflect("reflect bool twice/nested pointer to true", &b2)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var b *bool
-			return log0.StringReflect("reflect bool pointer to nil", b)
+			return plog.StringReflect("reflect bool pointer to nil", b)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes", []byte("Hello, Wörld!")...),
-		expected: `{
+		input: plog.StringBytes("bytes", []byte("Hello, Wörld!")...),
+		want: `{
 			"bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes with quote", []byte(`Hello, "World"!`)...),
-		expected: `{
+		input: plog.StringBytes("bytes with quote", []byte(`Hello, "World"!`)...),
+		want: `{
 			"bytes with quote":"Hello, \"World\"!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes quote", []byte(`"Hello, World!"`)...),
-		expected: `{
+		input: plog.StringBytes("bytes quote", []byte(`"Hello, World!"`)...),
+		want: `{
 			"bytes quote":"\"Hello, World!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes nested quote", []byte(`"Hello, "World"!"`)...),
-		expected: `{
+		input: plog.StringBytes("bytes nested quote", []byte(`"Hello, "World"!"`)...),
+		want: `{
 			"bytes nested quote":"\"Hello, \"World\"!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes json", []byte(`{"foo":"bar"}`)...),
-		expected: `{
+		input: plog.StringBytes("bytes json", []byte(`{"foo":"bar"}`)...),
+		want: `{
 			"bytes json":"{\"foo\":\"bar\"}"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("bytes json quote", []byte(`"{"foo":"bar"}"`)...),
-		expected: `{
+		input: plog.StringBytes("bytes json quote", []byte(`"{"foo":"bar"}"`)...),
+		want: `{
 			"bytes json quote":"\"{\"foo\":\"bar\"}\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytes("empty bytes", []byte{}...),
-		expected: `{
+		input: plog.StringBytes("empty bytes", []byte{}...),
+		want: `{
 			"empty bytes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var p []byte
-			return log0.StringBytes("nil bytes", p...)
+			return plog.StringBytes("nil bytes", p...)
 		}(),
-		expected: `{
+		want: `{
 			"nil bytes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of byte slices", []byte("Hello, Wörld!"), []byte("Hello, World!")),
-		expected: `{
+		input: plog.StringBytess("slice of byte slices", []byte("Hello, Wörld!"), []byte("Hello, World!")),
+		want: `{
 			"slice of byte slices":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of byte slices with quote", []byte(`Hello, "Wörld"!`), []byte(`Hello, "World"!`)),
-		expected: `{
+		input: plog.StringBytess("slice of byte slices with quote", []byte(`Hello, "Wörld"!`), []byte(`Hello, "World"!`)),
+		want: `{
 			"slice of byte slices with quote":["Hello, \"Wörld\"!","Hello, \"World\"!"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("quoted slice of byte slices", []byte(`"Hello, Wörld!"`), []byte(`"Hello, World!"`)),
-		expected: `{
+		input: plog.StringBytess("quoted slice of byte slices", []byte(`"Hello, Wörld!"`), []byte(`"Hello, World!"`)),
+		want: `{
 			"quoted slice of byte slices":["\"Hello, Wörld!\"","\"Hello, World!\""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of byte slices with nested quote", []byte(`"Hello, "Wörld"!"`), []byte(`"Hello, "World"!"`)),
-		expected: `{
+		input: plog.StringBytess("slice of byte slices with nested quote", []byte(`"Hello, "Wörld"!"`), []byte(`"Hello, "World"!"`)),
+		want: `{
 			"slice of byte slices with nested quote":["\"Hello, \"Wörld\"!\"","\"Hello, \"World\"!\""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of byte slices with json", []byte(`{"foo":"bar"}`), []byte(`{"baz":"xyz"}`)),
-		expected: `{
+		input: plog.StringBytess("slice of byte slices with json", []byte(`{"foo":"bar"}`), []byte(`{"baz":"xyz"}`)),
+		want: `{
 			"slice of byte slices with json":["{\"foo\":\"bar\"}","{\"baz\":\"xyz\"}"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of byte slices with quoted json", []byte(`"{"foo":"bar"}"`), []byte(`"{"baz":"xyz"}"`)),
-		expected: `{
+		input: plog.StringBytess("slice of byte slices with quoted json", []byte(`"{"foo":"bar"}"`), []byte(`"{"baz":"xyz"}"`)),
+		want: `{
 			"slice of byte slices with quoted json":["\"{\"foo\":\"bar\"}\"","\"{\"baz\":\"xyz\"}\""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of empty byte slices", []byte{}, []byte{}),
-		expected: `{
+		input: plog.StringBytess("slice of empty byte slices", []byte{}, []byte{}),
+		want: `{
 			"slice of empty byte slices":["",""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("slice of nil byte slices", nil, nil),
-		expected: `{
+		input: plog.StringBytess("slice of nil byte slices", nil, nil),
+		want: `{
 			"slice of nil byte slices":[null,null]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytess("empty slice of nil slices"),
-		expected: `{
+		input: plog.StringBytess("empty slice of nil slices"),
+		want: `{
 			"empty slice of nil slices":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any bytes", []byte("Hello, Wörld!")),
-		expected: `{
+		input: plog.StringAny("any bytes", []byte("Hello, Wörld!")),
+		want: `{
 			"any bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any empty bytes", []byte{}),
-		expected: `{
+		input: plog.StringAny("any empty bytes", []byte{}),
+		want: `{
 			"any empty bytes":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect bytes", []byte("Hello, Wörld!")),
-		expected: `{
+		input: plog.StringReflect("reflect bytes", []byte("Hello, Wörld!")),
+		want: `{
 			"reflect bytes":"SGVsbG8sIFfDtnJsZCE="
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect empty bytes", []byte{}),
-		expected: `{
+		input: plog.StringReflect("reflect empty bytes", []byte{}),
+		want: `{
 			"reflect empty bytes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.StringBytesp("bytes pointer", &p)
+			return plog.StringBytesp("bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"bytes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.StringBytesp("empty bytes pointer", &p)
+			return plog.StringBytesp("empty bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty bytes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytesp("nil bytes pointer", nil),
-		expected: `{
+		input: plog.StringBytesp("nil bytes pointer", nil),
+		want: `{
 			"nil bytes pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p, p2 := []byte("Hello, Wörld!"), []byte("Hello, World!")
-			return log0.StringBytessp("slice of byte pointer slices", &p, &p2)
+			return plog.StringBytessp("slice of byte pointer slices", &p, &p2)
 		}(),
-		expected: `{
+		want: `{
 			"slice of byte pointer slices":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p, p2 := []byte{}, []byte{}
-			return log0.StringBytessp("slice of empty byte pointer slices", &p, &p2)
+			return plog.StringBytessp("slice of empty byte pointer slices", &p, &p2)
 		}(),
-		expected: `{
+		want: `{
 			"slice of empty byte pointer slices":["",""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytessp("slice of nil byte pointer slices", nil, nil),
-		expected: `{
+		input: plog.StringBytessp("slice of nil byte pointer slices", nil, nil),
+		want: `{
 			"slice of nil byte pointer slices":[null,null]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringBytessp("empty slice of byte pointer slices"),
-		expected: `{
+		input: plog.StringBytessp("empty slice of byte pointer slices"),
+		want: `{
 			"empty slice of byte pointer slices":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.StringAny("any bytes pointer", &p)
+			return plog.StringAny("any bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any bytes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.StringAny("any empty bytes pointer", &p)
+			return plog.StringAny("any empty bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty bytes pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.StringReflect("reflect bytes pointer", &p)
+			return plog.StringReflect("reflect bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bytes pointer":"SGVsbG8sIFfDtnJsZCE="
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.StringReflect("reflect empty bytes pointer", &p)
+			return plog.StringReflect("reflect empty bytes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty bytes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringComplex128("complex128", complex(1, 23)),
-		expected: `{
+		input: plog.StringComplex128("complex128", complex(1, 23)),
+		want: `{
 			"complex128":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any complex128", complex(1, 23)),
-		expected: `{
+		input: plog.StringAny("any complex128", complex(1, 23)),
+		want: `{
 			"any complex128":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect complex128", complex(1, 23)),
+		input: plog.StringReflect("reflect complex128", complex(1, 23)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.StringComplex128p("complex128 pointer", &c)
+			return plog.StringComplex128p("complex128 pointer", &c)
 		}(),
-		expected: `{
+		want: `{
 			"complex128 pointer":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringComplex128p("nil complex128 pointer", nil),
-		expected: `{
+		input: plog.StringComplex128p("nil complex128 pointer", nil),
+		want: `{
 			"nil complex128 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.StringAny("any complex128 pointer", &c)
+			return plog.StringAny("any complex128 pointer", &c)
 		}(),
-		expected: `{
+		want: `{
 			"any complex128 pointer":"1+23i"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.StringReflect("reflect complex128 pointer", &c)
+			return plog.StringReflect("reflect complex128 pointer", &c)
 		}(),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line:  line(),
-		input: log0.StringComplex64("complex64", complex(3, 21)),
-		expected: `{
+		input: plog.StringComplex64("complex64", complex(3, 21)),
+		want: `{
 			"complex64":"3+21i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any complex64", complex(3, 21)),
-		expected: `{
+		input: plog.StringAny("any complex64", complex(3, 21)),
+		want: `{
 			"any complex64":"3+21i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect complex64", complex(3, 21)),
+		input: plog.StringReflect("reflect complex64", complex(3, 21)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line:  line(),
-		input: log0.StringError("error", errors.New("something went wrong")),
-		expected: `{
+		input: plog.StringError("error", errors.New("something went wrong")),
+		want: `{
 			"error":"something went wrong"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringError("nil error", nil),
-		expected: `{
+		input: plog.StringError("nil error", nil),
+		want: `{
 			"nil error":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringErrors("errors", errors.New("something went wrong"), errors.New("wrong")),
-		expected: `{
+		input: plog.StringErrors("errors", errors.New("something went wrong"), errors.New("wrong")),
+		want: `{
 			"errors":["something went wrong","wrong"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringErrors("nil errors", nil, nil),
-		expected: `{
+		input: plog.StringErrors("nil errors", nil, nil),
+		want: `{
 			"nil errors":[null,null]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringErrors("without errors"),
-		expected: `{
+		input: plog.StringErrors("without errors"),
+		want: `{
 			"without errors":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any error", errors.New("something went wrong")),
-		expected: `{
+		input: plog.StringAny("any error", errors.New("something went wrong")),
+		want: `{
 			"any error":"something went wrong"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect error", errors.New("something went wrong")),
-		expected: `{
+		input: plog.StringReflect("reflect error", errors.New("something went wrong")),
+		want: `{
 			"reflect error":{}
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.StringComplex64p("complex64 pointer", &c)
+			return plog.StringComplex64p("complex64 pointer", &c)
 		}(),
-		expected: `{
+		want: `{
 			"complex64 pointer":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringComplex64p("nil complex64 pointer", nil),
-		expected: `{
+		input: plog.StringComplex64p("nil complex64 pointer", nil),
+		want: `{
 			"nil complex64 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.StringAny("any complex64 pointer", &c)
+			return plog.StringAny("any complex64 pointer", &c)
 		}(),
-		expected: `{
+		want: `{
 			"any complex64 pointer":"1+23i"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.StringReflect("reflect complex64 pointer", &c)
+			return plog.StringReflect("reflect complex64 pointer", &c)
 		}(),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat32("float32", 4.2),
-		expected: `{
+		input: plog.StringFloat32("float32", 4.2),
+		want: `{
 			"float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat32("high precision float32", 0.123456789),
-		expected: `{
+		input: plog.StringFloat32("high precision float32", 0.123456789),
+		want: `{
 			"high precision float32":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat32("zero float32", 0),
-		expected: `{
+		input: plog.StringFloat32("zero float32", 0),
+		want: `{
 			"zero float32":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any float32", 4.2),
-		expected: `{
+		input: plog.StringAny("any float32", 4.2),
+		want: `{
 			"any float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any zero float32", 0),
-		expected: `{
+		input: plog.StringAny("any zero float32", 0),
+		want: `{
 			"any zero float32":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect float32", 4.2),
-		expected: `{
+		input: plog.StringReflect("reflect float32", 4.2),
+		want: `{
 			"reflect float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect zero float32", 0),
-		expected: `{
+		input: plog.StringReflect("reflect zero float32", 0),
+		want: `{
 			"reflect zero float32":0
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.StringFloat32p("float32 pointer", &f)
+			return plog.StringFloat32p("float32 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 0.123456789
-			return log0.StringFloat32p("high precision float32 pointer", &f)
+			return plog.StringFloat32p("high precision float32 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"high precision float32 pointer":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat32p("float32 nil pointer", nil),
-		expected: `{
+		input: plog.StringFloat32p("float32 nil pointer", nil),
+		want: `{
 			"float32 nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.StringAny("any float32 pointer", &f)
+			return plog.StringAny("any float32 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"any float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.StringReflect("reflect float32 pointer", &f)
+			return plog.StringReflect("reflect float32 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f *float32
-			return log0.StringReflect("reflect float32 pointer to nil", f)
+			return plog.StringReflect("reflect float32 pointer to nil", f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float32 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat64("float64", 4.2),
-		expected: `{
+		input: plog.StringFloat64("float64", 4.2),
+		want: `{
 			"float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat64("high precision float64", 0.123456789),
-		expected: `{
+		input: plog.StringFloat64("high precision float64", 0.123456789),
+		want: `{
 			"high precision float64":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat64("zero float64", 0),
-		expected: `{
+		input: plog.StringFloat64("zero float64", 0),
+		want: `{
 			"zero float64":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any float64", 4.2),
-		expected: `{
+		input: plog.StringAny("any float64", 4.2),
+		want: `{
 			"any float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any zero float64", 0),
-		expected: `{
+		input: plog.StringAny("any zero float64", 0),
+		want: `{
 			"any zero float64":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect float64", 4.2),
-		expected: `{
+		input: plog.StringReflect("reflect float64", 4.2),
+		want: `{
 			"reflect float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect zero float64", 0),
-		expected: `{
+		input: plog.StringReflect("reflect zero float64", 0),
+		want: `{
 			"reflect zero float64":0
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.StringFloat64p("float64 pointer", &f)
+			return plog.StringFloat64p("float64 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 0.123456789
-			return log0.StringFloat64p("high precision float64 pointer", &f)
+			return plog.StringFloat64p("high precision float64 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"high precision float64 pointer":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringFloat64p("float64 nil pointer", nil),
-		expected: `{
+		input: plog.StringFloat64p("float64 nil pointer", nil),
+		want: `{
 			"float64 nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.StringAny("any float64 pointer", &f)
+			return plog.StringAny("any float64 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"any float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.StringReflect("reflect float64 pointer", &f)
+			return plog.StringReflect("reflect float64 pointer", &f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f *float64
-			return log0.StringReflect("reflect float64 pointer to nil", f)
+			return plog.StringReflect("reflect float64 pointer to nil", f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float64 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringInt("int", 42),
-		expected: `{
+		input: plog.StringInt("int", 42),
+		want: `{
 			"int":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any int", 42),
-		expected: `{
+		input: plog.StringAny("any int", 42),
+		want: `{
 			"any int":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect int", 42),
-		expected: `{
+		input: plog.StringReflect("reflect int", 42),
+		want: `{
 			"reflect int":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.StringIntp("int pointer", &i)
+			return plog.StringIntp("int pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"int pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.StringAny("any int pointer", &i)
+			return plog.StringAny("any int pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.StringReflect("reflect int pointer", &i)
+			return plog.StringReflect("reflect int pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringInt16("int16", 42),
-		expected: `{
+		input: plog.StringInt16("int16", 42),
+		want: `{
 			"int16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any int16", 42),
-		expected: `{
+		input: plog.StringAny("any int16", 42),
+		want: `{
 			"any int16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect int16", 42),
-		expected: `{
+		input: plog.StringReflect("reflect int16", 42),
+		want: `{
 			"reflect int16":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.StringInt16p("int16 pointer", &i)
+			return plog.StringInt16p("int16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"int16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.StringAny("any int16 pointer", &i)
+			return plog.StringAny("any int16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.StringReflect("reflect int16 pointer", &i)
+			return plog.StringReflect("reflect int16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int16 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringInt32("int32", 42),
-		expected: `{
+		input: plog.StringInt32("int32", 42),
+		want: `{
 			"int32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any int32", 42),
-		expected: `{
+		input: plog.StringAny("any int32", 42),
+		want: `{
 			"any int32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect int32", 42),
-		expected: `{
+		input: plog.StringReflect("reflect int32", 42),
+		want: `{
 			"reflect int32":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.StringInt32p("int32 pointer", &i)
+			return plog.StringInt32p("int32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"int32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.StringAny("any int32 pointer", &i)
+			return plog.StringAny("any int32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.StringReflect("reflect int32 pointer", &i)
+			return plog.StringReflect("reflect int32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringInt64("int64", 42),
-		expected: `{
+		input: plog.StringInt64("int64", 42),
+		want: `{
 			"int64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any int64", 42),
-		expected: `{
+		input: plog.StringAny("any int64", 42),
+		want: `{
 			"any int64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect int64", 42),
-		expected: `{
+		input: plog.StringReflect("reflect int64", 42),
+		want: `{
 			"reflect int64":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.StringInt64p("int64 pointer", &i)
+			return plog.StringInt64p("int64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"int64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.StringAny("any int64 pointer", &i)
+			return plog.StringAny("any int64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.StringReflect("reflect int64 pointer", &i)
+			return plog.StringReflect("reflect int64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringInt8("int8", 42),
-		expected: `{
+		input: plog.StringInt8("int8", 42),
+		want: `{
 			"int8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any int8", 42),
-		expected: `{
+		input: plog.StringAny("any int8", 42),
+		want: `{
 			"any int8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect int8", 42),
-		expected: `{
+		input: plog.StringReflect("reflect int8", 42),
+		want: `{
 			"reflect int8":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.StringInt8p("int8 pointer", &i)
+			return plog.StringInt8p("int8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"int8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.StringAny("any int8 pointer", &i)
+			return plog.StringAny("any int8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.StringReflect("reflect int8 pointer", &i)
+			return plog.StringReflect("reflect int8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("runes", []rune("Hello, Wörld!")...),
-		expected: `{
+		input: plog.StringRunes("runes", []rune("Hello, Wörld!")...),
+		want: `{
 			"runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("empty runes", []rune{}...),
-		expected: `{
+		input: plog.StringRunes("empty runes", []rune{}...),
+		want: `{
 			"empty runes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var p []rune
-			return log0.StringRunes("nil runes", p...)
+			return plog.StringRunes("nil runes", p...)
 		}(),
-		expected: `{
+		want: `{
 			"nil runes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunes("rune slice with zero rune", []rune{rune(0)}...),
-		expected: `{
+		input: plog.StringRunes("rune slice with zero rune", []rune{rune(0)}...),
+		want: `{
 			"rune slice with zero rune":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any runes", []rune("Hello, Wörld!")),
-		expected: `{
+		input: plog.StringAny("any runes", []rune("Hello, Wörld!")),
+		want: `{
 			"any runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any empty runes", []rune{}),
-		expected: `{
+		input: plog.StringAny("any empty runes", []rune{}),
+		want: `{
 			"any empty runes":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any rune slice with zero rune", []rune{rune(0)}),
-		expected: `{
+		input: plog.StringAny("any rune slice with zero rune", []rune{rune(0)}),
+		want: `{
 			"any rune slice with zero rune":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect runes", []rune("Hello, Wörld!")),
-		expected: `{
+		input: plog.StringReflect("reflect runes", []rune("Hello, Wörld!")),
+		want: `{
 			"reflect runes":[72,101,108,108,111,44,32,87,246,114,108,100,33]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect empty runes", []rune{}),
-		expected: `{
+		input: plog.StringReflect("reflect empty runes", []rune{}),
+		want: `{
 			"reflect empty runes":[]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect rune slice with zero rune", []rune{rune(0)}),
-		expected: `{
+		input: plog.StringReflect("reflect rune slice with zero rune", []rune{rune(0)}),
+		want: `{
 			"reflect rune slice with zero rune":[0]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.StringRunesp("runes pointer", &p)
+			return plog.StringRunesp("runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"runes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.StringRunesp("empty runes pointer", &p)
+			return plog.StringRunesp("empty runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty runes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRunesp("nil runes pointer", nil),
-		expected: `{
+		input: plog.StringRunesp("nil runes pointer", nil),
+		want: `{
 			"nil runes pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.StringAny("any runes pointer", &p)
+			return plog.StringAny("any runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any runes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.StringAny("any empty runes pointer", &p)
+			return plog.StringAny("any empty runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty runes pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.StringReflect("reflect runes pointer", &p)
+			return plog.StringReflect("reflect runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect runes pointer":[72,101,108,108,111,44,32,87,246,114,108,100,33]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.StringReflect("reflect empty runes pointer", &p)
+			return plog.StringReflect("reflect empty runes pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty runes pointer":[]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringString("string", "Hello, Wörld!"),
-		expected: `{
+		input: plog.StringString("string", "Hello, Wörld!"),
+		want: `{
 			"string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringString("empty string", ""),
-		expected: `{
+		input: plog.StringString("empty string", ""),
+		want: `{
 			"empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringString("string with zero byte", string(byte(0))),
-		expected: `{
+		input: plog.StringString("string with zero byte", string(byte(0))),
+		want: `{
 			"string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStrings("strings", "Hello, Wörld!", "Hello, World!"),
-		expected: `{
+		input: plog.StringStrings("strings", "Hello, Wörld!", "Hello, World!"),
+		want: `{
 			"strings":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStrings("nil strings"),
-		expected: `{
+		input: plog.StringStrings("nil strings"),
+		want: `{
 			"nil strings":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStrings("empty strings", "", ""),
-		expected: `{
+		input: plog.StringStrings("empty strings", "", ""),
+		want: `{
 			"empty strings":["",""]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStrings("without strings"),
-		expected: `{
+		input: plog.StringStrings("without strings"),
+		want: `{
 			"without strings":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStrings("strings with zero byte", string(byte(0)), string(byte(0))),
-		expected: `{
+		input: plog.StringStrings("strings with zero byte", string(byte(0)), string(byte(0))),
+		want: `{
 			"strings with zero byte":["\u0000","\u0000"]
 		}`,
 	},
 
 	{
 		line:  line(),
-		input: log0.StringAny("any string", "Hello, Wörld!"),
-		expected: `{
+		input: plog.StringAny("any string", "Hello, Wörld!"),
+		want: `{
 			"any string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any empty string", ""),
-		expected: `{
+		input: plog.StringAny("any empty string", ""),
+		want: `{
 			"any empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any string with zero byte", string(byte(0))),
-		expected: `{
+		input: plog.StringAny("any string with zero byte", string(byte(0))),
+		want: `{
 			"any string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect string", "Hello, Wörld!"),
-		expected: `{
+		input: plog.StringReflect("reflect string", "Hello, Wörld!"),
+		want: `{
 			"reflect string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect empty string", ""),
-		expected: `{
+		input: plog.StringReflect("reflect empty string", ""),
+		want: `{
 			"reflect empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect string with zero byte", string(byte(0))),
-		expected: `{
+		input: plog.StringReflect("reflect string with zero byte", string(byte(0))),
+		want: `{
 			"reflect string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.StringStringp("string pointer", &p)
+			return plog.StringStringp("string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.StringStringp("empty string pointer", &p)
+			return plog.StringStringp("empty string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty string pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringStringp("nil string pointer", nil),
-		expected: `{
+		input: plog.StringStringp("nil string pointer", nil),
+		want: `{
 			"nil string pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.StringAny("any string pointer", &p)
+			return plog.StringAny("any string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.StringAny("any empty string pointer", &p)
+			return plog.StringAny("any empty string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty string pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.StringReflect("reflect string pointer", &p)
+			return plog.StringReflect("reflect string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.StringReflect("reflect empty string pointer", &p)
+			return plog.StringReflect("reflect empty string pointer", &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty string pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint("uint", 42),
-		expected: `{
+		input: plog.StringUint("uint", 42),
+		want: `{
 			"uint":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any uint", 42),
-		expected: `{
+		input: plog.StringAny("any uint", 42),
+		want: `{
 			"any uint":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uint", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uint", 42),
+		want: `{
 			"reflect uint":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.StringUintp("uint pointer", &i)
+			return plog.StringUintp("uint pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUintp("nil uint pointer", nil),
-		expected: `{
+		input: plog.StringUintp("nil uint pointer", nil),
+		want: `{
 			"nil uint pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.StringAny("any uint pointer", &i)
+			return plog.StringAny("any uint pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.StringReflect("reflect uint pointer", &i)
+			return plog.StringReflect("reflect uint pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint16("uint16", 42),
-		expected: `{
+		input: plog.StringUint16("uint16", 42),
+		want: `{
 			"uint16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any uint16", 42),
-		expected: `{
+		input: plog.StringAny("any uint16", 42),
+		want: `{
 			"any uint16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uint16", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uint16", 42),
+		want: `{
 			"reflect uint16":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.StringUint16p("uint16 pointer", &i)
+			return plog.StringUint16p("uint16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint16 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint16p("uint16 pointer", nil),
-		expected: `{
+		input: plog.StringUint16p("uint16 pointer", nil),
+		want: `{
 			"uint16 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.StringAny("any uint16 pointer", &i)
+			return plog.StringAny("any uint16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.StringReflect("reflect uint16 pointer", &i)
+			return plog.StringReflect("reflect uint16 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i *uint16
-			return log0.StringReflect("reflect uint16 pointer to nil", i)
+			return plog.StringReflect("reflect uint16 pointer to nil", i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint16 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint32("uint32", 42),
-		expected: `{
+		input: plog.StringUint32("uint32", 42),
+		want: `{
 			"uint32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any uint32", 42),
-		expected: `{
+		input: plog.StringAny("any uint32", 42),
+		want: `{
 			"any uint32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uint32", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uint32", 42),
+		want: `{
 			"reflect uint32":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.StringUint32p("uint32 pointer", &i)
+			return plog.StringUint32p("uint32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint32p("nil uint32 pointer", nil),
-		expected: `{
+		input: plog.StringUint32p("nil uint32 pointer", nil),
+		want: `{
 			"nil uint32 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.StringAny("any uint32 pointer", &i)
+			return plog.StringAny("any uint32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.StringReflect("reflect uint32 pointer", &i)
+			return plog.StringReflect("reflect uint32 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint64("uint64", 42),
-		expected: `{
+		input: plog.StringUint64("uint64", 42),
+		want: `{
 			"uint64":42
 		}`,
 	},
 
 	{
 		line:  line(),
-		input: log0.StringAny("any uint64", 42),
-		expected: `{
+		input: plog.StringAny("any uint64", 42),
+		want: `{
 			"any uint64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uint64", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uint64", 42),
+		want: `{
 			"reflect uint64":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.StringUint64p("uint64 pointer", &i)
+			return plog.StringUint64p("uint64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint64p("nil uint64 pointer", nil),
-		expected: `{
+		input: plog.StringUint64p("nil uint64 pointer", nil),
+		want: `{
 			"nil uint64 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.StringAny("any uint64 pointer", &i)
+			return plog.StringAny("any uint64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.StringReflect("reflect uint64 pointer", &i)
+			return plog.StringReflect("reflect uint64 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint8("uint8", 42),
-		expected: `{
+		input: plog.StringUint8("uint8", 42),
+		want: `{
 			"uint8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any uint8", 42),
-		expected: `{
+		input: plog.StringAny("any uint8", 42),
+		want: `{
 			"any uint8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uint8", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uint8", 42),
+		want: `{
 			"reflect uint8":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.StringUint8p("uint8 pointer", &i)
+			return plog.StringUint8p("uint8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUint8p("nil uint8 pointer", nil),
-		expected: `{
+		input: plog.StringUint8p("nil uint8 pointer", nil),
+		want: `{
 			"nil uint8 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.StringAny("any uint8 pointer", &i)
+			return plog.StringAny("any uint8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.StringReflect("reflect uint8 pointer", &i)
+			return plog.StringReflect("reflect uint8 pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUintptr("uintptr", 42),
-		expected: `{
+		input: plog.StringUintptr("uintptr", 42),
+		want: `{
 			"uintptr":42
 		}`,
 	},
 	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
-		input: log0.StringAny("any uintptr", 42),
-		expected: `{
+		input: plog.StringAny("any uintptr", 42),
+		want: `{
 			"any uintptr":42
 		}`,
 	},
 	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect uintptr", 42),
-		expected: `{
+		input: plog.StringReflect("reflect uintptr", 42),
+		want: `{
 			"reflect uintptr":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.StringUintptrp("uintptr pointer", &i)
+			return plog.StringUintptrp("uintptr pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"uintptr pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringUintptrp("nil uintptr pointer", nil),
-		expected: `{
+		input: plog.StringUintptrp("nil uintptr pointer", nil),
+		want: `{
 			"nil uintptr pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.StringAny("any uintptr pointer", &i)
+			return plog.StringAny("any uintptr pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uintptr pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.StringReflect("reflect uintptr pointer", &i)
+			return plog.StringReflect("reflect uintptr pointer", &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uintptr pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringTime("time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.StringTime("time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.StringAny("any time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"any time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.StringReflect("reflect time", time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"reflect time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.StringTimep("time pointer", &t)
+			return plog.StringTimep("time pointer", &t)
 		}(),
-		expected: `{
+		want: `{
 			"time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var t *time.Time
-			return log0.StringTimep("nil time pointer", t)
+			return plog.StringTimep("nil time pointer", t)
 		}(),
-		expected: `{
+		want: `{
 			"nil time pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
-			return log0.StringFunc("function", func() log0.KV {
+		input: func() plog.KV {
+			return plog.StringFunc("function", func() plog.KV {
 				t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-				return log0.Time(t)
+				return plog.Time(t)
 			})
 		}(),
-		expected: `{
+		want: `{
 			"function":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.StringAny("any time pointer", &t)
+			return plog.StringAny("any time pointer", &t)
 		}(),
-		expected: `{
+		want: `{
 			"any time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.StringReflect("reflect time pointer", &t)
+			return plog.StringReflect("reflect time pointer", &t)
 		}(),
-		expected: `{
+		want: `{
 			"reflect time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringDuration("duration", 42*time.Nanosecond),
-		expected: `{
+		input: plog.StringDuration("duration", 42*time.Nanosecond),
+		want: `{
 			"duration":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any duration", 42*time.Nanosecond),
-		expected: `{
+		input: plog.StringAny("any duration", 42*time.Nanosecond),
+		want: `{
 			"any duration":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect duration", 42*time.Nanosecond),
-		expected: `{
+		input: plog.StringReflect("reflect duration", 42*time.Nanosecond),
+		want: `{
 			"reflect duration":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.StringDurationp("duration pointer", &d)
+			return plog.StringDurationp("duration pointer", &d)
 		}(),
-		expected: `{
+		want: `{
 			"duration pointer":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringDurationp("nil duration pointer", nil),
-		expected: `{
+		input: plog.StringDurationp("nil duration pointer", nil),
+		want: `{
 			"nil duration pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.StringAny("any duration pointer", &d)
+			return plog.StringAny("any duration pointer", &d)
 		}(),
-		expected: `{
+		want: `{
 			"any duration pointer":"42ns"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.StringReflect("reflect duration pointer", &d)
+			return plog.StringReflect("reflect duration pointer", &d)
 		}(),
-		expected: `{
+		want: `{
 			"reflect duration pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any struct", Struct{Name: "John Doe", Age: 42}),
-		expected: `{
+		input: plog.StringAny("any struct", Struct{Name: "John Doe", Age: 42}),
+		want: `{
 			"any struct": {
 				"Name":"John Doe",
 				"Age":42
@@ -1830,11 +1828,11 @@ var KVTestCases = []struct {
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			s := Struct{Name: "John Doe", Age: 42}
-			return log0.StringAny("any struct pointer", &s)
+			return plog.StringAny("any struct pointer", &s)
 		}(),
-		expected: `{
+		want: `{
 			"any struct pointer": {
 				"Name":"John Doe",
 				"Age":42
@@ -1843,8 +1841,8 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("struct reflect", Struct{Name: "John Doe", Age: 42}),
-		expected: `{
+		input: plog.StringReflect("struct reflect", Struct{Name: "John Doe", Age: 42}),
+		want: `{
 			"struct reflect": {
 				"Name":"John Doe",
 				"Age":42
@@ -1853,11 +1851,11 @@ var KVTestCases = []struct {
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			s := Struct{Name: "John Doe", Age: 42}
-			return log0.StringReflect("struct reflect pointer", &s)
+			return plog.StringReflect("struct reflect pointer", &s)
 		}(),
-		expected: `{
+		want: `{
 			"struct reflect pointer": {
 				"Name":"John Doe",
 				"Age":42
@@ -1866,1752 +1864,1752 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.StringRaw("raw json", []byte(`{"foo":"bar"}`)),
-		expected: `{
+		input: plog.StringRaw("raw json", []byte(`{"foo":"bar"}`)),
+		want: `{
 			"raw json":{"foo":"bar"}
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringRaw("raw malformed json object", []byte(`xyz{"foo":"bar"}`)),
+		input: plog.StringRaw("raw malformed json object", []byte(`xyz{"foo":"bar"}`)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'x' looking for beginning of value"),
 	},
 	{
 		line:  line(),
-		input: log0.StringRaw("raw malformed json key/value", []byte(`{"foo":"bar""}`)),
+		input: plog.StringRaw("raw malformed json key/value", []byte(`{"foo":"bar""}`)),
 		error: errors.New(`json: error calling MarshalJSON for type json.Marshaler: invalid character '"' after object key:value pair`),
 	},
 	{
 		line:  line(),
-		input: log0.StringRaw("raw json with unescaped null byte", append([]byte(`{"foo":"`), append([]byte{0}, []byte(`xyz"}`)...)...)),
+		input: plog.StringRaw("raw json with unescaped null byte", append([]byte(`{"foo":"`), append([]byte{0}, []byte(`xyz"}`)...)...)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character '\\x00' in string literal"),
 	},
 	{
 		line:  line(),
-		input: log0.StringRaw("raw nil", nil),
-		expected: `{
+		input: plog.StringRaw("raw nil", nil),
+		want: `{
 			"raw nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any byte array", [3]byte{'f', 'o', 'o'}),
-		expected: `{
+		input: plog.StringAny("any byte array", [3]byte{'f', 'o', 'o'}),
+		want: `{
 			"any byte array":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			a := [3]byte{'f', 'o', 'o'}
-			return log0.StringAny("any byte array pointer", &a)
+			return plog.StringAny("any byte array pointer", &a)
 		}(),
-		expected: `{
+		want: `{
 			"any byte array pointer":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var a *[3]byte
-			return log0.StringAny("any byte array pointer to nil", a)
+			return plog.StringAny("any byte array pointer to nil", a)
 		}(),
-		expected: `{
+		want: `{
 			"any byte array pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect byte array", [3]byte{'f', 'o', 'o'}),
-		expected: `{
+		input: plog.StringReflect("reflect byte array", [3]byte{'f', 'o', 'o'}),
+		want: `{
 			"reflect byte array":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			a := [3]byte{'f', 'o', 'o'}
-			return log0.StringReflect("reflect byte array pointer", &a)
+			return plog.StringReflect("reflect byte array pointer", &a)
 		}(),
-		expected: `{
+		want: `{
 			"reflect byte array pointer":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var a *[3]byte
-			return log0.StringReflect("reflect byte array pointer to nil", a)
+			return plog.StringReflect("reflect byte array pointer to nil", a)
 		}(),
-		expected: `{
+		want: `{
 			"reflect byte array pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringAny("any untyped nil", nil),
-		expected: `{
+		input: plog.StringAny("any untyped nil", nil),
+		want: `{
 			"any untyped nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.StringReflect("reflect untyped nil", nil),
-		expected: `{
+		input: plog.StringReflect("reflect untyped nil", nil),
+		want: `{
 			"reflect untyped nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBool(log0.String("bool true"), true),
-		expected: `{
+		input: plog.TextBool(plog.String("bool true"), true),
+		want: `{
 			"bool true":true
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBool(log0.String("bool false"), false),
-		expected: `{
+		input: plog.TextBool(plog.String("bool false"), false),
+		want: `{
 			"bool false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any bool false"), false),
-		expected: `{
+		input: plog.TextAny(plog.String("any bool false"), false),
+		want: `{
 			"any bool false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("reflect bool false"), false),
-		expected: `{
+		input: plog.TextAny(plog.String("reflect bool false"), false),
+		want: `{
 			"reflect bool false":false
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.TextBoolp(log0.String("bool pointer to true"), &b)
+			return plog.TextBoolp(plog.String("bool pointer to true"), &b)
 		}(),
-		expected: `{
+		want: `{
 			"bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := false
-			return log0.TextBoolp(log0.String("bool pointer to false"), &b)
+			return plog.TextBoolp(plog.String("bool pointer to false"), &b)
 		}(),
-		expected: `{
+		want: `{
 			"bool pointer to false":false
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBoolp(log0.String("bool nil pointer"), nil),
-		expected: `{
+		input: plog.TextBoolp(plog.String("bool nil pointer"), nil),
+		want: `{
 			"bool nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.TextAny(log0.String("any bool pointer to true"), &b)
+			return plog.TextAny(plog.String("any bool pointer to true"), &b)
 		}(),
-		expected: `{
+		want: `{
 			"any bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
 			b2 := &b
-			return log0.TextAny(log0.String("any twice/nested pointer to bool true"), &b2)
+			return plog.TextAny(plog.String("any twice/nested pointer to bool true"), &b2)
 		}(),
-		expected: `{
+		want: `{
 			"any twice/nested pointer to bool true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
-			return log0.TextReflect(log0.String("reflect bool pointer to true"), &b)
+			return plog.TextReflect(plog.String("reflect bool pointer to true"), &b)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			b := true
 			b2 := &b
-			return log0.TextReflect(log0.String("reflect bool twice/nested pointer to true"), &b2)
+			return plog.TextReflect(plog.String("reflect bool twice/nested pointer to true"), &b2)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var b *bool
-			return log0.TextReflect(log0.String("reflect bool pointer to nil"), b)
+			return plog.TextReflect(plog.String("reflect bool pointer to nil"), b)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bool pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes"), []byte("Hello, Wörld!")...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes"), []byte("Hello, Wörld!")...),
+		want: `{
 			"bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes with quote"), []byte(`Hello, "World"!`)...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes with quote"), []byte(`Hello, "World"!`)...),
+		want: `{
 			"bytes with quote":"Hello, \"World\"!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes quote"), []byte(`"Hello, World!"`)...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes quote"), []byte(`"Hello, World!"`)...),
+		want: `{
 			"bytes quote":"\"Hello, World!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes nested quote"), []byte(`"Hello, "World"!"`)...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes nested quote"), []byte(`"Hello, "World"!"`)...),
+		want: `{
 			"bytes nested quote":"\"Hello, \"World\"!\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes json"), []byte(`{"foo":"bar"}`)...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes json"), []byte(`{"foo":"bar"}`)...),
+		want: `{
 			"bytes json":"{\"foo\":\"bar\"}"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("bytes json quote"), []byte(`"{"foo":"bar"}"`)...),
-		expected: `{
+		input: plog.TextBytes(plog.String("bytes json quote"), []byte(`"{"foo":"bar"}"`)...),
+		want: `{
 			"bytes json quote":"\"{\"foo\":\"bar\"}\""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytes(log0.String("empty bytes"), []byte{}...),
-		expected: `{
+		input: plog.TextBytes(plog.String("empty bytes"), []byte{}...),
+		want: `{
 			"empty bytes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var p []byte
-			return log0.TextBytes(log0.String("nil bytes"), p...)
+			return plog.TextBytes(plog.String("nil bytes"), p...)
 		}(),
-		expected: `{
+		want: `{
 			"nil bytes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any bytes"), []byte("Hello, Wörld!")),
-		expected: `{
+		input: plog.TextAny(plog.String("any bytes"), []byte("Hello, Wörld!")),
+		want: `{
 			"any bytes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any empty bytes"), []byte{}),
-		expected: `{
+		input: plog.TextAny(plog.String("any empty bytes"), []byte{}),
+		want: `{
 			"any empty bytes":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect bytes"), []byte("Hello, Wörld!")),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect bytes"), []byte("Hello, Wörld!")),
+		want: `{
 			"reflect bytes":"SGVsbG8sIFfDtnJsZCE="
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect empty bytes"), []byte{}),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect empty bytes"), []byte{}),
+		want: `{
 			"reflect empty bytes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.TextBytesp(log0.String("bytes pointer"), &p)
+			return plog.TextBytesp(plog.String("bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"bytes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.TextBytesp(log0.String("empty bytes pointer"), &p)
+			return plog.TextBytesp(plog.String("empty bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty bytes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextBytesp(log0.String("nil bytes pointer"), nil),
-		expected: `{
+		input: plog.TextBytesp(plog.String("nil bytes pointer"), nil),
+		want: `{
 			"nil bytes pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.TextAny(log0.String("any bytes pointer"), &p)
+			return plog.TextAny(plog.String("any bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any bytes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.TextAny(log0.String("any empty bytes pointer"), &p)
+			return plog.TextAny(plog.String("any empty bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty bytes pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte("Hello, Wörld!")
-			return log0.TextReflect(log0.String("reflect bytes pointer"), &p)
+			return plog.TextReflect(plog.String("reflect bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect bytes pointer":"SGVsbG8sIFfDtnJsZCE="
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []byte{}
-			return log0.TextReflect(log0.String("reflect empty bytes pointer"), &p)
+			return plog.TextReflect(plog.String("reflect empty bytes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty bytes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextComplex128(log0.String("complex128"), complex(1, 23)),
-		expected: `{
+		input: plog.TextComplex128(plog.String("complex128"), complex(1, 23)),
+		want: `{
 			"complex128":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any complex128"), complex(1, 23)),
-		expected: `{
+		input: plog.TextAny(plog.String("any complex128"), complex(1, 23)),
+		want: `{
 			"any complex128":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect complex128"), complex(1, 23)),
+		input: plog.TextReflect(plog.String("reflect complex128"), complex(1, 23)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.TextComplex128p(log0.String("complex128 pointer"), &c)
+			return plog.TextComplex128p(plog.String("complex128 pointer"), &c)
 		}(),
-		expected: `{
+		want: `{
 			"complex128 pointer":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextComplex128p(log0.String("nil complex128 pointer"), nil),
-		expected: `{
+		input: plog.TextComplex128p(plog.String("nil complex128 pointer"), nil),
+		want: `{
 			"nil complex128 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.TextAny(log0.String("any complex128 pointer"), &c)
+			return plog.TextAny(plog.String("any complex128 pointer"), &c)
 		}(),
-		expected: `{
+		want: `{
 			"any complex128 pointer":"1+23i"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex128 = complex(1, 23)
-			return log0.TextReflect(log0.String("reflect complex128 pointer"), &c)
+			return plog.TextReflect(plog.String("reflect complex128 pointer"), &c)
 		}(),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line:  line(),
-		input: log0.TextComplex64(log0.String("complex64"), complex(3, 21)),
-		expected: `{
+		input: plog.TextComplex64(plog.String("complex64"), complex(3, 21)),
+		want: `{
 			"complex64":"3+21i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any complex64"), complex(3, 21)),
-		expected: `{
+		input: plog.TextAny(plog.String("any complex64"), complex(3, 21)),
+		want: `{
 			"any complex64":"3+21i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect complex64"), complex(3, 21)),
+		input: plog.TextReflect(plog.String("reflect complex64"), complex(3, 21)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
 	},
 	{
 		line:  line(),
-		input: log0.TextError(log0.String("error"), errors.New("something went wrong")),
-		expected: `{
+		input: plog.TextError(plog.String("error"), errors.New("something went wrong")),
+		want: `{
 			"error":"something went wrong"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextError(log0.String("nil error"), nil),
-		expected: `{
+		input: plog.TextError(plog.String("nil error"), nil),
+		want: `{
 			"nil error":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any error"), errors.New("something went wrong")),
-		expected: `{
+		input: plog.TextAny(plog.String("any error"), errors.New("something went wrong")),
+		want: `{
 			"any error":"something went wrong"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect error"), errors.New("something went wrong")),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect error"), errors.New("something went wrong")),
+		want: `{
 			"reflect error":{}
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.TextComplex64p(log0.String("complex64 pointer"), &c)
+			return plog.TextComplex64p(plog.String("complex64 pointer"), &c)
 		}(),
-		expected: `{
+		want: `{
 			"complex64 pointer":"1+23i"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextComplex64p(log0.String("nil complex64 pointer"), nil),
-		expected: `{
+		input: plog.TextComplex64p(plog.String("nil complex64 pointer"), nil),
+		want: `{
 			"nil complex64 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.TextAny(log0.String("any complex64 pointer"), &c)
+			return plog.TextAny(plog.String("any complex64 pointer"), &c)
 		}(),
-		expected: `{
+		want: `{
 			"any complex64 pointer":"1+23i"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var c complex64 = complex(1, 23)
-			return log0.TextReflect(log0.String("reflect complex64 pointer"), &c)
+			return plog.TextReflect(plog.String("reflect complex64 pointer"), &c)
 		}(),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat32(log0.String("float32"), 4.2),
-		expected: `{
+		input: plog.TextFloat32(plog.String("float32"), 4.2),
+		want: `{
 			"float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat32(log0.String("high precision float32"), 0.123456789),
-		expected: `{
+		input: plog.TextFloat32(plog.String("high precision float32"), 0.123456789),
+		want: `{
 			"high precision float32":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat32(log0.String("zero float32"), 0),
-		expected: `{
+		input: plog.TextFloat32(plog.String("zero float32"), 0),
+		want: `{
 			"zero float32":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any float32"), 4.2),
-		expected: `{
+		input: plog.TextAny(plog.String("any float32"), 4.2),
+		want: `{
 			"any float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any zero float32"), 0),
-		expected: `{
+		input: plog.TextAny(plog.String("any zero float32"), 0),
+		want: `{
 			"any zero float32":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect float32"), 4.2),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect float32"), 4.2),
+		want: `{
 			"reflect float32":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect zero float32"), 0),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect zero float32"), 0),
+		want: `{
 			"reflect zero float32":0
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.TextFloat32p(log0.String("float32 pointer"), &f)
+			return plog.TextFloat32p(plog.String("float32 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 0.123456789
-			return log0.TextFloat32p(log0.String("high precision float32 pointer"), &f)
+			return plog.TextFloat32p(plog.String("high precision float32 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"high precision float32 pointer":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat32p(log0.String("float32 nil pointer"), nil),
-		expected: `{
+		input: plog.TextFloat32p(plog.String("float32 nil pointer"), nil),
+		want: `{
 			"float32 nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.TextAny(log0.String("any float32 pointer"), &f)
+			return plog.TextAny(plog.String("any float32 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"any float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float32 = 4.2
-			return log0.TextReflect(log0.String("reflect float32 pointer"), &f)
+			return plog.TextReflect(plog.String("reflect float32 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float32 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f *float32
-			return log0.TextReflect(log0.String("reflect float32 pointer to nil"), f)
+			return plog.TextReflect(plog.String("reflect float32 pointer to nil"), f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float32 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat64(log0.String("float64"), 4.2),
-		expected: `{
+		input: plog.TextFloat64(plog.String("float64"), 4.2),
+		want: `{
 			"float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat64(log0.String("high precision float64"), 0.123456789),
-		expected: `{
+		input: plog.TextFloat64(plog.String("high precision float64"), 0.123456789),
+		want: `{
 			"high precision float64":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat64(log0.String("zero float64"), 0),
-		expected: `{
+		input: plog.TextFloat64(plog.String("zero float64"), 0),
+		want: `{
 			"zero float64":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any float64"), 4.2),
-		expected: `{
+		input: plog.TextAny(plog.String("any float64"), 4.2),
+		want: `{
 			"any float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any zero float64"), 0),
-		expected: `{
+		input: plog.TextAny(plog.String("any zero float64"), 0),
+		want: `{
 			"any zero float64":0
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect float64"), 4.2),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect float64"), 4.2),
+		want: `{
 			"reflect float64":4.2
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect zero float64"), 0),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect zero float64"), 0),
+		want: `{
 			"reflect zero float64":0
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.TextFloat64p(log0.String("float64 pointer"), &f)
+			return plog.TextFloat64p(plog.String("float64 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 0.123456789
-			return log0.TextFloat64p(log0.String("high precision float64 pointer"), &f)
+			return plog.TextFloat64p(plog.String("high precision float64 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"high precision float64 pointer":0.123456789
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextFloat64p(log0.String("float64 nil pointer"), nil),
-		expected: `{
+		input: plog.TextFloat64p(plog.String("float64 nil pointer"), nil),
+		want: `{
 			"float64 nil pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.TextAny(log0.String("any float64 pointer"), &f)
+			return plog.TextAny(plog.String("any float64 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"any float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f float64 = 4.2
-			return log0.TextReflect(log0.String("reflect float64 pointer"), &f)
+			return plog.TextReflect(plog.String("reflect float64 pointer"), &f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float64 pointer":4.2
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var f *float64
-			return log0.TextReflect(log0.String("reflect float64 pointer to nil"), f)
+			return plog.TextReflect(plog.String("reflect float64 pointer to nil"), f)
 		}(),
-		expected: `{
+		want: `{
 			"reflect float64 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextInt(log0.String("int"), 42),
-		expected: `{
+		input: plog.TextInt(plog.String("int"), 42),
+		want: `{
 			"int":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any int"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any int"), 42),
+		want: `{
 			"any int":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect int"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect int"), 42),
+		want: `{
 			"reflect int":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.TextIntp(log0.String("int pointer"), &i)
+			return plog.TextIntp(plog.String("int pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"int pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.TextAny(log0.String("any int pointer"), &i)
+			return plog.TextAny(plog.String("any int pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int = 42
-			return log0.TextReflect(log0.String("reflect int pointer"), &i)
+			return plog.TextReflect(plog.String("reflect int pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextInt16(log0.String("int16"), 42),
-		expected: `{
+		input: plog.TextInt16(plog.String("int16"), 42),
+		want: `{
 			"int16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any int16"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any int16"), 42),
+		want: `{
 			"any int16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect int16"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect int16"), 42),
+		want: `{
 			"reflect int16":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.TextInt16p(log0.String("int16 pointer"), &i)
+			return plog.TextInt16p(plog.String("int16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"int16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.TextAny(log0.String("any int16 pointer"), &i)
+			return plog.TextAny(plog.String("any int16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int16 = 42
-			return log0.TextReflect(log0.String("reflect int16 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect int16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int16 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextInt32(log0.String("int32"), 42),
-		expected: `{
+		input: plog.TextInt32(plog.String("int32"), 42),
+		want: `{
 			"int32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any int32"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any int32"), 42),
+		want: `{
 			"any int32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect int32"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect int32"), 42),
+		want: `{
 			"reflect int32":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.TextInt32p(log0.String("int32 pointer"), &i)
+			return plog.TextInt32p(plog.String("int32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"int32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.TextAny(log0.String("any int32 pointer"), &i)
+			return plog.TextAny(plog.String("any int32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int32 = 42
-			return log0.TextReflect(log0.String("reflect int32 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect int32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextInt64(log0.String("int64"), 42),
-		expected: `{
+		input: plog.TextInt64(plog.String("int64"), 42),
+		want: `{
 			"int64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any int64"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any int64"), 42),
+		want: `{
 			"any int64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect int64"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect int64"), 42),
+		want: `{
 			"reflect int64":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.TextInt64p(log0.String("int64 pointer"), &i)
+			return plog.TextInt64p(plog.String("int64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"int64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.TextAny(log0.String("any int64 pointer"), &i)
+			return plog.TextAny(plog.String("any int64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int64 = 42
-			return log0.TextReflect(log0.String("reflect int64 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect int64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextInt8(log0.String("int8"), 42),
-		expected: `{
+		input: plog.TextInt8(plog.String("int8"), 42),
+		want: `{
 			"int8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any int8"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any int8"), 42),
+		want: `{
 			"any int8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect int8"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect int8"), 42),
+		want: `{
 			"reflect int8":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.TextInt8p(log0.String("int8 pointer"), &i)
+			return plog.TextInt8p(plog.String("int8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"int8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.TextAny(log0.String("any int8 pointer"), &i)
+			return plog.TextAny(plog.String("any int8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any int8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i int8 = 42
-			return log0.TextReflect(log0.String("reflect int8 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect int8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect int8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("runes"), []rune("Hello, Wörld!")...),
-		expected: `{
+		input: plog.TextRunes(plog.String("runes"), []rune("Hello, Wörld!")...),
+		want: `{
 			"runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("empty runes"), []rune{}...),
-		expected: `{
+		input: plog.TextRunes(plog.String("empty runes"), []rune{}...),
+		want: `{
 			"empty runes":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var p []rune
-			return log0.TextRunes(log0.String("nil runes"), p...)
+			return plog.TextRunes(plog.String("nil runes"), p...)
 		}(),
-		expected: `{
+		want: `{
 			"nil runes":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunes(log0.String("rune slice with zero rune"), []rune{rune(0)}...),
-		expected: `{
+		input: plog.TextRunes(plog.String("rune slice with zero rune"), []rune{rune(0)}...),
+		want: `{
 			"rune slice with zero rune":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any runes"), []rune("Hello, Wörld!")),
-		expected: `{
+		input: plog.TextAny(plog.String("any runes"), []rune("Hello, Wörld!")),
+		want: `{
 			"any runes":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any empty runes"), []rune{}),
-		expected: `{
+		input: plog.TextAny(plog.String("any empty runes"), []rune{}),
+		want: `{
 			"any empty runes":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any rune slice with zero rune"), []rune{rune(0)}),
-		expected: `{
+		input: plog.TextAny(plog.String("any rune slice with zero rune"), []rune{rune(0)}),
+		want: `{
 			"any rune slice with zero rune":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect runes"), []rune("Hello, Wörld!")),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect runes"), []rune("Hello, Wörld!")),
+		want: `{
 			"reflect runes":[72,101,108,108,111,44,32,87,246,114,108,100,33]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect empty runes"), []rune{}),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect empty runes"), []rune{}),
+		want: `{
 			"reflect empty runes":[]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect rune slice with zero rune"), []rune{rune(0)}),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect rune slice with zero rune"), []rune{rune(0)}),
+		want: `{
 			"reflect rune slice with zero rune":[0]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.TextRunesp(log0.String("runes pointer"), &p)
+			return plog.TextRunesp(plog.String("runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"runes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.TextRunesp(log0.String("empty runes pointer"), &p)
+			return plog.TextRunesp(plog.String("empty runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty runes pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRunesp(log0.String("nil runes pointer"), nil),
-		expected: `{
+		input: plog.TextRunesp(plog.String("nil runes pointer"), nil),
+		want: `{
 			"nil runes pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.TextAny(log0.String("any runes pointer"), &p)
+			return plog.TextAny(plog.String("any runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any runes pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.TextAny(log0.String("any empty runes pointer"), &p)
+			return plog.TextAny(plog.String("any empty runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty runes pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune("Hello, Wörld!")
-			return log0.TextReflect(log0.String("reflect runes pointer"), &p)
+			return plog.TextReflect(plog.String("reflect runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect runes pointer":[72,101,108,108,111,44,32,87,246,114,108,100,33]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := []rune{}
-			return log0.TextReflect(log0.String("reflect empty runes pointer"), &p)
+			return plog.TextReflect(plog.String("reflect empty runes pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty runes pointer":[]
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextText(log0.String("string"), log0.String("Hello, Wörld!")),
-		expected: `{
+		input: plog.TextText(plog.String("string"), plog.String("Hello, Wörld!")),
+		want: `{
 			"string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextText(log0.String("empty string"), log0.String("")),
-		expected: `{
+		input: plog.TextText(plog.String("empty string"), plog.String("")),
+		want: `{
 			"empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextText(log0.String("string with zero byte"), log0.String((string(byte(0))))),
-		expected: `{
+		input: plog.TextText(plog.String("string with zero byte"), plog.String((string(byte(0))))),
+		want: `{
 			"string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextString(log0.String("string"), "Hello, Wörld!"),
-		expected: `{
+		input: plog.TextString(plog.String("string"), "Hello, Wörld!"),
+		want: `{
 			"string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextString(log0.String("empty string"), ""),
-		expected: `{
+		input: plog.TextString(plog.String("empty string"), ""),
+		want: `{
 			"empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextString(log0.String("string with zero byte"), string(byte(0))),
-		expected: `{
+		input: plog.TextString(plog.String("string with zero byte"), string(byte(0))),
+		want: `{
 			"string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any string"), "Hello, Wörld!"),
-		expected: `{
+		input: plog.TextAny(plog.String("any string"), "Hello, Wörld!"),
+		want: `{
 			"any string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any empty string"), ""),
-		expected: `{
+		input: plog.TextAny(plog.String("any empty string"), ""),
+		want: `{
 			"any empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any string with zero byte"), string(byte(0))),
-		expected: `{
+		input: plog.TextAny(plog.String("any string with zero byte"), string(byte(0))),
+		want: `{
 			"any string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect string"), "Hello, Wörld!"),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect string"), "Hello, Wörld!"),
+		want: `{
 			"reflect string":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect empty string"), ""),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect empty string"), ""),
+		want: `{
 			"reflect empty string":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect string with zero byte"), string(byte(0))),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect string with zero byte"), string(byte(0))),
+		want: `{
 			"reflect string with zero byte":"\u0000"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.TextStringp(log0.String("string pointer"), &p)
+			return plog.TextStringp(plog.String("string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.TextStringp(log0.String("empty string pointer"), &p)
+			return plog.TextStringp(plog.String("empty string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"empty string pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextStringp(log0.String("nil string pointer"), nil),
-		expected: `{
+		input: plog.TextStringp(plog.String("nil string pointer"), nil),
+		want: `{
 			"nil string pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.TextAny(log0.String("any string pointer"), &p)
+			return plog.TextAny(plog.String("any string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.TextAny(log0.String("any empty string pointer"), &p)
+			return plog.TextAny(plog.String("any empty string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"any empty string pointer":""
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := "Hello, Wörld!"
-			return log0.TextReflect(log0.String("reflect string pointer"), &p)
+			return plog.TextReflect(plog.String("reflect string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect string pointer":"Hello, Wörld!"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			p := ""
-			return log0.TextReflect(log0.String("reflect empty string pointer"), &p)
+			return plog.TextReflect(plog.String("reflect empty string pointer"), &p)
 		}(),
-		expected: `{
+		want: `{
 			"reflect empty string pointer":""
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint(log0.String("uint"), 42),
-		expected: `{
+		input: plog.TextUint(plog.String("uint"), 42),
+		want: `{
 			"uint":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uint"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uint"), 42),
+		want: `{
 			"any uint":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uint"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uint"), 42),
+		want: `{
 			"reflect uint":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.TextUintp(log0.String("uint pointer"), &i)
+			return plog.TextUintp(plog.String("uint pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUintp(log0.String("nil uint pointer"), nil),
-		expected: `{
+		input: plog.TextUintp(plog.String("nil uint pointer"), nil),
+		want: `{
 			"nil uint pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.TextAny(log0.String("any uint pointer"), &i)
+			return plog.TextAny(plog.String("any uint pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint = 42
-			return log0.TextReflect(log0.String("reflect uint pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uint pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint16(log0.String("uint16"), 42),
-		expected: `{
+		input: plog.TextUint16(plog.String("uint16"), 42),
+		want: `{
 			"uint16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uint16"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uint16"), 42),
+		want: `{
 			"any uint16":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uint16"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uint16"), 42),
+		want: `{
 			"reflect uint16":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.TextUint16p(log0.String("uint16 pointer"), &i)
+			return plog.TextUint16p(plog.String("uint16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint16 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint16p(log0.String("uint16 pointer"), nil),
-		expected: `{
+		input: plog.TextUint16p(plog.String("uint16 pointer"), nil),
+		want: `{
 			"uint16 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.TextAny(log0.String("any uint16 pointer"), &i)
+			return plog.TextAny(plog.String("any uint16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint16 = 42
-			return log0.TextReflect(log0.String("reflect uint16 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uint16 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint16 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i *uint16
-			return log0.TextReflect(log0.String("reflect uint16 pointer to nil"), i)
+			return plog.TextReflect(plog.String("reflect uint16 pointer to nil"), i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint16 pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint32(log0.String("uint32"), 42),
-		expected: `{
+		input: plog.TextUint32(plog.String("uint32"), 42),
+		want: `{
 			"uint32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uint32"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uint32"), 42),
+		want: `{
 			"any uint32":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uint32"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uint32"), 42),
+		want: `{
 			"reflect uint32":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.TextUint32p(log0.String("uint32 pointer"), &i)
+			return plog.TextUint32p(plog.String("uint32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint32p(log0.String("nil uint32 pointer"), nil),
-		expected: `{
+		input: plog.TextUint32p(plog.String("nil uint32 pointer"), nil),
+		want: `{
 			"nil uint32 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.TextAny(log0.String("any uint32 pointer"), &i)
+			return plog.TextAny(plog.String("any uint32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint32 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint32 = 42
-			return log0.TextReflect(log0.String("reflect uint32 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uint32 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint32 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint64(log0.String("uint64"), 42),
-		expected: `{
+		input: plog.TextUint64(plog.String("uint64"), 42),
+		want: `{
 			"uint64":42
 		}`,
 	},
 
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uint64"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uint64"), 42),
+		want: `{
 			"any uint64":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uint64"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uint64"), 42),
+		want: `{
 			"reflect uint64":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.TextUint64p(log0.String("uint64 pointer"), &i)
+			return plog.TextUint64p(plog.String("uint64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint64p(log0.String("nil uint64 pointer"), nil),
-		expected: `{
+		input: plog.TextUint64p(plog.String("nil uint64 pointer"), nil),
+		want: `{
 			"nil uint64 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.TextAny(log0.String("any uint64 pointer"), &i)
+			return plog.TextAny(plog.String("any uint64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint64 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint64 = 42
-			return log0.TextReflect(log0.String("reflect uint64 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uint64 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint64 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint8(log0.String("uint8"), 42),
-		expected: `{
+		input: plog.TextUint8(plog.String("uint8"), 42),
+		want: `{
 			"uint8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uint8"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uint8"), 42),
+		want: `{
 			"any uint8":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uint8"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uint8"), 42),
+		want: `{
 			"reflect uint8":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.TextUint8p(log0.String("uint8 pointer"), &i)
+			return plog.TextUint8p(plog.String("uint8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uint8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUint8p(log0.String("nil uint8 pointer"), nil),
-		expected: `{
+		input: plog.TextUint8p(plog.String("nil uint8 pointer"), nil),
+		want: `{
 			"nil uint8 pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.TextAny(log0.String("any uint8 pointer"), &i)
+			return plog.TextAny(plog.String("any uint8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uint8 pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uint8 = 42
-			return log0.TextReflect(log0.String("reflect uint8 pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uint8 pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uint8 pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUintptr(log0.String("uintptr"), 42),
-		expected: `{
+		input: plog.TextUintptr(plog.String("uintptr"), 42),
+		want: `{
 			"uintptr":42
 		}`,
 	},
 	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any uintptr"), 42),
-		expected: `{
+		input: plog.TextAny(plog.String("any uintptr"), 42),
+		want: `{
 			"any uintptr":42
 		}`,
 	},
 	// FIXME: use var x uintptr = 42
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect uintptr"), 42),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect uintptr"), 42),
+		want: `{
 			"reflect uintptr":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.TextUintptrp(log0.String("uintptr pointer"), &i)
+			return plog.TextUintptrp(plog.String("uintptr pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"uintptr pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextUintptrp(log0.String("nil uintptr pointer"), nil),
-		expected: `{
+		input: plog.TextUintptrp(plog.String("nil uintptr pointer"), nil),
+		want: `{
 			"nil uintptr pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.TextAny(log0.String("any uintptr pointer"), &i)
+			return plog.TextAny(plog.String("any uintptr pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"any uintptr pointer":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var i uintptr = 42
-			return log0.TextReflect(log0.String("reflect uintptr pointer"), &i)
+			return plog.TextReflect(plog.String("reflect uintptr pointer"), &i)
 		}(),
-		expected: `{
+		want: `{
 			"reflect uintptr pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextTime(log0.String("time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.TextTime(plog.String("time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.TextAny(plog.String("any time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"any time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect time"), time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)),
+		want: `{
 			"reflect time":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.TextTimep(log0.String("time pointer"), &t)
+			return plog.TextTimep(plog.String("time pointer"), &t)
 		}(),
-		expected: `{
+		want: `{
 			"time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var t *time.Time
-			return log0.TextTimep(log0.String("nil time pointer"), t)
+			return plog.TextTimep(plog.String("nil time pointer"), t)
 		}(),
-		expected: `{
+		want: `{
 			"nil time pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
-			return log0.TextFunc(log0.String("function"), func() json.Marshaler {
+		input: func() plog.KV {
+			return plog.TextFunc(plog.String("function"), func() json.Marshaler {
 				t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-				return log0.Time(t)
+				return plog.Time(t)
 			})
 		}(),
-		expected: `{
+		want: `{
 			"function":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.TextAny(log0.String("any time pointer"), &t)
+			return plog.TextAny(plog.String("any time pointer"), &t)
 		}(),
-		expected: `{
+		want: `{
 			"any time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
-			return log0.TextReflect(log0.String("reflect time pointer"), &t)
+			return plog.TextReflect(plog.String("reflect time pointer"), &t)
 		}(),
-		expected: `{
+		want: `{
 			"reflect time pointer":"1970-01-01T00:00:00.000000042Z"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextDuration(log0.String("duration"), 42*time.Nanosecond),
-		expected: `{
+		input: plog.TextDuration(plog.String("duration"), 42*time.Nanosecond),
+		want: `{
 			"duration":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any duration"), 42*time.Nanosecond),
-		expected: `{
+		input: plog.TextAny(plog.String("any duration"), 42*time.Nanosecond),
+		want: `{
 			"any duration":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect duration"), 42*time.Nanosecond),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect duration"), 42*time.Nanosecond),
+		want: `{
 			"reflect duration":42
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.TextDurationp(log0.String("duration pointer"), &d)
+			return plog.TextDurationp(plog.String("duration pointer"), &d)
 		}(),
-		expected: `{
+		want: `{
 			"duration pointer":"42ns"
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextDurationp(log0.String("nil duration pointer"), nil),
-		expected: `{
+		input: plog.TextDurationp(plog.String("nil duration pointer"), nil),
+		want: `{
 			"nil duration pointer":null
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.TextAny(log0.String("any duration pointer"), &d)
+			return plog.TextAny(plog.String("any duration pointer"), &d)
 		}(),
-		expected: `{
+		want: `{
 			"any duration pointer":"42ns"
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			d := 42 * time.Nanosecond
-			return log0.TextReflect(log0.String("reflect duration pointer"), &d)
+			return plog.TextReflect(plog.String("reflect duration pointer"), &d)
 		}(),
-		expected: `{
+		want: `{
 			"reflect duration pointer":42
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any struct"), Struct{Name: "John Doe", Age: 42}),
-		expected: `{
+		input: plog.TextAny(plog.String("any struct"), Struct{Name: "John Doe", Age: 42}),
+		want: `{
 			"any struct": {
 				"Name":"John Doe",
 				"Age":42
@@ -3620,11 +3618,11 @@ var KVTestCases = []struct {
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			s := Struct{Name: "John Doe", Age: 42}
-			return log0.TextAny(log0.String("any struct pointer"), &s)
+			return plog.TextAny(plog.String("any struct pointer"), &s)
 		}(),
-		expected: `{
+		want: `{
 			"any struct pointer": {
 				"Name":"John Doe",
 				"Age":42
@@ -3633,8 +3631,8 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("struct reflect"), Struct{Name: "John Doe", Age: 42}),
-		expected: `{
+		input: plog.TextReflect(plog.String("struct reflect"), Struct{Name: "John Doe", Age: 42}),
+		want: `{
 			"struct reflect": {
 				"Name":"John Doe",
 				"Age":42
@@ -3643,11 +3641,11 @@ var KVTestCases = []struct {
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			s := Struct{Name: "John Doe", Age: 42}
-			return log0.TextReflect(log0.String("struct reflect pointer"), &s)
+			return plog.TextReflect(plog.String("struct reflect pointer"), &s)
 		}(),
-		expected: `{
+		want: `{
 			"struct reflect pointer": {
 				"Name":"John Doe",
 				"Age":42
@@ -3656,127 +3654,125 @@ var KVTestCases = []struct {
 	},
 	{
 		line:  line(),
-		input: log0.TextRaw(log0.String("raw json"), []byte(`{"foo":"bar"}`)),
-		expected: `{
+		input: plog.TextRaw(plog.String("raw json"), []byte(`{"foo":"bar"}`)),
+		want: `{
 			"raw json":{"foo":"bar"}
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextRaw(log0.String("raw malformed json object"), []byte(`xyz{"foo":"bar"}`)),
+		input: plog.TextRaw(plog.String("raw malformed json object"), []byte(`xyz{"foo":"bar"}`)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'x' looking for beginning of value"),
 	},
 	{
 		line:  line(),
-		input: log0.TextRaw(log0.String("raw malformed json key/value"), []byte(`{"foo":"bar""}`)),
+		input: plog.TextRaw(plog.String("raw malformed json key/value"), []byte(`{"foo":"bar""}`)),
 		error: errors.New(`json: error calling MarshalJSON for type json.Marshaler: invalid character '"' after object key:value pair`),
 	},
 	{
 		line:  line(),
-		input: log0.TextRaw(log0.String("raw json with unescaped null byte"), append([]byte(`{"foo":"`), append([]byte{0}, []byte(`xyz"}`)...)...)),
+		input: plog.TextRaw(plog.String("raw json with unescaped null byte"), append([]byte(`{"foo":"`), append([]byte{0}, []byte(`xyz"}`)...)...)),
 		error: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character '\\x00' in string literal"),
 	},
 	{
 		line:  line(),
-		input: log0.TextRaw(log0.String("raw nil"), nil),
-		expected: `{
+		input: plog.TextRaw(plog.String("raw nil"), nil),
+		want: `{
 			"raw nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any byte array"), [3]byte{'f', 'o', 'o'}),
-		expected: `{
+		input: plog.TextAny(plog.String("any byte array"), [3]byte{'f', 'o', 'o'}),
+		want: `{
 			"any byte array":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			a := [3]byte{'f', 'o', 'o'}
-			return log0.TextAny(log0.String("any byte array pointer"), &a)
+			return plog.TextAny(plog.String("any byte array pointer"), &a)
 		}(),
-		expected: `{
+		want: `{
 			"any byte array pointer":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var a *[3]byte
-			return log0.TextAny(log0.String("any byte array pointer to nil"), a)
+			return plog.TextAny(plog.String("any byte array pointer to nil"), a)
 		}(),
-		expected: `{
+		want: `{
 			"any byte array pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect byte array"), [3]byte{'f', 'o', 'o'}),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect byte array"), [3]byte{'f', 'o', 'o'}),
+		want: `{
 			"reflect byte array":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			a := [3]byte{'f', 'o', 'o'}
-			return log0.TextReflect(log0.String("reflect byte array pointer"), &a)
+			return plog.TextReflect(plog.String("reflect byte array pointer"), &a)
 		}(),
-		expected: `{
+		want: `{
 			"reflect byte array pointer":[102,111,111]
 		}`,
 	},
 	{
 		line: line(),
-		input: func() log0.KV {
+		input: func() plog.KV {
 			var a *[3]byte
-			return log0.TextReflect(log0.String("reflect byte array pointer to nil"), a)
+			return plog.TextReflect(plog.String("reflect byte array pointer to nil"), a)
 		}(),
-		expected: `{
+		want: `{
 			"reflect byte array pointer to nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextAny(log0.String("any untyped nil"), nil),
-		expected: `{
+		input: plog.TextAny(plog.String("any untyped nil"), nil),
+		want: `{
 			"any untyped nil":null
 		}`,
 	},
 	{
 		line:  line(),
-		input: log0.TextReflect(log0.String("reflect untyped nil"), nil),
-		expected: `{
+		input: plog.TextReflect(plog.String("reflect untyped nil"), nil),
+		want: `{
 			"reflect untyped nil":null
 		}`,
 	},
 }
 
 func TestKV(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	for _, tc := range KVTestCases {
-		tc := tc
-		t.Run(fmt.Sprint(tc.input), func(t *testing.T) {
+	for _, tt := range KVTests {
+		tt := tt
+		t.Run(tt.line+"/"+fmt.Sprint(tt.input), func(t *testing.T) {
 			t.Parallel()
-			linkToExample := fmt.Sprintf("%s:%d", testFile, tc.line)
 
-			txt, err := tc.input.MarshalText()
+			txt, err := tt.input.MarshalText()
 			if err != nil {
 				t.Fatalf("encoding marshal text error: %s", err)
 			}
 
-			m := map[string]json.Marshaler{string(txt): tc.input}
+			m := map[string]json.Marshaler{string(txt): tt.input}
 
 			jsn, err := json.Marshal(m)
 
-			if !equal4.ErrorEqual(err, tc.error) {
-				t.Fatalf("unexpected marshal error, expected: %s, recieved: %s %s", tc.error, err, linkToExample)
+			if fmt.Sprint(err) != fmt.Sprint(tt.error) {
+				t.Fatalf("unwant marshal error, want: %s, recieved: %s %s", tt.error, err, tt.line)
 			}
 
 			if err == nil {
-				ja := jsonassert.New(testprinter{t: t, link: linkToExample})
-				ja.Assertf(string(jsn), tc.expected)
+				ja := jsonassert.New(testprinter{t: t, link: tt.line})
+				ja.Assertf(string(jsn), tt.want)
 			}
 		})
 	}

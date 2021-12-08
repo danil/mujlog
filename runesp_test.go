@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalRunespTestCases = []marshalTestCase{
+var MarshalRunespTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune("Hello, Wörld!")
-			return map[string]json.Marshaler{"runes pointer": log0.Runesp(&p)}
+			return map[string]json.Marshaler{"runes pointer": plog.Runesp(&p)}
 		}(),
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"runes pointer":"Hello, Wörld!"
 		}`,
 	},
@@ -29,20 +28,20 @@ var MarshalRunespTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune{}
-			return map[string]json.Marshaler{"empty runes pointer": log0.Runesp(&p)}
+			return map[string]json.Marshaler{"empty runes pointer": plog.Runesp(&p)}
 		}(),
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"empty runes pointer":""
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil runes pointer": log0.Runesp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil runes pointer": plog.Runesp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil runes pointer":null
 		}`,
 	},
@@ -50,11 +49,11 @@ var MarshalRunespTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune("Hello, Wörld!")
-			return map[string]json.Marshaler{"any runes pointer": log0.Any(&p)}
+			return map[string]json.Marshaler{"any runes pointer": plog.Any(&p)}
 		}(),
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"any runes pointer":"Hello, Wörld!"
 		}`,
 	},
@@ -62,11 +61,11 @@ var MarshalRunespTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune{}
-			return map[string]json.Marshaler{"any empty runes pointer": log0.Any(&p)}
+			return map[string]json.Marshaler{"any empty runes pointer": plog.Any(&p)}
 		}(),
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"any empty runes pointer":""
 		}`,
 	},
@@ -74,11 +73,11 @@ var MarshalRunespTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune("Hello, Wörld!")
-			return map[string]json.Marshaler{"reflect runes pointer": log0.Reflect(&p)}
+			return map[string]json.Marshaler{"reflect runes pointer": plog.Reflect(&p)}
 		}(),
-		expected:     "[72 101 108 108 111 44 32 87 246 114 108 100 33]",
-		expectedText: "[72 101 108 108 111 44 32 87 246 114 108 100 33]",
-		expectedJSON: `{
+		want:     "[72 101 108 108 111 44 32 87 246 114 108 100 33]",
+		wantText: "[72 101 108 108 111 44 32 87 246 114 108 100 33]",
+		wantJSON: `{
 			"reflect runes pointer":[72,101,108,108,111,44,32,87,246,114,108,100,33]
 		}`,
 	},
@@ -86,17 +85,16 @@ var MarshalRunespTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := []rune{}
-			return map[string]json.Marshaler{"reflect empty runes pointer": log0.Reflect(&p)}
+			return map[string]json.Marshaler{"reflect empty runes pointer": plog.Reflect(&p)}
 		}(),
-		expected:     "[]",
-		expectedText: "[]",
-		expectedJSON: `{
+		want:     "[]",
+		wantText: "[]",
+		wantJSON: `{
 			"reflect empty runes pointer":[]
 		}`,
 	},
 }
 
 func TestMarshalRunesp(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalRunespTestCases)
+	testMarshal(t, MarshalRunespTests)
 }

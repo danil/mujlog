@@ -2,47 +2,45 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint64TestCases = []marshalTestCase{
+var MarshalUint64Tests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"uint64": log0.Uint64(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"uint64": plog.Uint64(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uint64":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any uint64": log0.Any(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any uint64": plog.Any(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uint64":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect uint64": log0.Reflect(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect uint64": plog.Reflect(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uint64":42
 		}`,
 	},
 }
 
 func TestMarshalUint64(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint64TestCases)
+	testMarshal(t, MarshalUint64Tests)
 }

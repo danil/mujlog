@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Int64p returns stringer/JSON/text marshaler for the int64 pointer type.
 func Int64p(p *int64) int64P { return int64P{P: p} }

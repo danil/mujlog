@@ -2,47 +2,45 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint32TestCases = []marshalTestCase{
+var MarshalUint32Tests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"uint32": log0.Uint32(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"uint32": plog.Uint32(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uint32":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any uint32": log0.Any(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any uint32": plog.Any(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uint32":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect uint32": log0.Reflect(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect uint32": plog.Reflect(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uint32":42
 		}`,
 	},
 }
 
 func TestMarshalUint32(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint32TestCases)
+	testMarshal(t, MarshalUint32Tests)
 }

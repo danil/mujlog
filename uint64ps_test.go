@@ -2,44 +2,43 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint64psTestCases = []marshalTestCase{
+var MarshalUint64psTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint64 = 42, 77
-			return map[string]json.Marshaler{"uint64 pointer slice": log0.Uint64ps(&f, &f2)}
+			return map[string]json.Marshaler{"uint64 pointer slice": plog.Uint64ps(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"uint64 pointer slice":[42,77]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil uint64 pointers": log0.Uint64ps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil uint64 pointers": plog.Uint64ps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil uint64 pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without uint64 pointers": log0.Uint64ps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without uint64 pointers": plog.Uint64ps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without uint64 pointers":null
 		}`,
 	},
@@ -47,11 +46,11 @@ var MarshalUint64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint64 = 42, 77
-			return map[string]json.Marshaler{"slice of any uint64 pointers": log0.Anys(&f, &f2)}
+			return map[string]json.Marshaler{"slice of any uint64 pointers": plog.Anys(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of any uint64 pointers":[42,77]
 		}`,
 	},
@@ -59,17 +58,16 @@ var MarshalUint64psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 uint64 = 42, 77
-			return map[string]json.Marshaler{"slice of reflects of uint64 pointers": log0.Reflects(&f, &f2)}
+			return map[string]json.Marshaler{"slice of reflects of uint64 pointers": plog.Reflects(&f, &f2)}
 		}(),
-		expected:     "42 77",
-		expectedText: "42 77",
-		expectedJSON: `{
+		want:     "42 77",
+		wantText: "42 77",
+		wantJSON: `{
 			"slice of reflects of uint64 pointers":[42,77]
 		}`,
 	},
 }
 
 func TestMarshalUint64ps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint64psTestCases)
+	testMarshal(t, MarshalUint64psTests)
 }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Complex64p returns stringer/JSON/text marshaler for the complex64 pointer type.
 func Complex64p(p *complex64) complex64P { return complex64P{P: p} }

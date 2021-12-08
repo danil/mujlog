@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Float64p returns stringer/JSON/text marshaler for the  float64 pointer type.
 func Float64p(p *float64) float64P { return float64P{P: p} }

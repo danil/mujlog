@@ -2,36 +2,35 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalComplex64pTestCases = []marshalTestCase{
+var MarshalComplex64pTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c complex64 = complex(1, 23)
-			return map[string]json.Marshaler{"complex64 pointer": log0.Complex64p(&c)}
+			return map[string]json.Marshaler{"complex64 pointer": plog.Complex64p(&c)}
 		}(),
-		expected:     "1+23i",
-		expectedText: "1+23i",
-		expectedJSON: `{
+		want:     "1+23i",
+		wantText: "1+23i",
+		wantJSON: `{
 			"complex64 pointer":"1+23i"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil complex64 pointer": log0.Complex64p(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil complex64 pointer": plog.Complex64p(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil complex64 pointer":null
 		}`,
 	},
@@ -39,11 +38,11 @@ var MarshalComplex64pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c complex64 = complex(1, 23)
-			return map[string]json.Marshaler{"any complex64 pointer": log0.Any(&c)}
+			return map[string]json.Marshaler{"any complex64 pointer": plog.Any(&c)}
 		}(),
-		expected:     "1+23i",
-		expectedText: "1+23i",
-		expectedJSON: `{
+		want:     "1+23i",
+		wantText: "1+23i",
+		wantJSON: `{
 			"any complex64 pointer":"1+23i"
 		}`,
 	},
@@ -51,15 +50,14 @@ var MarshalComplex64pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var c complex64 = complex(1, 23)
-			return map[string]json.Marshaler{"reflect complex64 pointer": log0.Reflect(&c)}
+			return map[string]json.Marshaler{"reflect complex64 pointer": plog.Reflect(&c)}
 		}(),
-		expected:      "(1+23i)",
-		expectedText:  "(1+23i)",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
+		want:      "(1+23i)",
+		wantText:  "(1+23i)",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
 	},
 }
 
 func TestMarshalComplex64p(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalComplex64pTestCases)
+	testMarshal(t, MarshalComplex64pTests)
 }

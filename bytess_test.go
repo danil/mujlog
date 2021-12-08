@@ -2,102 +2,100 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
 // TODO: Add any/relfect test cases.
-var MarshalBytessTestCases = []marshalTestCase{
+var MarshalBytessTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of byte slices": log0.Bytess([]byte("Hello, Wörld!"), []byte("Hello, World!"))},
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of byte slices": plog.Bytess([]byte("Hello, Wörld!"), []byte("Hello, World!"))},
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"slice of byte slices":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of byte slices with quote": log0.Bytess([]byte(`Hello, "Wörld"!`), []byte(`Hello, "World"!`))},
-		expected:     `Hello, \"Wörld\"! Hello, \"World\"!`,
-		expectedText: `Hello, \"Wörld\"! Hello, \"World\"!`,
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of byte slices with quote": plog.Bytess([]byte(`Hello, "Wörld"!`), []byte(`Hello, "World"!`))},
+		want:     `Hello, \"Wörld\"! Hello, \"World\"!`,
+		wantText: `Hello, \"Wörld\"! Hello, \"World\"!`,
+		wantJSON: `{
 			"slice of byte slices with quote":["Hello, \"Wörld\"!","Hello, \"World\"!"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"quoted slice of byte slices": log0.Bytess([]byte(`"Hello, Wörld!"`), []byte(`"Hello, World!"`))},
-		expected:     `\"Hello, Wörld!\" \"Hello, World!\"`,
-		expectedText: `\"Hello, Wörld!\" \"Hello, World!\"`,
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"quoted slice of byte slices": plog.Bytess([]byte(`"Hello, Wörld!"`), []byte(`"Hello, World!"`))},
+		want:     `\"Hello, Wörld!\" \"Hello, World!\"`,
+		wantText: `\"Hello, Wörld!\" \"Hello, World!\"`,
+		wantJSON: `{
 			"quoted slice of byte slices":["\"Hello, Wörld!\"","\"Hello, World!\""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of byte slices with nested quote": log0.Bytess([]byte(`"Hello, "Wörld"!"`), []byte(`"Hello, "World"!"`))},
-		expected:     `\"Hello, \"Wörld\"!\" \"Hello, \"World\"!\"`,
-		expectedText: `\"Hello, \"Wörld\"!\" \"Hello, \"World\"!\"`,
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of byte slices with nested quote": plog.Bytess([]byte(`"Hello, "Wörld"!"`), []byte(`"Hello, "World"!"`))},
+		want:     `\"Hello, \"Wörld\"!\" \"Hello, \"World\"!\"`,
+		wantText: `\"Hello, \"Wörld\"!\" \"Hello, \"World\"!\"`,
+		wantJSON: `{
 			"slice of byte slices with nested quote":["\"Hello, \"Wörld\"!\"","\"Hello, \"World\"!\""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of byte slices with json": log0.Bytess([]byte(`{"foo":"bar"}`), []byte(`{"baz":"xyz"}`))},
-		expected:     `{\"foo\":\"bar\"} {\"baz\":\"xyz\"}`,
-		expectedText: `{\"foo\":\"bar\"} {\"baz\":\"xyz\"}`,
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of byte slices with json": plog.Bytess([]byte(`{"foo":"bar"}`), []byte(`{"baz":"xyz"}`))},
+		want:     `{\"foo\":\"bar\"} {\"baz\":\"xyz\"}`,
+		wantText: `{\"foo\":\"bar\"} {\"baz\":\"xyz\"}`,
+		wantJSON: `{
 			"slice of byte slices with json":["{\"foo\":\"bar\"}","{\"baz\":\"xyz\"}"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of byte slices with quoted json": log0.Bytess([]byte(`"{"foo":"bar"}"`), []byte(`"{"baz":"xyz"}"`))},
-		expected:     `\"{\"foo\":\"bar\"}\" \"{\"baz\":\"xyz\"}\"`,
-		expectedText: `\"{\"foo\":\"bar\"}\" \"{\"baz\":\"xyz\"}\"`,
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of byte slices with quoted json": plog.Bytess([]byte(`"{"foo":"bar"}"`), []byte(`"{"baz":"xyz"}"`))},
+		want:     `\"{\"foo\":\"bar\"}\" \"{\"baz\":\"xyz\"}\"`,
+		wantText: `\"{\"foo\":\"bar\"}\" \"{\"baz\":\"xyz\"}\"`,
+		wantJSON: `{
 			"slice of byte slices with quoted json":["\"{\"foo\":\"bar\"}\"","\"{\"baz\":\"xyz\"}\""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of empty byte slice": log0.Bytess([]byte{}, []byte{})},
-		expected:     " ",
-		expectedText: " ",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of empty byte slice": plog.Bytess([]byte{}, []byte{})},
+		want:     " ",
+		wantText: " ",
+		wantJSON: `{
 			"slice of empty byte slice":["",""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil byte slice": log0.Bytess(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil byte slice": plog.Bytess(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil byte slice":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"empty slice of byte slices": log0.Bytess()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"empty slice of byte slices": plog.Bytess()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"empty slice of byte slices":null
 		}`,
 	},
 }
 
 func TestMarshalBytess(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBytessTestCases)
+	testMarshal(t, MarshalBytessTests)
 }

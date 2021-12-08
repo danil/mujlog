@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalBoolpTestCases = []marshalTestCase{
+var MarshalBoolpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := true
-			return map[string]json.Marshaler{"bool pointer to true": log0.Boolp(&b)}
+			return map[string]json.Marshaler{"bool pointer to true": plog.Boolp(&b)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"bool pointer to true":true
 		}`,
 	},
@@ -29,20 +28,20 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := false
-			return map[string]json.Marshaler{"bool pointer to false": log0.Boolp(&b)}
+			return map[string]json.Marshaler{"bool pointer to false": plog.Boolp(&b)}
 		}(),
-		expected:     "false",
-		expectedText: "false",
-		expectedJSON: `{
+		want:     "false",
+		wantText: "false",
+		wantJSON: `{
 			"bool pointer to false":false
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"bool nil pointer": log0.Boolp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"bool nil pointer": plog.Boolp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"bool nil pointer":null
 		}`,
 	},
@@ -50,11 +49,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := true
-			return map[string]json.Marshaler{"any bool pointer to true": log0.Any(&b)}
+			return map[string]json.Marshaler{"any bool pointer to true": plog.Any(&b)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"any bool pointer to true":true
 		}`,
 	},
@@ -63,11 +62,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"any twice/nested pointer to bool true": log0.Any(&b2)}
+			return map[string]json.Marshaler{"any twice/nested pointer to bool true": plog.Any(&b2)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"any twice/nested pointer to bool true":true
 		}`,
 	},
@@ -75,11 +74,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := true
-			return map[string]json.Marshaler{"reflect bool pointer to true": log0.Reflect(&b)}
+			return map[string]json.Marshaler{"reflect bool pointer to true": plog.Reflect(&b)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"reflect bool pointer to true":true
 		}`,
 	},
@@ -88,11 +87,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": log0.Reflect(&b2)}
+			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": plog.Reflect(&b2)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
@@ -100,11 +99,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var b *bool
-			return map[string]json.Marshaler{"reflect bool pointer to nil": log0.Reflect(b)}
+			return map[string]json.Marshaler{"reflect bool pointer to nil": plog.Reflect(b)}
 		}(),
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"reflect bool pointer to nil":null
 		}`,
 	},
@@ -112,11 +111,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := true
-			return map[string]json.Marshaler{"any bool pointer to true": log0.Any(&b)}
+			return map[string]json.Marshaler{"any bool pointer to true": plog.Any(&b)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"any bool pointer to true":true
 		}`,
 	},
@@ -125,11 +124,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"any twice/nested pointer to bool true": log0.Any(&b2)}
+			return map[string]json.Marshaler{"any twice/nested pointer to bool true": plog.Any(&b2)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"any twice/nested pointer to bool true":true
 		}`,
 	},
@@ -137,11 +136,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			b := true
-			return map[string]json.Marshaler{"reflect bool pointer to true": log0.Reflect(&b)}
+			return map[string]json.Marshaler{"reflect bool pointer to true": plog.Reflect(&b)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"reflect bool pointer to true":true
 		}`,
 	},
@@ -150,11 +149,11 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			b := true
 			b2 := &b
-			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": log0.Reflect(&b2)}
+			return map[string]json.Marshaler{"reflect bool twice/nested pointer to true": plog.Reflect(&b2)}
 		}(),
-		expected:     "true",
-		expectedText: "true",
-		expectedJSON: `{
+		want:     "true",
+		wantText: "true",
+		wantJSON: `{
 			"reflect bool twice/nested pointer to true":true
 		}`,
 	},
@@ -162,17 +161,16 @@ var MarshalBoolpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var b *bool
-			return map[string]json.Marshaler{"reflect bool pointer to nil": log0.Reflect(b)}
+			return map[string]json.Marshaler{"reflect bool pointer to nil": plog.Reflect(b)}
 		}(),
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"reflect bool pointer to nil":null
 		}`,
 	},
 }
 
 func TestMarshalBoolp(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBoolpTestCases)
+	testMarshal(t, MarshalBoolpTests)
 }

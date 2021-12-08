@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Complex128p returns stringer/JSON/text marshaler for the complex128 pointer type.
 func Complex128p(p *complex128) complex128P { return complex128P{P: p} }

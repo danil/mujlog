@@ -2,32 +2,31 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalFloat64sTestCases = []marshalTestCase{
+var MarshalFloat64sTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"float64 slice": log0.Float64s(0.123456789, 0.987654641)},
-		expected:     "0.123456789 0.987654641",
-		expectedText: "0.123456789 0.987654641",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"float64 slice": plog.Float64s(0.123456789, 0.987654641)},
+		want:     "0.123456789 0.987654641",
+		wantText: "0.123456789 0.987654641",
+		wantJSON: `{
 			"float64 slice":[0.123456789,0.987654641]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without float64": log0.Float64s()},
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without float64": plog.Float64s()},
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"slice without float64":[]
 		}`,
 	},
@@ -35,11 +34,11 @@ var MarshalFloat64sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 float64 = 0.123456789, 0.987654641
-			return map[string]json.Marshaler{"slice of any float64": log0.Anys(f, f2)}
+			return map[string]json.Marshaler{"slice of any float64": plog.Anys(f, f2)}
 		}(),
-		expected:     "0.123456789 0.987654641",
-		expectedText: "0.123456789 0.987654641",
-		expectedJSON: `{
+		want:     "0.123456789 0.987654641",
+		wantText: "0.123456789 0.987654641",
+		wantJSON: `{
 			"slice of any float64":[0.123456789, 0.987654641]
 		}`,
 	},
@@ -47,17 +46,16 @@ var MarshalFloat64sTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 float64 = 0.123456789, 0.987654641
-			return map[string]json.Marshaler{"slice of float64 reflects": log0.Reflects(f, f2)}
+			return map[string]json.Marshaler{"slice of float64 reflects": plog.Reflects(f, f2)}
 		}(),
-		expected:     "0.123456789 0.987654641",
-		expectedText: "0.123456789 0.987654641",
-		expectedJSON: `{
+		want:     "0.123456789 0.987654641",
+		wantText: "0.123456789 0.987654641",
+		wantJSON: `{
 			"slice of float64 reflects":[0.123456789, 0.987654641]
 		}`,
 	},
 }
 
 func TestMarshalFloat64s(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalFloat64sTestCases)
+	testMarshal(t, MarshalFloat64sTests)
 }

@@ -2,35 +2,34 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUintptrpTestCases = []marshalTestCase{
+var MarshalUintptrpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uintptr = 42
-			return map[string]json.Marshaler{"uintptr pointer": log0.Uintptrp(&i)}
+			return map[string]json.Marshaler{"uintptr pointer": plog.Uintptrp(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uintptr pointer":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil uintptr pointer": log0.Uintptrp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil uintptr pointer": plog.Uintptrp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil uintptr pointer":null
 		}`,
 	},
@@ -38,11 +37,11 @@ var MarshalUintptrpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uintptr = 42
-			return map[string]json.Marshaler{"any uintptr pointer": log0.Any(&i)}
+			return map[string]json.Marshaler{"any uintptr pointer": plog.Any(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uintptr pointer":42
 		}`,
 	},
@@ -50,17 +49,16 @@ var MarshalUintptrpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uintptr = 42
-			return map[string]json.Marshaler{"reflect uintptr pointer": log0.Reflect(&i)}
+			return map[string]json.Marshaler{"reflect uintptr pointer": plog.Reflect(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uintptr pointer":42
 		}`,
 	},
 }
 
 func TestMarshalUintptrp(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUintptrpTestCases)
+	testMarshal(t, MarshalUintptrpTests)
 }

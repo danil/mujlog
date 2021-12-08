@@ -2,45 +2,44 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 	"time"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalDurationpsTestCases = []marshalTestCase{
+var MarshalDurationpsTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var d, d2 = 42 * time.Nanosecond, 42 * time.Second
-			return map[string]json.Marshaler{"slice of durations pointers": log0.Durationps(&d, &d2)}
+			return map[string]json.Marshaler{"slice of durations pointers": plog.Durationps(&d, &d2)}
 		}(),
-		expected:     "42ns 42s",
-		expectedText: "42ns 42s",
-		expectedJSON: `{
+		want:     "42ns 42s",
+		wantText: "42ns 42s",
+		wantJSON: `{
 			"slice of durations pointers":["42ns","42s"]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil durations pointers": log0.Durationps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil durations pointers": plog.Durationps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil durations pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without durations pointers": log0.Durationps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without durations pointers": plog.Durationps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without durations pointers":null
 		}`,
 	},
@@ -48,11 +47,11 @@ var MarshalDurationpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var d, d2 = 42 * time.Nanosecond, 42 * time.Second
-			return map[string]json.Marshaler{"slice of any duration pointers": log0.Anys(&d, &d2)}
+			return map[string]json.Marshaler{"slice of any duration pointers": plog.Anys(&d, &d2)}
 		}(),
-		expected:     "42ns 42s",
-		expectedText: "42ns 42s",
-		expectedJSON: `{
+		want:     "42ns 42s",
+		wantText: "42ns 42s",
+		wantJSON: `{
 			"slice of any duration pointers":["42ns","42s"]
 		}`,
 	},
@@ -60,17 +59,16 @@ var MarshalDurationpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var d, d2 = 42 * time.Nanosecond, 42 * time.Second
-			return map[string]json.Marshaler{"slice of reflect of duration pointers": log0.Reflects(&d, &d2)}
+			return map[string]json.Marshaler{"slice of reflect of duration pointers": plog.Reflects(&d, &d2)}
 		}(),
-		expected:     "42ns 42s",
-		expectedText: "42ns 42s",
-		expectedJSON: `{
+		want:     "42ns 42s",
+		wantText: "42ns 42s",
+		wantJSON: `{
 			"slice of reflect of duration pointers":[42,42000000000]
 		}`,
 	},
 }
 
 func TestMarshalDurationps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalDurationpsTestCases)
+	testMarshal(t, MarshalDurationpsTests)
 }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Float32p returns stringer/JSON/text marshaler for the float32 pointer type.
 func Float32p(p *float32) float32P { return float32P{P: p} }

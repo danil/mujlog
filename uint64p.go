@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Uint64p returns stringer/JSON/text marshaler for the uint64 pointer type.
 func Uint64p(p *uint64) uint64P { return uint64P{P: p} }

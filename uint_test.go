@@ -2,23 +2,22 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUintTestCases = []marshalTestCase{
+var MarshalUintTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"uint pointer": log0.Uint(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"uint pointer": plog.Uint(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uint pointer":42
 		}`,
 	},
@@ -26,11 +25,11 @@ var MarshalUintTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uint = 42
-			return map[string]json.Marshaler{"any uint": log0.Any(i)}
+			return map[string]json.Marshaler{"any uint": plog.Any(i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uint":42
 		}`,
 	},
@@ -38,17 +37,16 @@ var MarshalUintTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uint = 42
-			return map[string]json.Marshaler{"reflect uint": log0.Reflect(i)}
+			return map[string]json.Marshaler{"reflect uint": plog.Reflect(i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uint":42
 		}`,
 	},
 }
 
 func TestMarshalUint(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUintTestCases)
+	testMarshal(t, MarshalUintTests)
 }

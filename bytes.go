@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"bytes"
 	"sync"
 
-	"github.com/kvlog/log0/encode0"
+	"github.com/pprint/plog/pencode"
 )
 
 var bufPool = sync.Pool{New: func() interface{} { return new(bytes.Buffer) }}
@@ -29,7 +29,7 @@ func (s byteS) MarshalText() ([]byte, error) {
 	}
 	var buf bytes.Buffer
 
-	err := encode0.Bytes(&buf, s.S)
+	err := pencode.Bytes(&buf, s.S)
 	if err != nil {
 		return nil, err
 	}

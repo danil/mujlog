@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalIntpTestCases = []marshalTestCase{
+var MarshalIntpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i int = 42
-			return map[string]json.Marshaler{"int pointer": log0.Intp(&i)}
+			return map[string]json.Marshaler{"int pointer": plog.Intp(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"int pointer":42
 		}`,
 	},
@@ -29,11 +28,11 @@ var MarshalIntpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i int = 42
-			return map[string]json.Marshaler{"any int pointer": log0.Any(&i)}
+			return map[string]json.Marshaler{"any int pointer": plog.Any(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any int pointer":42
 		}`,
 	},
@@ -41,17 +40,16 @@ var MarshalIntpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i int = 42
-			return map[string]json.Marshaler{"reflect int pointer": log0.Reflect(&i)}
+			return map[string]json.Marshaler{"reflect int pointer": plog.Reflect(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect int pointer":42
 		}`,
 	},
 }
 
 func TestMarshalIntp(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalIntpTestCases)
+	testMarshal(t, MarshalIntpTests)
 }

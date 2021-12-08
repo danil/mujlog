@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Uintptrp returns stringer/JSON/text marshaler for the uintptr pointer type.
 func Uintptrp(p *uintptr) uintptrP { return uintptrP{P: p} }

@@ -2,36 +2,35 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalErrorpTestCases = []marshalTestCase{
+var MarshalErrorpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			err := errors.New("something went wrong")
-			return map[string]json.Marshaler{"error pointer": log0.Errorp(&err)}
+			return map[string]json.Marshaler{"error pointer": plog.Errorp(&err)}
 		}(),
-		expected:     "something went wrong",
-		expectedText: "something went wrong",
-		expectedJSON: `{
+		want:     "something went wrong",
+		wantText: "something went wrong",
+		wantJSON: `{
 			"error pointer":"something went wrong"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil error pointer": log0.Errorp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil error pointer": plog.Errorp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil error pointer":null
 		}`,
 	},
@@ -39,11 +38,11 @@ var MarshalErrorpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			err := errors.New("something went wrong")
-			return map[string]json.Marshaler{"any error pointer": log0.Any(&err)}
+			return map[string]json.Marshaler{"any error pointer": plog.Any(&err)}
 		}(),
-		expected:     "something went wrong",
-		expectedText: "something went wrong",
-		expectedJSON: `{
+		want:     "something went wrong",
+		wantText: "something went wrong",
+		wantJSON: `{
 			"any error pointer":"something went wrong"
 		}`,
 	},
@@ -52,11 +51,11 @@ var MarshalErrorpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			err := errors.New("something went wrong")
 			err2 := &err
-			return map[string]json.Marshaler{"any twice/nested pointer to error": log0.Any(&err2)}
+			return map[string]json.Marshaler{"any twice/nested pointer to error": plog.Any(&err2)}
 		}(),
-		expected:     "{something went wrong}",
-		expectedText: "{something went wrong}",
-		expectedJSON: `{
+		want:     "{something went wrong}",
+		wantText: "{something went wrong}",
+		wantJSON: `{
 			"any twice/nested pointer to error":{}
 		}`,
 	},
@@ -64,11 +63,11 @@ var MarshalErrorpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			err := errors.New("something went wrong")
-			return map[string]json.Marshaler{"reflect error pointer": log0.Reflect(&err)}
+			return map[string]json.Marshaler{"reflect error pointer": plog.Reflect(&err)}
 		}(),
-		expected:     "{something went wrong}",
-		expectedText: "{something went wrong}",
-		expectedJSON: `{
+		want:     "{something went wrong}",
+		wantText: "{something went wrong}",
+		wantJSON: `{
 			"reflect error pointer":{}
 		}`,
 	},
@@ -77,17 +76,16 @@ var MarshalErrorpTestCases = []marshalTestCase{
 		input: func() map[string]json.Marshaler {
 			err := errors.New("something went wrong")
 			err2 := &err
-			return map[string]json.Marshaler{"reflect twice/nested pointer to error": log0.Reflect(&err2)}
+			return map[string]json.Marshaler{"reflect twice/nested pointer to error": plog.Reflect(&err2)}
 		}(),
-		expected:     "{something went wrong}",
-		expectedText: "{something went wrong}",
-		expectedJSON: `{
+		want:     "{something went wrong}",
+		wantText: "{something went wrong}",
+		wantJSON: `{
 			"reflect twice/nested pointer to error":{}
 		}`,
 	},
 }
 
 func TestErrorpMarshal(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalErrorpTestCases)
+	testMarshal(t, MarshalErrorpTests)
 }

@@ -2,27 +2,26 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
 	"errors"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalRawpsTestCases = []marshalTestCase{
+var MarshalRawpsTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`{"foo":{"bar":{"xyz":"Hello, Wörld!"}}}`), []byte("[42]")
-			return map[string]json.Marshaler{"slice of raw jsons": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of raw jsons": plog.Rawps(&p, &p2)}
 		}(),
-		expected:     `{"foo":{"bar":{"xyz":"Hello, Wörld!"}}} [42]`,
-		expectedText: `{"foo":{"bar":{"xyz":"Hello, Wörld!"}}} [42]`,
-		expectedJSON: `{
+		want:     `{"foo":{"bar":{"xyz":"Hello, Wörld!"}}} [42]`,
+		wantText: `{"foo":{"bar":{"xyz":"Hello, Wörld!"}}} [42]`,
+		wantJSON: `{
 			"slice of raw jsons":[{"foo":{"bar":{"xyz":"Hello, Wörld!"}}},[42]]
 		}`,
 	},
@@ -30,21 +29,21 @@ var MarshalRawpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`Hello, "Wörld"!`), []byte("[42]")
-			return map[string]json.Marshaler{"rawps with quote": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"rawps with quote": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      `Hello, "Wörld"! [42]`,
-		expectedText:  `Hello, "Wörld"! [42]`,
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'H' looking for beginning of value"),
+		want:      `Hello, "Wörld"! [42]`,
+		wantText:  `Hello, "Wörld"! [42]`,
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'H' looking for beginning of value"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`"Hello, Wörld!"`), []byte("[42]")
-			return map[string]json.Marshaler{"quoted rawps": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"quoted rawps": plog.Rawps(&p, &p2)}
 		}(),
-		expected:     `"Hello, Wörld!" [42]`,
-		expectedText: `"Hello, Wörld!" [42]`,
-		expectedJSON: `{
+		want:     `"Hello, Wörld!" [42]`,
+		wantText: `"Hello, Wörld!" [42]`,
+		wantJSON: `{
 			"quoted rawps":["Hello, Wörld!",[42]]
 		}`,
 	},
@@ -52,77 +51,76 @@ var MarshalRawpsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`"Hello, "Wörld"!"`), []byte("[42]")
-			return map[string]json.Marshaler{"rawps with nested quote": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"rawps with nested quote": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      `"Hello, "Wörld"!" [42]`,
-		expectedText:  `"Hello, "Wörld"!" [42]`,
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'W' after array element"),
+		want:      `"Hello, "Wörld"!" [42]`,
+		wantText:  `"Hello, "Wörld"!" [42]`,
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'W' after array element"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`"{"foo":"bar"}"`), []byte("[42]")
-			return map[string]json.Marshaler{"raw quoted jsons": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"raw quoted jsons": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      `"{"foo":"bar"}" [42]`,
-		expectedText:  `"{"foo":"bar"}" [42]`,
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'f' after array element"),
+		want:      `"{"foo":"bar"}" [42]`,
+		wantText:  `"{"foo":"bar"}" [42]`,
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'f' after array element"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`xyz{"foo":"bar"}`), []byte("[42]")
-			return map[string]json.Marshaler{"slice of raw malformed json objects": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of raw malformed json objects": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      `xyz{"foo":"bar"} [42]`,
-		expectedText:  `xyz{"foo":"bar"} [42]`,
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'x' looking for beginning of value"),
+		want:      `xyz{"foo":"bar"} [42]`,
+		wantText:  `xyz{"foo":"bar"} [42]`,
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character 'x' looking for beginning of value"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte(`{"foo":"bar""}`), []byte("[42]")
-			return map[string]json.Marshaler{"slice of raw malformed json key/value": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of raw malformed json key/value": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      `{"foo":"bar""} [42]`,
-		expectedText:  `{"foo":"bar""} [42]`,
-		expectedError: errors.New(`json: error calling MarshalJSON for type json.Marshaler: invalid character '"' after object key:value pair`),
+		want:      `{"foo":"bar""} [42]`,
+		wantText:  `{"foo":"bar""} [42]`,
+		wantError: errors.New(`json: error calling MarshalJSON for type json.Marshaler: invalid character '"' after object key:value pair`),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := append([]byte(`{"foo":"`), append([]byte{0}, []byte(`xyz"}`)...)...), []byte("[42]")
-			return map[string]json.Marshaler{"slice of raw json with unescaped null byte": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of raw json with unescaped null byte": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      "{\"foo\":\"\u0000xyz\"} [42]",
-		expectedText:  "{\"foo\":\"\u0000xyz\"} [42]",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character '\\x00' in string literal"),
+		want:      "{\"foo\":\"\u0000xyz\"} [42]",
+		wantText:  "{\"foo\":\"\u0000xyz\"} [42]",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character '\\x00' in string literal"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte{}, []byte{}
-			return map[string]json.Marshaler{"slice of empty rawps": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of empty rawps": plog.Rawps(&p, &p2)}
 		}(),
-		expected:      " ",
-		expectedText:  " ",
-		expectedError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character ',' looking for beginning of value"),
+		want:      " ",
+		wantText:  " ",
+		wantError: errors.New("json: error calling MarshalJSON for type json.Marshaler: invalid character ',' looking for beginning of value"),
 	},
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var p, p2 []byte
-			return map[string]json.Marshaler{"slice of raw nils": log0.Rawps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of raw nils": plog.Rawps(&p, &p2)}
 		}(),
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of raw nils":[null,null]
 		}`,
 	},
 }
 
 func TestMarshalRawps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalRawpsTestCases)
+	testMarshal(t, MarshalRawpsTests)
 }

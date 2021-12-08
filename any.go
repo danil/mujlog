@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 import (
 	"encoding"
@@ -11,11 +11,11 @@ import (
 )
 
 // Any returns stringer/JSON/text marshaler for any type.
-func Any(v interface{}) anyV { return anyV{V: v} }
+func Any(v interface{}) AnyV { return AnyV{V: v} }
 
-type anyV struct{ V interface{} }
+type AnyV struct{ V interface{} }
 
-func (v anyV) String() string {
+func (v AnyV) String() string {
 	switch x := v.V.(type) {
 	case bool:
 		return Bool(x).String()
@@ -199,7 +199,7 @@ func (v anyV) String() string {
 	}
 }
 
-func (v anyV) MarshalText() ([]byte, error) {
+func (v AnyV) MarshalText() ([]byte, error) {
 	switch x := v.V.(type) {
 	case bool:
 		return Bool(x).MarshalText()
@@ -382,7 +382,7 @@ func (v anyV) MarshalText() ([]byte, error) {
 	}
 }
 
-func (v anyV) MarshalJSON() ([]byte, error) {
+func (v AnyV) MarshalJSON() ([]byte, error) {
 	switch x := v.V.(type) {
 	case bool:
 		return Bool(x).MarshalJSON()

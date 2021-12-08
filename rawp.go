@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Rawp returns stringer/JSON/text marshaler for the raw byte slice pointer.
 func Rawp(p *[]byte) rawP { return rawP{P: p} }

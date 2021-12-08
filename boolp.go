@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0
+package plog
 
 // Boolp returns stringer/JSON/text marshaler for the bool pointer type.
 func Boolp(p *bool) boolP { return boolP{P: p} }

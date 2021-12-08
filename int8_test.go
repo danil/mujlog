@@ -2,47 +2,45 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalInt8TestCases = []marshalTestCase{
+var MarshalInt8Tests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"int8": log0.Int8(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"int8": plog.Int8(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"int8":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any int8": log0.Any(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any int8": plog.Any(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any int8":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect int8": log0.Reflect(42)},
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect int8": plog.Reflect(42)},
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect int8":42
 		}`,
 	},
 }
 
 func TestMarshalInt8(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalInt8TestCases)
+	testMarshal(t, MarshalInt8Tests)
 }

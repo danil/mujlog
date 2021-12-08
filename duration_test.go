@@ -2,48 +2,46 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 	"time"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalDurationTestCases = []marshalTestCase{
+var MarshalDurationTests = []marshalTests{
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"duration": log0.Duration(42 * time.Nanosecond)},
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"duration": plog.Duration(42 * time.Nanosecond)},
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"duration":"42ns"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"any duration": log0.Any(42 * time.Nanosecond)},
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"any duration": plog.Any(42 * time.Nanosecond)},
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"any duration":"42ns"
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"reflect duration": log0.Reflect(42 * time.Nanosecond)},
-		expected:     "42ns",
-		expectedText: "42ns",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"reflect duration": plog.Reflect(42 * time.Nanosecond)},
+		want:     "42ns",
+		wantText: "42ns",
+		wantJSON: `{
 			"reflect duration":42
 		}`,
 	},
 }
 
 func TestMarshalDuration(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalDurationTestCases)
+	testMarshal(t, MarshalDurationTests)
 }

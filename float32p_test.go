@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalFloat32pTestCases = []marshalTestCase{
+var MarshalFloat32pTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f float32 = 4.2
-			return map[string]json.Marshaler{"float32 pointer": log0.Float32p(&f)}
+			return map[string]json.Marshaler{"float32 pointer": plog.Float32p(&f)}
 		}(),
-		expected:     "4.2",
-		expectedText: "4.2",
-		expectedJSON: `{
+		want:     "4.2",
+		wantText: "4.2",
+		wantJSON: `{
 			"float32 pointer":4.2
 		}`,
 	},
@@ -29,20 +28,20 @@ var MarshalFloat32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f float32 = 0.123456789
-			return map[string]json.Marshaler{"high precision float32 pointer": log0.Float32p(&f)}
+			return map[string]json.Marshaler{"high precision float32 pointer": plog.Float32p(&f)}
 		}(),
-		expected:     "0.12345679",
-		expectedText: "0.12345679",
-		expectedJSON: `{
+		want:     "0.12345679",
+		wantText: "0.12345679",
+		wantJSON: `{
 			"high precision float32 pointer":0.123456789
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"float32 nil pointer": log0.Float32p(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"float32 nil pointer": plog.Float32p(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"float32 nil pointer":null
 		}`,
 	},
@@ -50,11 +49,11 @@ var MarshalFloat32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f float32 = 4.2
-			return map[string]json.Marshaler{"any float32 pointer": log0.Any(&f)}
+			return map[string]json.Marshaler{"any float32 pointer": plog.Any(&f)}
 		}(),
-		expected:     "4.2",
-		expectedText: "4.2",
-		expectedJSON: `{
+		want:     "4.2",
+		wantText: "4.2",
+		wantJSON: `{
 			"any float32 pointer":4.2
 		}`,
 	},
@@ -62,11 +61,11 @@ var MarshalFloat32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f float32 = 4.2
-			return map[string]json.Marshaler{"reflect float32 pointer": log0.Reflect(&f)}
+			return map[string]json.Marshaler{"reflect float32 pointer": plog.Reflect(&f)}
 		}(),
-		expected:     "4.2",
-		expectedText: "4.2",
-		expectedJSON: `{
+		want:     "4.2",
+		wantText: "4.2",
+		wantJSON: `{
 			"reflect float32 pointer":4.2
 		}`,
 	},
@@ -74,17 +73,16 @@ var MarshalFloat32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f *float32
-			return map[string]json.Marshaler{"reflect float32 pointer to nil": log0.Reflect(f)}
+			return map[string]json.Marshaler{"reflect float32 pointer to nil": plog.Reflect(f)}
 		}(),
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"reflect float32 pointer to nil":null
 		}`,
 	},
 }
 
 func TestMarshalFloat32p(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalFloat32pTestCases)
+	testMarshal(t, MarshalFloat32pTests)
 }

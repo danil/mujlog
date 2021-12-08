@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalBytespsTestCases = []marshalTestCase{
+var MarshalBytespsTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte("Hello, Wörld!"), []byte("Hello, World!")
-			return map[string]json.Marshaler{"slice of byte slice pointers": log0.Bytesps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of byte slice pointers": plog.Bytesps(&p, &p2)}
 		}(),
-		expected:     "Hello, Wörld! Hello, World!",
-		expectedText: "Hello, Wörld! Hello, World!",
-		expectedJSON: `{
+		want:     "Hello, Wörld! Hello, World!",
+		wantText: "Hello, Wörld! Hello, World!",
+		wantJSON: `{
 			"slice of byte slice pointers":["Hello, Wörld!","Hello, World!"]
 		}`,
 	},
@@ -29,35 +28,34 @@ var MarshalBytespsTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p, p2 := []byte{}, []byte{}
-			return map[string]json.Marshaler{"slice of empty byte slice pointers": log0.Bytesps(&p, &p2)}
+			return map[string]json.Marshaler{"slice of empty byte slice pointers": plog.Bytesps(&p, &p2)}
 		}(),
-		expected:     " ",
-		expectedText: " ",
-		expectedJSON: `{
+		want:     " ",
+		wantText: " ",
+		wantJSON: `{
 			"slice of empty byte slice pointers":["",""]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil byte slice pointers": log0.Bytesps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil byte slice pointers": plog.Bytesps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil byte slice pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"empty slice of byte slice pointers": log0.Bytesps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"empty slice of byte slice pointers": plog.Bytesps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"empty slice of byte slice pointers":null
 		}`,
 	},
 }
 
 func TestMarshalBytesps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalBytespsTestCases)
+	testMarshal(t, MarshalBytespsTests)
 }

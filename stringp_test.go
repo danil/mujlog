@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalStringpTestCases = []marshalTestCase{
+var MarshalStringpTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := "Hello, Wörld!"
-			return map[string]json.Marshaler{"string pointer": log0.Stringp(&p)}
+			return map[string]json.Marshaler{"string pointer": plog.Stringp(&p)}
 		}(),
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"string pointer":"Hello, Wörld!"
 		}`,
 	},
@@ -29,20 +28,20 @@ var MarshalStringpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := ""
-			return map[string]json.Marshaler{"empty string pointer": log0.Stringp(&p)}
+			return map[string]json.Marshaler{"empty string pointer": plog.Stringp(&p)}
 		}(),
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"empty string pointer":""
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil string pointer": log0.Stringp(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil string pointer": plog.Stringp(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil string pointer":null
 		}`,
 	},
@@ -50,11 +49,11 @@ var MarshalStringpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := "Hello, Wörld!"
-			return map[string]json.Marshaler{"any string pointer": log0.Any(&p)}
+			return map[string]json.Marshaler{"any string pointer": plog.Any(&p)}
 		}(),
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"any string pointer":"Hello, Wörld!"
 		}`,
 	},
@@ -62,11 +61,11 @@ var MarshalStringpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := ""
-			return map[string]json.Marshaler{"any empty string pointer": log0.Any(&p)}
+			return map[string]json.Marshaler{"any empty string pointer": plog.Any(&p)}
 		}(),
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"any empty string pointer":""
 		}`,
 	},
@@ -74,11 +73,11 @@ var MarshalStringpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := "Hello, Wörld!"
-			return map[string]json.Marshaler{"reflect string pointer": log0.Reflect(&p)}
+			return map[string]json.Marshaler{"reflect string pointer": plog.Reflect(&p)}
 		}(),
-		expected:     "Hello, Wörld!",
-		expectedText: "Hello, Wörld!",
-		expectedJSON: `{
+		want:     "Hello, Wörld!",
+		wantText: "Hello, Wörld!",
+		wantJSON: `{
 			"reflect string pointer":"Hello, Wörld!"
 		}`,
 	},
@@ -86,17 +85,16 @@ var MarshalStringpTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			p := ""
-			return map[string]json.Marshaler{"reflect empty string pointer": log0.Reflect(&p)}
+			return map[string]json.Marshaler{"reflect empty string pointer": plog.Reflect(&p)}
 		}(),
-		expected:     "",
-		expectedText: "",
-		expectedJSON: `{
+		want:     "",
+		wantText: "",
+		wantJSON: `{
 			"reflect empty string pointer":""
 		}`,
 	},
 }
 
 func TestMarshalStingp(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalStringpTestCases)
+	testMarshal(t, MarshalStringpTests)
 }

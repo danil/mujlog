@@ -2,35 +2,34 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalUint32pTestCases = []marshalTestCase{
+var MarshalUint32pTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uint32 = 42
-			return map[string]json.Marshaler{"uint32 pointer": log0.Uint32p(&i)}
+			return map[string]json.Marshaler{"uint32 pointer": plog.Uint32p(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"uint32 pointer":42
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"nil uint32 pointer": log0.Uint32p(nil)},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"nil uint32 pointer": plog.Uint32p(nil)},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"nil uint32 pointer":null
 		}`,
 	},
@@ -38,11 +37,11 @@ var MarshalUint32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uint32 = 42
-			return map[string]json.Marshaler{"any uint32 pointer": log0.Any(&i)}
+			return map[string]json.Marshaler{"any uint32 pointer": plog.Any(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"any uint32 pointer":42
 		}`,
 	},
@@ -50,17 +49,16 @@ var MarshalUint32pTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var i uint32 = 42
-			return map[string]json.Marshaler{"reflect uint32 pointer": log0.Reflect(&i)}
+			return map[string]json.Marshaler{"reflect uint32 pointer": plog.Reflect(&i)}
 		}(),
-		expected:     "42",
-		expectedText: "42",
-		expectedJSON: `{
+		want:     "42",
+		wantText: "42",
+		wantJSON: `{
 			"reflect uint32 pointer":42
 		}`,
 	},
 }
 
 func TestMarshalUint32p(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalUint32pTestCases)
+	testMarshal(t, MarshalUint32pTests)
 }

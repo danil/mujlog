@@ -2,44 +2,43 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log0_test
+package plog_test
 
 import (
 	"encoding/json"
-	"runtime"
 	"testing"
 
-	"github.com/kvlog/log0"
+	"github.com/pprint/plog"
 )
 
-var MarshalInt16psTestCases = []marshalTestCase{
+var MarshalInt16psTests = []marshalTests{
 	{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 int16 = 123, 321
-			return map[string]json.Marshaler{"int16 pointer slice": log0.Int16ps(&f, &f2)}
+			return map[string]json.Marshaler{"int16 pointer slice": plog.Int16ps(&f, &f2)}
 		}(),
-		expected:     "123 321",
-		expectedText: "123 321",
-		expectedJSON: `{
+		want:     "123 321",
+		wantText: "123 321",
+		wantJSON: `{
 			"int16 pointer slice":[123,321]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice of nil int16 pointers": log0.Int16ps(nil, nil)},
-		expected:     "null null",
-		expectedText: "null null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice of nil int16 pointers": plog.Int16ps(nil, nil)},
+		want:     "null null",
+		wantText: "null null",
+		wantJSON: `{
 			"slice of nil int16 pointers":[null,null]
 		}`,
 	},
 	{
-		line:         line(),
-		input:        map[string]json.Marshaler{"slice without int16 pointers": log0.Int16ps()},
-		expected:     "null",
-		expectedText: "null",
-		expectedJSON: `{
+		line:     line(),
+		input:    map[string]json.Marshaler{"slice without int16 pointers": plog.Int16ps()},
+		want:     "null",
+		wantText: "null",
+		wantJSON: `{
 			"slice without int16 pointers":null
 		}`,
 	},
@@ -47,11 +46,11 @@ var MarshalInt16psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 int16 = 123, 321
-			return map[string]json.Marshaler{"slice of any int16 pointers": log0.Anys(&f, &f2)}
+			return map[string]json.Marshaler{"slice of any int16 pointers": plog.Anys(&f, &f2)}
 		}(),
-		expected:     "123 321",
-		expectedText: "123 321",
-		expectedJSON: `{
+		want:     "123 321",
+		wantText: "123 321",
+		wantJSON: `{
 			"slice of any int16 pointers":[123,321]
 		}`,
 	},
@@ -59,17 +58,16 @@ var MarshalInt16psTestCases = []marshalTestCase{
 		line: line(),
 		input: func() map[string]json.Marshaler {
 			var f, f2 int16 = 123, 321
-			return map[string]json.Marshaler{"slice of reflects of int16 pointers": log0.Reflects(&f, &f2)}
+			return map[string]json.Marshaler{"slice of reflects of int16 pointers": plog.Reflects(&f, &f2)}
 		}(),
-		expected:     "123 321",
-		expectedText: "123 321",
-		expectedJSON: `{
+		want:     "123 321",
+		wantText: "123 321",
+		wantJSON: `{
 			"slice of reflects of int16 pointers":[123,321]
 		}`,
 	},
 }
 
 func TestMarshalInt16ps(t *testing.T) {
-	_, testFile, _, _ := runtime.Caller(0)
-	testMarshal(t, testFile, MarshalInt16psTestCases)
+	testMarshal(t, MarshalInt16psTests)
 }
