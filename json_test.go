@@ -15,7 +15,7 @@ import (
 var MarshalJSONTests = []marshalTests{
 	{
 		line:     line(),
-		input:    map[string]json.Marshaler{"kv slice": plog.JSON(plog.StringString("foo", "bar"), plog.StringInt("xyz", 42))},
+		input:    map[string]json.Marshaler{"kv slice": pfmt.JSON(plog.StringString("foo", "bar"), plog.StringInt("xyz", 42))},
 		want:     `foo "bar" xyz 42`,
 		wantText: `foo "bar" xyz 42`,
 		wantJSON: `{
@@ -24,7 +24,7 @@ var MarshalJSONTests = []marshalTests{
 	},
 	{
 		line:     line(),
-		input:    map[string]json.Marshaler{"without jsons": plog.JSON()},
+		input:    map[string]json.Marshaler{"without jsons": pfmt.JSON()},
 		want:     "",
 		wantText: "",
 		wantJSON: `{
@@ -33,7 +33,7 @@ var MarshalJSONTests = []marshalTests{
 	},
 	{
 		line:     line(),
-		input:    map[string]json.Marshaler{"slice of empty jsons": plog.JSON(pfmt.String(""), pfmt.String(""))},
+		input:    map[string]json.Marshaler{"slice of empty jsons": pfmt.JSON(pfmt.String(""), pfmt.String(""))},
 		want:     ``,
 		wantText: ``,
 		wantJSON: `{
@@ -42,7 +42,7 @@ var MarshalJSONTests = []marshalTests{
 	},
 	{
 		line:     line(),
-		input:    map[string]json.Marshaler{"slice of json nils": plog.JSON(nil, nil)},
+		input:    map[string]json.Marshaler{"slice of json nils": pfmt.JSON(nil, nil)},
 		want:     "",
 		wantText: "",
 		wantJSON: `{

@@ -23,7 +23,7 @@ var WriteTests = []struct {
 	line      string
 	log       plog.Logger
 	input     []byte
-	kv        []plog.KV
+	kv        []pfmt.KV
 	want      string
 	benchmark bool
 }{
@@ -39,7 +39,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("foo", "bar")},
+			KV:     []pfmt.KV{plog.StringString("foo", "bar")},
 		},
 		input: nil,
 		want: `{
@@ -77,12 +77,12 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("string", "foo")},
+			KV:     []pfmt.KV{plog.StringString("string", "foo")},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:  120,
 		},
 		input: []byte("Hello, World!"),
-		kv:    []plog.KV{plog.StringString("string", "bar")},
+		kv:    []pfmt.KV{plog.StringString("string", "bar")},
 		want: `{
 			"message":"Hello, World!",
 		  "string": "bar"
@@ -104,7 +104,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			KV:      []plog.KV{plog.StringString("message", "string value")},
+			KV:      []pfmt.KV{plog.StringString("message", "string value")},
 			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -121,7 +121,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello,\nWorld!"),
-		kv:    []plog.KV{plog.StringString("message", "string value")},
+		kv:    []pfmt.KV{plog.StringString("message", "string value")},
 		want: `{
 			"message":"string value",
 			"excerpt":"Hello, World!",
@@ -133,7 +133,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("message", "string value")},
+			KV:     []pfmt.KV{plog.StringString("message", "string value")},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:  120,
 		},
@@ -145,7 +145,7 @@ var WriteTests = []struct {
 		name: `input is nil and "message" key with "string value"`,
 		line: line(),
 		log:  dummy(),
-		kv:   []plog.KV{plog.StringString("message", "string value")},
+		kv:   []pfmt.KV{plog.StringString("message", "string value")},
 		want: `{
 			"message":"string value"
 		}`,
@@ -155,7 +155,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello, World!\n"),
-		kv:    []plog.KV{plog.StringInt("message", 1)},
+		kv:    []pfmt.KV{plog.StringInt("message", 1)},
 		want: `{
 			"message":1,
 			"excerpt":"Hello, World!",
@@ -167,7 +167,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello,\nWorld!"),
-		kv:    []plog.KV{plog.StringFloat32("message", 4.2)},
+		kv:    []pfmt.KV{plog.StringFloat32("message", 4.2)},
 		want: `{
 			"message":4.2,
 			"excerpt":"Hello, World!",
@@ -179,7 +179,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello,\nWorld!"),
-		kv:    []plog.KV{plog.StringFloat64("message", 4.2)},
+		kv:    []pfmt.KV{plog.StringFloat64("message", 4.2)},
 		want: `{
 			"message":4.2,
 			"excerpt":"Hello, World!",
@@ -191,7 +191,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello,\nWorld!"),
-		kv:    []plog.KV{plog.StringBool("message", true)},
+		kv:    []pfmt.KV{plog.StringBool("message", true)},
 		want: `{
 			"message":true,
 			"excerpt":"Hello, World!",
@@ -203,7 +203,7 @@ var WriteTests = []struct {
 		line:  line(),
 		log:   dummy(),
 		input: []byte("Hello, World!"),
-		kv:    []plog.KV{plog.StringReflect("message", nil)},
+		kv:    []pfmt.KV{plog.StringReflect("message", nil)},
 		want: `{
 			"message":null,
 			"trail":"Hello, World!"
@@ -218,7 +218,7 @@ var WriteTests = []struct {
 			Key:    plog.Original,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("message", "foo")},
+		kv: []pfmt.KV{plog.StringString("message", "foo")},
 		want: `{
 			"message":"foo"
 		}`,
@@ -233,7 +233,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("message", "foo\n")},
+		kv: []pfmt.KV{plog.StringString("message", "foo\n")},
 		want: `{
 			"message":"foo\n"
 		}`,
@@ -249,7 +249,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("message", "bar")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar")},
 		want: `{
 			"message":"bar",
 			"trail":"foo"
@@ -265,7 +265,7 @@ var WriteTests = []struct {
 			Key:    plog.Original,
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar")},
 		want: `{
 			"message":"bar",
 			"excerpt":"foo",
@@ -283,7 +283,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar\n")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar\n")},
 		want: `{
 			"message":"bar\n",
 			"excerpt":"foo",
@@ -299,7 +299,7 @@ var WriteTests = []struct {
 			Key:    plog.Original,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("excerpt", "foo")},
+		kv: []pfmt.KV{plog.StringString("excerpt", "foo")},
 		want: `{
 			"excerpt":"foo"
 		}`,
@@ -314,7 +314,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("excerpt", "foo\n")},
+		kv: []pfmt.KV{plog.StringString("excerpt", "foo\n")},
 		want: `{
 			"excerpt":"foo\n"
 		}`,
@@ -329,7 +329,7 @@ var WriteTests = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -346,7 +346,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -363,7 +363,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -380,7 +380,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar\n")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar\n")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -395,7 +395,7 @@ var WriteTests = []struct {
 			Key:    plog.Original,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("message", "foo"), plog.StringString("excerpt", "bar")},
+		kv: []pfmt.KV{plog.StringString("message", "foo"), plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -411,7 +411,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("message", "foo\n"), plog.StringString("excerpt", "bar\n")},
+		kv: []pfmt.KV{plog.StringString("message", "foo\n"), plog.StringString("excerpt", "bar\n")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -427,7 +427,7 @@ var WriteTests = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
 		want: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -445,7 +445,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("message", "bar"),
 			plog.StringString("excerpt", "xyz"),
 		},
@@ -466,7 +466,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar\n"), plog.StringString("excerpt", "xyz\n")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar\n"), plog.StringString("excerpt", "xyz\n")},
 		want: `{
 			"message":"bar\n",
 			"excerpt":"xyz\n",
@@ -482,7 +482,7 @@ var WriteTests = []struct {
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("message", "foo")},
+		kv: []pfmt.KV{plog.StringString("message", "foo")},
 		want: `{
 			"message":"foo"
 		}`,
@@ -497,7 +497,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("message", "foo\n")},
+		kv: []pfmt.KV{plog.StringString("message", "foo\n")},
 		want: `{
 			"message":"foo\n"
 		}`,
@@ -513,7 +513,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("message", "bar")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar")},
 		want: `{
 			"message":"bar",
 			"excerpt":"foo"
@@ -529,7 +529,7 @@ var WriteTests = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar")},
 		want: `{
 			"message":"bar",
 			"excerpt":"foo",
@@ -547,7 +547,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar\n")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar\n")},
 		want: `{
 			"message":"bar\n",
 			"excerpt":"foo",
@@ -563,7 +563,7 @@ var WriteTests = []struct {
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("excerpt", "foo")},
+		kv: []pfmt.KV{plog.StringString("excerpt", "foo")},
 		want: `{
 			"excerpt":"foo"
 		}`,
@@ -578,7 +578,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("excerpt", "foo\n")},
+		kv: []pfmt.KV{plog.StringString("excerpt", "foo\n")},
 		want: `{
 			"excerpt":"foo\n"
 		}`,
@@ -593,7 +593,7 @@ var WriteTests = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -610,7 +610,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -627,7 +627,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar"
@@ -644,7 +644,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("excerpt", "bar\n")},
+		kv:    []pfmt.KV{plog.StringString("excerpt", "bar\n")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -659,7 +659,7 @@ var WriteTests = []struct {
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
-		kv: []plog.KV{plog.StringString("message", "foo"), plog.StringString("excerpt", "bar")},
+		kv: []pfmt.KV{plog.StringString("message", "foo"), plog.StringString("excerpt", "bar")},
 		want: `{
 			"message":"foo",
 			"excerpt":"bar"
@@ -675,7 +675,7 @@ var WriteTests = []struct {
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
-		kv: []plog.KV{plog.StringString("message", "foo\n"), plog.StringString("excerpt", "bar\n")},
+		kv: []pfmt.KV{plog.StringString("message", "foo\n"), plog.StringString("excerpt", "bar\n")},
 		want: `{
 			"message":"foo\n",
 			"excerpt":"bar\n"
@@ -691,7 +691,7 @@ var WriteTests = []struct {
 			Trunc:  120,
 		},
 		input: []byte("foo"),
-		kv:    []plog.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
 		want: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -709,7 +709,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar"), plog.StringString("excerpt", "xyz")},
 		want: `{
 			"message":"bar",
 			"excerpt":"xyz",
@@ -727,7 +727,7 @@ var WriteTests = []struct {
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
 		input: []byte("foo\n"),
-		kv:    []plog.KV{plog.StringString("message", "bar\n"), plog.StringString("excerpt", "xyz\n")},
+		kv:    []pfmt.KV{plog.StringString("message", "bar\n"), plog.StringString("excerpt", "xyz\n")},
 		want: `{
 			"message":"bar\n",
 			"excerpt":"xyz\n",
@@ -738,7 +738,7 @@ var WriteTests = []struct {
 		name: `bytes is nil and bytes "message" key with json`,
 		line: line(),
 		log:  dummy(),
-		kv:   []plog.KV{plog.StringBytes("message", []byte(`{"foo":"bar"}`)...)},
+		kv:   []pfmt.KV{plog.StringBytes("message", []byte(`{"foo":"bar"}`)...)},
 		want: `{
 			"message":"{\"foo\":\"bar\"}"
 		}`,
@@ -747,7 +747,7 @@ var WriteTests = []struct {
 		name: `bytes is nil and raw "message" key with json`,
 		line: line(),
 		log:  dummy(),
-		kv:   []plog.KV{plog.StringRaw("message", []byte(`{"foo":"bar"}`))},
+		kv:   []pfmt.KV{plog.StringRaw("message", []byte(`{"foo":"bar"}`))},
 		want: `{
 			"message":{"foo":"bar"}
 		}`,
@@ -760,7 +760,7 @@ var WriteTests = []struct {
 			Flag:   log.Llongfile,
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
-		kv: []plog.KV{plog.StringString("foo", "bar")},
+		kv: []pfmt.KV{plog.StringString("foo", "bar")},
 		want: `{
 			"foo":"bar"
 		}`,
@@ -811,9 +811,9 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("foo", "bar")},
+			KV:     []pfmt.KV{plog.StringString("foo", "bar")},
 		},
-		kv: []plog.KV{plog.StringString("foo", "baz")},
+		kv: []pfmt.KV{plog.StringString("foo", "baz")},
 		want: `{
 			"foo":"baz"
 		}`,
@@ -823,9 +823,9 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("foo", "bar")},
+			KV:     []pfmt.KV{plog.StringString("foo", "bar")},
 		},
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("foo", "baz"),
 			plog.StringString("foo", "xyz"),
 		},
@@ -899,7 +899,7 @@ var FprintWriteTests = []struct {
 			l1.Output = &bytes.Buffer{}
 			l := l1.Tee(
 				plog.StringString("version", "1.1"),
-				plog.StringFunc("timestamp", func() plog.KV {
+				plog.StringFunc("timestamp", func() pfmt.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return pfmt.Int64(t.Unix())
 				}),
@@ -1044,7 +1044,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("string", "foo")},
+			KV:     []pfmt.KV{plog.StringString("string", "foo")},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
@@ -1058,7 +1058,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringInt("integer", 123)},
+			KV:     []pfmt.KV{plog.StringInt("integer", 123)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
@@ -1072,7 +1072,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringFloat32("float", 3.21)},
+			KV:     []pfmt.KV{plog.StringFloat32("float", 3.21)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
@@ -1173,7 +1173,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringBytes("excerpt", []byte("Explicit byte slice")...)},
+			KV:     []pfmt.KV{plog.StringBytes("excerpt", []byte("Explicit byte slice")...)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1188,7 +1188,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringString("excerpt", "Explicit string")},
+			KV:     []pfmt.KV{plog.StringString("excerpt", "Explicit string")},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1203,7 +1203,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringInt("excerpt", 42)},
+			KV:     []pfmt.KV{plog.StringInt("excerpt", 42)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1218,7 +1218,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringFloat32("excerpt", 4.2)},
+			KV:     []pfmt.KV{plog.StringFloat32("excerpt", 4.2)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1233,7 +1233,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringBool("excerpt", true)},
+			KV:     []pfmt.KV{plog.StringBool("excerpt", true)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1248,7 +1248,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []plog.KV{plog.StringRunes("excerpt", []rune("Explicit rune slice")...)},
+			KV:     []pfmt.KV{plog.StringRunes("excerpt", []rune("Explicit rune slice")...)},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1263,8 +1263,8 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV: []plog.KV{
-				plog.StringFunc("time", func() plog.KV {
+			KV: []pfmt.KV{
+				plog.StringFunc("time", func() pfmt.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return pfmt.String(t.String())
 				}),
@@ -1422,7 +1422,7 @@ var FprintWriteTests = []struct {
 			l := l1.Tee(
 				plog.StringString("version", "1.1"),
 				plog.StringString("host", "example.tld"),
-				plog.StringFunc("timestamp", func() plog.KV {
+				plog.StringFunc("timestamp", func() pfmt.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return pfmt.Int64(t.Unix())
 				}),
@@ -1447,7 +1447,7 @@ var FprintWriteTests = []struct {
 			l := l1.Tee(
 				plog.StringString("version", "1.1"),
 				plog.StringString("host", "example.tld"),
-				plog.StringFunc("timestamp", func() plog.KV {
+				plog.StringFunc("timestamp", func() pfmt.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
 					return pfmt.Int64(t.Unix())
 				}),
@@ -1687,7 +1687,7 @@ var NewTests = []struct {
 	name      string
 	line      string
 	log       plog.Logger
-	kv        []plog.KV
+	kv        []pfmt.KV
 	want      string
 	benchmark bool
 }{
@@ -1696,7 +1696,7 @@ var NewTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 			},
 		},
@@ -1709,7 +1709,7 @@ var NewTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 				plog.StringString("baz", "xyz"),
 			},
@@ -1725,7 +1725,7 @@ var NewTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 		},
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("baz", "xyz"),
 		},
 		want: `{
@@ -1738,7 +1738,7 @@ var NewTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 		},
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("foo", "bar"),
 			plog.StringString("baz", "xyz"),
 		},
@@ -1752,11 +1752,11 @@ var NewTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 			},
 		},
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("baz", "xyz"),
 		},
 		want: `{
@@ -1769,12 +1769,12 @@ var NewTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 				plog.StringString("abc", "dfg"),
 			},
 		},
-		kv: []plog.KV{
+		kv: []pfmt.KV{
 			plog.StringString("baz", "xyz"),
 			plog.StringString("hjk", "lmn"),
 		},
@@ -1824,7 +1824,7 @@ var SeverityLevelTests = []struct {
 	line      string
 	log       plog.Logger
 	levels    []string
-	kv        []plog.KV
+	kv        []pfmt.KV
 	want      string
 	benchmark bool
 }{
@@ -1846,7 +1846,7 @@ var SeverityLevelTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Level:  func(level string) io.Writer { return nil },
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 			},
 		},
@@ -1874,7 +1874,7 @@ var SeverityLevelTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Level:  func(level string) io.Writer { return nil },
-			KV: []plog.KV{
+			KV: []pfmt.KV{
 				plog.StringString("level", "42"),
 			},
 		},

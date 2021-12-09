@@ -37,7 +37,7 @@ const (
 type Log struct {
 	Output  io.Writer                             // Output is a destination for output.
 	Flag    int                                   // Flag is a log properties.
-	KV      []KV                                  // KV is a key-values.
+	KV      []pfmt.KV                             // KV is a key-values.
 	Level   func(level string) (output io.Writer) // Level function receives severity level and returns a output writer for a severity level.
 	Keys    [4]encoding.TextMarshaler             // Keys: 0 = original message; 1 = message excerpt; 2 = message trail; 3 = file path.
 	Key     uint8                                 // Key is a default/sticky message key: all except 1 = original message; 1 = message excerpt.
@@ -51,33 +51,27 @@ type Logger interface {
 	// Tee returns copy of the logger with an additional key-values.
 	// Copy of the original key-values should have a lower priority
 	// than the priority of the newer key-values.
-	Tee(...KV) Logger
+	Tee(...pfmt.KV) Logger
 	// Close puts the logger into the sync pool.
 	Close() error
 }
 
-// KV is a key-value pair.
-type KV interface {
-	encoding.TextMarshaler
-	json.Marshaler
-}
-
 // KeyValuer provides key-values slice.
 type KeyValuer interface {
-	KeyValues() []KV
+	KeyValues() []pfmt.KV
 }
 
-func (l *Log) KeyValues() []KV {
+func (l *Log) KeyValues() []pfmt.KV {
 	return l.KV
 }
 
 var mapPool = sync.Pool{New: func() interface{} { m := make(map[string]json.Marshaler); return &m }}
 
 type Encoder interface {
-	Encode(...KV) []byte
+	Encode(...pfmt.KV) []byte
 }
 
-func (l *Log) Encode(kv ...KV) []byte {
+func (l *Log) Encode(kv ...pfmt.KV) []byte {
 	m := *mapPool.Get().(*map[string]json.Marshaler)
 	for k := range m {
 		delete(m, k)
@@ -119,7 +113,7 @@ var logPool = sync.Pool{New: func() interface{} { return new(Log) }}
 // Then the function from Level field returns writer for output of the logger.
 // Copy of the original key-values has the priority lower
 // than the priority of the newer key-values.
-func (l *Log) Tee(kv ...KV) Logger {
+func (l *Log) Tee(kv ...pfmt.KV) Logger {
 	l0 := logPool.Get().(*Log)
 	l0.Output = l.Output
 	l0.Flag = l.Flag
@@ -440,9 +434,9 @@ func GELF() *Log {
 		// GELF spec version – "1.1"; Must be set by client library.
 		// <https://docs.graylog.org/en/latest/pages/gelf.html#gelf-payload-specification>,
 		// <https://github.com/graylog-labs/gelf-rb/issues/41#issuecomment-198266505>.
-		KV: []KV{
+		KV: []pfmt.KV{
 			StringString("version", "1.1"),
-			StringFunc("timestamp", func() KV { return pfmt.Int64(time.Now().Unix()) }),
+			StringFunc("timestamp", func() pfmt.KV { return pfmt.Int64(time.Now().Unix()) }),
 		},
 		Trunc: 120,
 		Keys: [4]encoding.TextMarshaler{

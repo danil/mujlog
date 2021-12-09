@@ -214,8 +214,8 @@ func StringTimep(k string, v *time.Time) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Timep(v)}
 }
 
-func StringFunc(k string, v func() KV) kvm {
-	return kvm{K: pfmt.String(k), V: Func(v)}
+func StringFunc(k string, v func() pfmt.KV) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Func(v)}
 }
 
 func StringRaw(k string, v []byte) kvm {

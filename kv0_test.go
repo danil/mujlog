@@ -18,7 +18,7 @@ import (
 
 var KVTests = []struct {
 	line      string
-	input     plog.KV
+	input     pfmt.KV
 	want      string
 	error     error
 	benchmark bool
@@ -67,7 +67,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.StringBoolp("bool pointer to true", &b)
 		}(),
@@ -77,7 +77,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := false
 			return plog.StringBoolp("bool pointer to false", &b)
 		}(),
@@ -94,7 +94,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.StringAny("any bool pointer to true", &b)
 		}(),
@@ -104,7 +104,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			b2 := &b
 			return plog.StringAny("any twice/nested pointer to bool true", &b2)
@@ -115,7 +115,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.StringReflect("reflect bool pointer to true", &b)
 		}(),
@@ -125,7 +125,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			b2 := &b
 			return plog.StringReflect("reflect bool twice/nested pointer to true", &b2)
@@ -136,7 +136,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var b *bool
 			return plog.StringReflect("reflect bool pointer to nil", b)
 		}(),
@@ -195,7 +195,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var p []byte
 			return plog.StringBytes("nil bytes", p...)
 		}(),
@@ -296,7 +296,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.StringBytesp("bytes pointer", &p)
 		}(),
@@ -306,7 +306,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.StringBytesp("empty bytes pointer", &p)
 		}(),
@@ -323,7 +323,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p, p2 := []byte("Hello, Wörld!"), []byte("Hello, World!")
 			return plog.StringBytessp("slice of byte pointer slices", &p, &p2)
 		}(),
@@ -333,7 +333,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p, p2 := []byte{}, []byte{}
 			return plog.StringBytessp("slice of empty byte pointer slices", &p, &p2)
 		}(),
@@ -357,7 +357,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.StringAny("any bytes pointer", &p)
 		}(),
@@ -367,7 +367,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.StringAny("any empty bytes pointer", &p)
 		}(),
@@ -377,7 +377,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.StringReflect("reflect bytes pointer", &p)
 		}(),
@@ -387,7 +387,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.StringReflect("reflect empty bytes pointer", &p)
 		}(),
@@ -416,7 +416,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.StringComplex128p("complex128 pointer", &c)
 		}(),
@@ -433,7 +433,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.StringAny("any complex128 pointer", &c)
 		}(),
@@ -443,7 +443,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.StringReflect("reflect complex128 pointer", &c)
 		}(),
@@ -519,7 +519,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.StringComplex64p("complex64 pointer", &c)
 		}(),
@@ -536,7 +536,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.StringAny("any complex64 pointer", &c)
 		}(),
@@ -546,7 +546,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.StringReflect("reflect complex64 pointer", &c)
 		}(),
@@ -603,7 +603,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.StringFloat32p("float32 pointer", &f)
 		}(),
@@ -613,7 +613,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 0.123456789
 			return plog.StringFloat32p("high precision float32 pointer", &f)
 		}(),
@@ -630,7 +630,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.StringAny("any float32 pointer", &f)
 		}(),
@@ -640,7 +640,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.StringReflect("reflect float32 pointer", &f)
 		}(),
@@ -650,7 +650,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f *float32
 			return plog.StringReflect("reflect float32 pointer to nil", f)
 		}(),
@@ -709,7 +709,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.StringFloat64p("float64 pointer", &f)
 		}(),
@@ -719,7 +719,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 0.123456789
 			return plog.StringFloat64p("high precision float64 pointer", &f)
 		}(),
@@ -736,7 +736,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.StringAny("any float64 pointer", &f)
 		}(),
@@ -746,7 +746,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.StringReflect("reflect float64 pointer", &f)
 		}(),
@@ -756,7 +756,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f *float64
 			return plog.StringReflect("reflect float64 pointer to nil", f)
 		}(),
@@ -787,7 +787,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.StringIntp("int pointer", &i)
 		}(),
@@ -797,7 +797,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.StringAny("any int pointer", &i)
 		}(),
@@ -807,7 +807,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.StringReflect("reflect int pointer", &i)
 		}(),
@@ -838,7 +838,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.StringInt16p("int16 pointer", &i)
 		}(),
@@ -848,7 +848,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.StringAny("any int16 pointer", &i)
 		}(),
@@ -858,7 +858,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.StringReflect("reflect int16 pointer", &i)
 		}(),
@@ -889,7 +889,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.StringInt32p("int32 pointer", &i)
 		}(),
@@ -899,7 +899,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.StringAny("any int32 pointer", &i)
 		}(),
@@ -909,7 +909,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.StringReflect("reflect int32 pointer", &i)
 		}(),
@@ -940,7 +940,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.StringInt64p("int64 pointer", &i)
 		}(),
@@ -950,7 +950,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.StringAny("any int64 pointer", &i)
 		}(),
@@ -960,7 +960,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.StringReflect("reflect int64 pointer", &i)
 		}(),
@@ -991,7 +991,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.StringInt8p("int8 pointer", &i)
 		}(),
@@ -1001,7 +1001,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.StringAny("any int8 pointer", &i)
 		}(),
@@ -1011,7 +1011,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.StringReflect("reflect int8 pointer", &i)
 		}(),
@@ -1035,7 +1035,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var p []rune
 			return plog.StringRunes("nil runes", p...)
 		}(),
@@ -1094,7 +1094,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.StringRunesp("runes pointer", &p)
 		}(),
@@ -1104,7 +1104,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.StringRunesp("empty runes pointer", &p)
 		}(),
@@ -1121,7 +1121,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.StringAny("any runes pointer", &p)
 		}(),
@@ -1131,7 +1131,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.StringAny("any empty runes pointer", &p)
 		}(),
@@ -1141,7 +1141,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.StringReflect("reflect runes pointer", &p)
 		}(),
@@ -1151,7 +1151,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.StringReflect("reflect empty runes pointer", &p)
 		}(),
@@ -1260,7 +1260,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.StringStringp("string pointer", &p)
 		}(),
@@ -1270,7 +1270,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.StringStringp("empty string pointer", &p)
 		}(),
@@ -1287,7 +1287,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.StringAny("any string pointer", &p)
 		}(),
@@ -1297,7 +1297,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.StringAny("any empty string pointer", &p)
 		}(),
@@ -1307,7 +1307,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.StringReflect("reflect string pointer", &p)
 		}(),
@@ -1317,7 +1317,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.StringReflect("reflect empty string pointer", &p)
 		}(),
@@ -1348,7 +1348,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.StringUintp("uint pointer", &i)
 		}(),
@@ -1365,7 +1365,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.StringAny("any uint pointer", &i)
 		}(),
@@ -1375,7 +1375,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.StringReflect("reflect uint pointer", &i)
 		}(),
@@ -1406,7 +1406,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.StringUint16p("uint16 pointer", &i)
 		}(),
@@ -1423,7 +1423,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.StringAny("any uint16 pointer", &i)
 		}(),
@@ -1433,7 +1433,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.StringReflect("reflect uint16 pointer", &i)
 		}(),
@@ -1443,7 +1443,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i *uint16
 			return plog.StringReflect("reflect uint16 pointer to nil", i)
 		}(),
@@ -1474,7 +1474,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.StringUint32p("uint32 pointer", &i)
 		}(),
@@ -1491,7 +1491,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.StringAny("any uint32 pointer", &i)
 		}(),
@@ -1501,7 +1501,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.StringReflect("reflect uint32 pointer", &i)
 		}(),
@@ -1533,7 +1533,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.StringUint64p("uint64 pointer", &i)
 		}(),
@@ -1550,7 +1550,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.StringAny("any uint64 pointer", &i)
 		}(),
@@ -1560,7 +1560,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.StringReflect("reflect uint64 pointer", &i)
 		}(),
@@ -1591,7 +1591,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.StringUint8p("uint8 pointer", &i)
 		}(),
@@ -1608,7 +1608,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.StringAny("any uint8 pointer", &i)
 		}(),
@@ -1618,7 +1618,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.StringReflect("reflect uint8 pointer", &i)
 		}(),
@@ -1651,7 +1651,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.StringUintptrp("uintptr pointer", &i)
 		}(),
@@ -1668,7 +1668,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.StringAny("any uintptr pointer", &i)
 		}(),
@@ -1678,7 +1678,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.StringReflect("reflect uintptr pointer", &i)
 		}(),
@@ -1709,7 +1709,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.StringTimep("time pointer", &t)
 		}(),
@@ -1719,7 +1719,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var t *time.Time
 			return plog.StringTimep("nil time pointer", t)
 		}(),
@@ -1729,8 +1729,8 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
-			return plog.StringFunc("function", func() plog.KV {
+		input: func() pfmt.KV {
+			return plog.StringFunc("function", func() pfmt.KV {
 				t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 				return pfmt.Time(t)
 			})
@@ -1741,7 +1741,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.StringAny("any time pointer", &t)
 		}(),
@@ -1751,7 +1751,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.StringReflect("reflect time pointer", &t)
 		}(),
@@ -1782,7 +1782,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.StringDurationp("duration pointer", &d)
 		}(),
@@ -1799,7 +1799,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.StringAny("any duration pointer", &d)
 		}(),
@@ -1809,7 +1809,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.StringReflect("reflect duration pointer", &d)
 		}(),
@@ -1829,7 +1829,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			s := Struct{Name: "John Doe", Age: 42}
 			return plog.StringAny("any struct pointer", &s)
 		}(),
@@ -1852,7 +1852,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			s := Struct{Name: "John Doe", Age: 42}
 			return plog.StringReflect("struct reflect pointer", &s)
 		}(),
@@ -1901,7 +1901,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			a := [3]byte{'f', 'o', 'o'}
 			return plog.StringAny("any byte array pointer", &a)
 		}(),
@@ -1911,7 +1911,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var a *[3]byte
 			return plog.StringAny("any byte array pointer to nil", a)
 		}(),
@@ -1928,7 +1928,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			a := [3]byte{'f', 'o', 'o'}
 			return plog.StringReflect("reflect byte array pointer", &a)
 		}(),
@@ -1938,7 +1938,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var a *[3]byte
 			return plog.StringReflect("reflect byte array pointer to nil", a)
 		}(),
@@ -1990,7 +1990,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.TextBoolp(pfmt.String("bool pointer to true"), &b)
 		}(),
@@ -2000,7 +2000,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := false
 			return plog.TextBoolp(pfmt.String("bool pointer to false"), &b)
 		}(),
@@ -2017,7 +2017,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.TextAny(pfmt.String("any bool pointer to true"), &b)
 		}(),
@@ -2027,7 +2027,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			b2 := &b
 			return plog.TextAny(pfmt.String("any twice/nested pointer to bool true"), &b2)
@@ -2038,7 +2038,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			return plog.TextReflect(pfmt.String("reflect bool pointer to true"), &b)
 		}(),
@@ -2048,7 +2048,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			b := true
 			b2 := &b
 			return plog.TextReflect(pfmt.String("reflect bool twice/nested pointer to true"), &b2)
@@ -2059,7 +2059,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var b *bool
 			return plog.TextReflect(pfmt.String("reflect bool pointer to nil"), b)
 		}(),
@@ -2118,7 +2118,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var p []byte
 			return plog.TextBytes(pfmt.String("nil bytes"), p...)
 		}(),
@@ -2156,7 +2156,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.TextBytesp(pfmt.String("bytes pointer"), &p)
 		}(),
@@ -2166,7 +2166,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.TextBytesp(pfmt.String("empty bytes pointer"), &p)
 		}(),
@@ -2183,7 +2183,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.TextAny(pfmt.String("any bytes pointer"), &p)
 		}(),
@@ -2193,7 +2193,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.TextAny(pfmt.String("any empty bytes pointer"), &p)
 		}(),
@@ -2203,7 +2203,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte("Hello, Wörld!")
 			return plog.TextReflect(pfmt.String("reflect bytes pointer"), &p)
 		}(),
@@ -2213,7 +2213,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []byte{}
 			return plog.TextReflect(pfmt.String("reflect empty bytes pointer"), &p)
 		}(),
@@ -2242,7 +2242,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.TextComplex128p(pfmt.String("complex128 pointer"), &c)
 		}(),
@@ -2259,7 +2259,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.TextAny(pfmt.String("any complex128 pointer"), &c)
 		}(),
@@ -2269,7 +2269,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex128 = complex(1, 23)
 			return plog.TextReflect(pfmt.String("reflect complex128 pointer"), &c)
 		}(),
@@ -2324,7 +2324,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.TextComplex64p(pfmt.String("complex64 pointer"), &c)
 		}(),
@@ -2341,7 +2341,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.TextAny(pfmt.String("any complex64 pointer"), &c)
 		}(),
@@ -2351,7 +2351,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var c complex64 = complex(1, 23)
 			return plog.TextReflect(pfmt.String("reflect complex64 pointer"), &c)
 		}(),
@@ -2408,7 +2408,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.TextFloat32p(pfmt.String("float32 pointer"), &f)
 		}(),
@@ -2418,7 +2418,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 0.123456789
 			return plog.TextFloat32p(pfmt.String("high precision float32 pointer"), &f)
 		}(),
@@ -2435,7 +2435,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.TextAny(pfmt.String("any float32 pointer"), &f)
 		}(),
@@ -2445,7 +2445,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float32 = 4.2
 			return plog.TextReflect(pfmt.String("reflect float32 pointer"), &f)
 		}(),
@@ -2455,7 +2455,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f *float32
 			return plog.TextReflect(pfmt.String("reflect float32 pointer to nil"), f)
 		}(),
@@ -2514,7 +2514,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.TextFloat64p(pfmt.String("float64 pointer"), &f)
 		}(),
@@ -2524,7 +2524,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 0.123456789
 			return plog.TextFloat64p(pfmt.String("high precision float64 pointer"), &f)
 		}(),
@@ -2541,7 +2541,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.TextAny(pfmt.String("any float64 pointer"), &f)
 		}(),
@@ -2551,7 +2551,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f float64 = 4.2
 			return plog.TextReflect(pfmt.String("reflect float64 pointer"), &f)
 		}(),
@@ -2561,7 +2561,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var f *float64
 			return plog.TextReflect(pfmt.String("reflect float64 pointer to nil"), f)
 		}(),
@@ -2592,7 +2592,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.TextIntp(pfmt.String("int pointer"), &i)
 		}(),
@@ -2602,7 +2602,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.TextAny(pfmt.String("any int pointer"), &i)
 		}(),
@@ -2612,7 +2612,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int = 42
 			return plog.TextReflect(pfmt.String("reflect int pointer"), &i)
 		}(),
@@ -2643,7 +2643,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.TextInt16p(pfmt.String("int16 pointer"), &i)
 		}(),
@@ -2653,7 +2653,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.TextAny(pfmt.String("any int16 pointer"), &i)
 		}(),
@@ -2663,7 +2663,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int16 = 42
 			return plog.TextReflect(pfmt.String("reflect int16 pointer"), &i)
 		}(),
@@ -2694,7 +2694,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.TextInt32p(pfmt.String("int32 pointer"), &i)
 		}(),
@@ -2704,7 +2704,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.TextAny(pfmt.String("any int32 pointer"), &i)
 		}(),
@@ -2714,7 +2714,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int32 = 42
 			return plog.TextReflect(pfmt.String("reflect int32 pointer"), &i)
 		}(),
@@ -2745,7 +2745,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.TextInt64p(pfmt.String("int64 pointer"), &i)
 		}(),
@@ -2755,7 +2755,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.TextAny(pfmt.String("any int64 pointer"), &i)
 		}(),
@@ -2765,7 +2765,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int64 = 42
 			return plog.TextReflect(pfmt.String("reflect int64 pointer"), &i)
 		}(),
@@ -2796,7 +2796,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.TextInt8p(pfmt.String("int8 pointer"), &i)
 		}(),
@@ -2806,7 +2806,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.TextAny(pfmt.String("any int8 pointer"), &i)
 		}(),
@@ -2816,7 +2816,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i int8 = 42
 			return plog.TextReflect(pfmt.String("reflect int8 pointer"), &i)
 		}(),
@@ -2840,7 +2840,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var p []rune
 			return plog.TextRunes(pfmt.String("nil runes"), p...)
 		}(),
@@ -2899,7 +2899,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.TextRunesp(pfmt.String("runes pointer"), &p)
 		}(),
@@ -2909,7 +2909,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.TextRunesp(pfmt.String("empty runes pointer"), &p)
 		}(),
@@ -2926,7 +2926,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.TextAny(pfmt.String("any runes pointer"), &p)
 		}(),
@@ -2936,7 +2936,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.TextAny(pfmt.String("any empty runes pointer"), &p)
 		}(),
@@ -2946,7 +2946,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune("Hello, Wörld!")
 			return plog.TextReflect(pfmt.String("reflect runes pointer"), &p)
 		}(),
@@ -2956,7 +2956,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := []rune{}
 			return plog.TextReflect(pfmt.String("reflect empty runes pointer"), &p)
 		}(),
@@ -3050,7 +3050,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.TextStringp(pfmt.String("string pointer"), &p)
 		}(),
@@ -3060,7 +3060,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.TextStringp(pfmt.String("empty string pointer"), &p)
 		}(),
@@ -3077,7 +3077,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.TextAny(pfmt.String("any string pointer"), &p)
 		}(),
@@ -3087,7 +3087,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.TextAny(pfmt.String("any empty string pointer"), &p)
 		}(),
@@ -3097,7 +3097,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := "Hello, Wörld!"
 			return plog.TextReflect(pfmt.String("reflect string pointer"), &p)
 		}(),
@@ -3107,7 +3107,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			p := ""
 			return plog.TextReflect(pfmt.String("reflect empty string pointer"), &p)
 		}(),
@@ -3138,7 +3138,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.TextUintp(pfmt.String("uint pointer"), &i)
 		}(),
@@ -3155,7 +3155,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.TextAny(pfmt.String("any uint pointer"), &i)
 		}(),
@@ -3165,7 +3165,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint = 42
 			return plog.TextReflect(pfmt.String("reflect uint pointer"), &i)
 		}(),
@@ -3196,7 +3196,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.TextUint16p(pfmt.String("uint16 pointer"), &i)
 		}(),
@@ -3213,7 +3213,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.TextAny(pfmt.String("any uint16 pointer"), &i)
 		}(),
@@ -3223,7 +3223,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint16 = 42
 			return plog.TextReflect(pfmt.String("reflect uint16 pointer"), &i)
 		}(),
@@ -3233,7 +3233,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i *uint16
 			return plog.TextReflect(pfmt.String("reflect uint16 pointer to nil"), i)
 		}(),
@@ -3264,7 +3264,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.TextUint32p(pfmt.String("uint32 pointer"), &i)
 		}(),
@@ -3281,7 +3281,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.TextAny(pfmt.String("any uint32 pointer"), &i)
 		}(),
@@ -3291,7 +3291,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint32 = 42
 			return plog.TextReflect(pfmt.String("reflect uint32 pointer"), &i)
 		}(),
@@ -3323,7 +3323,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.TextUint64p(pfmt.String("uint64 pointer"), &i)
 		}(),
@@ -3340,7 +3340,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.TextAny(pfmt.String("any uint64 pointer"), &i)
 		}(),
@@ -3350,7 +3350,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint64 = 42
 			return plog.TextReflect(pfmt.String("reflect uint64 pointer"), &i)
 		}(),
@@ -3381,7 +3381,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.TextUint8p(pfmt.String("uint8 pointer"), &i)
 		}(),
@@ -3398,7 +3398,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.TextAny(pfmt.String("any uint8 pointer"), &i)
 		}(),
@@ -3408,7 +3408,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uint8 = 42
 			return plog.TextReflect(pfmt.String("reflect uint8 pointer"), &i)
 		}(),
@@ -3441,7 +3441,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.TextUintptrp(pfmt.String("uintptr pointer"), &i)
 		}(),
@@ -3458,7 +3458,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.TextAny(pfmt.String("any uintptr pointer"), &i)
 		}(),
@@ -3468,7 +3468,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var i uintptr = 42
 			return plog.TextReflect(pfmt.String("reflect uintptr pointer"), &i)
 		}(),
@@ -3499,7 +3499,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.TextTimep(pfmt.String("time pointer"), &t)
 		}(),
@@ -3509,7 +3509,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var t *time.Time
 			return plog.TextTimep(pfmt.String("nil time pointer"), t)
 		}(),
@@ -3519,7 +3519,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			return plog.TextFunc(pfmt.String("function"), func() json.Marshaler {
 				t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 				return pfmt.Time(t)
@@ -3531,7 +3531,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.TextAny(pfmt.String("any time pointer"), &t)
 		}(),
@@ -3541,7 +3541,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			t := time.Date(1970, time.January, 1, 0, 0, 0, 42, time.UTC)
 			return plog.TextReflect(pfmt.String("reflect time pointer"), &t)
 		}(),
@@ -3572,7 +3572,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.TextDurationp(pfmt.String("duration pointer"), &d)
 		}(),
@@ -3589,7 +3589,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.TextAny(pfmt.String("any duration pointer"), &d)
 		}(),
@@ -3599,7 +3599,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			d := 42 * time.Nanosecond
 			return plog.TextReflect(pfmt.String("reflect duration pointer"), &d)
 		}(),
@@ -3619,7 +3619,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			s := Struct{Name: "John Doe", Age: 42}
 			return plog.TextAny(pfmt.String("any struct pointer"), &s)
 		}(),
@@ -3642,7 +3642,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			s := Struct{Name: "John Doe", Age: 42}
 			return plog.TextReflect(pfmt.String("struct reflect pointer"), &s)
 		}(),
@@ -3691,7 +3691,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			a := [3]byte{'f', 'o', 'o'}
 			return plog.TextAny(pfmt.String("any byte array pointer"), &a)
 		}(),
@@ -3701,7 +3701,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var a *[3]byte
 			return plog.TextAny(pfmt.String("any byte array pointer to nil"), a)
 		}(),
@@ -3718,7 +3718,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			a := [3]byte{'f', 'o', 'o'}
 			return plog.TextReflect(pfmt.String("reflect byte array pointer"), &a)
 		}(),
@@ -3728,7 +3728,7 @@ var KVTests = []struct {
 	},
 	{
 		line: line(),
-		input: func() plog.KV {
+		input: func() pfmt.KV {
 			var a *[3]byte
 			return plog.TextReflect(pfmt.String("reflect byte array pointer to nil"), a)
 		}(),
