@@ -14,7 +14,7 @@ its extremely slow and allocates a lots of memory)
 
 ## Install
 
-    go get github.com/pprint/plog@v0.173.0
+    go get github.com/pprint/plog@latest
 
 ## Usage
 
