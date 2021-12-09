@@ -17,6 +17,7 @@ import (
 	"unicode/utf8"
 
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pprint/pfmt"
 )
 
 const (
@@ -277,25 +278,25 @@ func (l Log) excerpt(dst map[string]json.Marshaler, excerpt []byte, src ...byte)
 
 	if bytes.Equal(src, excerpt) && src != nil {
 		if l.Key == Excerpt {
-			dst[excerptKey] = Bytes(src...)
+			dst[excerptKey] = pfmt.Bytes(src...)
 
 		} else {
 			if dst[originalKey] == nil {
-				dst[originalKey] = Bytes(src...)
+				dst[originalKey] = pfmt.Bytes(src...)
 			} else if len(src) != 0 {
-				dst[trailKey] = Bytes(src...)
+				dst[trailKey] = pfmt.Bytes(src...)
 			}
 		}
 
 	} else if !bytes.Equal(src, excerpt) {
 		if dst[originalKey] == nil {
-			dst[originalKey] = Bytes(src...)
+			dst[originalKey] = pfmt.Bytes(src...)
 		} else if dst[originalKey] != nil && len(src) != 0 {
-			dst[trailKey] = Bytes(src...)
+			dst[trailKey] = pfmt.Bytes(src...)
 		}
 
 		if dst[excerptKey] == nil && len(excerpt) != 0 {
-			dst[excerptKey] = Bytes(excerpt...)
+			dst[excerptKey] = pfmt.Bytes(excerpt...)
 		}
 	}
 
@@ -312,7 +313,7 @@ func (l Log) excerpt(dst map[string]json.Marshaler, excerpt []byte, src ...byte)
 	}
 
 	if file != 0 {
-		dst[fileKey] = Bytes(src[:file]...)
+		dst[fileKey] = pfmt.Bytes(src[:file]...)
 	}
 
 	return nil
@@ -441,14 +442,14 @@ func GELF() *Log {
 		// <https://github.com/graylog-labs/gelf-rb/issues/41#issuecomment-198266505>.
 		KV: []KV{
 			StringString("version", "1.1"),
-			StringFunc("timestamp", func() KV { return Int64(time.Now().Unix()) }),
+			StringFunc("timestamp", func() KV { return pfmt.Int64(time.Now().Unix()) }),
 		},
 		Trunc: 120,
 		Keys: [4]encoding.TextMarshaler{
-			String("full_message"),
-			String("short_message"),
-			String("_trail"),
-			String("_file"),
+			pfmt.String("full_message"),
+			pfmt.String("short_message"),
+			pfmt.String("_trail"),
+			pfmt.String("_file"),
 		},
 		Key:     Excerpt,
 		Marks:   [3][]byte{[]byte("…"), []byte("_EMPTY_"), []byte("_BLANK_")},

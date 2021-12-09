@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/pprint/pfmt"
 	"github.com/pprint/plog"
 )
 
@@ -32,7 +33,7 @@ var MarshalJSONTests = []marshalTests{
 	},
 	{
 		line:     line(),
-		input:    map[string]json.Marshaler{"slice of empty jsons": plog.JSON(plog.String(""), plog.String(""))},
+		input:    map[string]json.Marshaler{"slice of empty jsons": plog.JSON(pfmt.String(""), pfmt.String(""))},
 		want:     ``,
 		wantText: ``,
 		wantJSON: `{

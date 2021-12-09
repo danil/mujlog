@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/kinbiko/jsonassert"
+	"github.com/pprint/pfmt"
 	"github.com/pprint/plog"
 )
 
@@ -60,7 +61,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Original,
 			Trunc:  120,
 			Marks:  [3][]byte{[]byte("…"), []byte("_EMPTY_"), []byte("_BLANK_")},
@@ -77,7 +78,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringString("string", "foo")},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:  120,
 		},
 		input: []byte("Hello, World!"),
@@ -104,7 +105,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
 			KV:      []plog.KV{plog.StringString("message", "string value")},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
@@ -133,7 +134,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringString("message", "string value")},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:  120,
 		},
 		want: `{
@@ -213,7 +214,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Key:    plog.Original,
 			Trunc:  120,
 		},
@@ -227,7 +228,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -242,7 +243,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -260,7 +261,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Trunc:  120,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:    plog.Original,
 		},
 		input: []byte("foo\n"),
@@ -276,7 +277,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -294,7 +295,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Original,
 			Trunc:  120,
 		},
@@ -308,7 +309,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -323,7 +324,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Original,
 			Trunc:  120,
 		},
@@ -339,7 +340,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -356,7 +357,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -373,7 +374,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -390,7 +391,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Original,
 			Trunc:  120,
 		},
@@ -405,7 +406,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -421,7 +422,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:    plog.Original,
 			Trunc:  120,
 		},
@@ -438,7 +439,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -459,7 +460,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Original,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -477,7 +478,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -491,7 +492,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -506,7 +507,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -523,7 +524,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -540,7 +541,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -558,7 +559,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -572,7 +573,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -587,7 +588,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -603,7 +604,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -620,7 +621,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -637,7 +638,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -654,7 +655,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -669,7 +670,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -685,7 +686,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:    plog.Excerpt,
 			Trunc:  120,
 		},
@@ -702,7 +703,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -720,7 +721,7 @@ var WriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail")},
 			Key:     plog.Excerpt,
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -757,7 +758,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		kv: []plog.KV{plog.StringString("foo", "bar")},
 		want: `{
@@ -770,7 +771,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: []byte("a"),
 		want: `{
@@ -783,7 +784,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 		},
 		input: []byte("ab"),
 		want: `{
@@ -797,7 +798,7 @@ var WriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 		},
 		input: []byte("abc"),
 		want: `{
@@ -837,7 +838,7 @@ var WriteTests = []struct {
 func TestWrite(t *testing.T) {
 	for _, tt := range WriteTests {
 		tt := tt
-		t.Run(tt.line+"/"+"io writer %"+tt.name, func(t *testing.T) {
+		t.Run(tt.line+"/io writer %"+tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			l0, ok := tt.log.(*plog.Log)
@@ -878,7 +879,7 @@ var FprintWriteTests = []struct {
 		name: "readme example 1",
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Marks:   [3][]byte{[]byte("…")},
 			Trunc:   12,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -900,7 +901,7 @@ var FprintWriteTests = []struct {
 				plog.StringString("version", "1.1"),
 				plog.StringFunc("timestamp", func() plog.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
-					return plog.Int64(t.Unix())
+					return pfmt.Int64(t.Unix())
 				}),
 			)
 			return l
@@ -917,7 +918,7 @@ var FprintWriteTests = []struct {
 		name: "readme example 3.1",
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		line:  line(),
 		input: 3.21,
@@ -929,7 +930,7 @@ var FprintWriteTests = []struct {
 		name: "readme example 3.2",
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		line:  line(),
 		input: 123,
@@ -979,7 +980,7 @@ var FprintWriteTests = []struct {
 	// 	line: line(),
 	// 	log: &plog.Log{
 	// 		Output: &bytes.Buffer{},
-	// 		Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+	// 		Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 	// 		Key:    plog.Original,
 	// 		Trunc:  120,
 	// 		Marks:  [3][]byte{[]byte("…"), []byte("_EMPTY_"), []byte("_BLANK_")},
@@ -1044,7 +1045,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringString("string", "foo")},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
 		want: `{
@@ -1058,7 +1059,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringInt("integer", 123)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
 		want: `{
@@ -1072,7 +1073,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringFloat32("float", 3.21)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
 		want: `{
@@ -1134,7 +1135,7 @@ var FprintWriteTests = []struct {
 		name: "zero maximum length",
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:  0,
 		},
 		line:  line(),
@@ -1159,7 +1160,7 @@ var FprintWriteTests = []struct {
 		name: "only original message key name",
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		line:  line(),
 		input: "Hello, World!",
@@ -1173,7 +1174,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringBytes("excerpt", []byte("Explicit byte slice")...)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1188,7 +1189,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringString("excerpt", "Explicit string")},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1203,7 +1204,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringInt("excerpt", 42)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1218,7 +1219,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringFloat32("excerpt", 4.2)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1233,7 +1234,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringBool("excerpt", true)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1248,7 +1249,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			KV:     []plog.KV{plog.StringRunes("excerpt", []rune("Explicit rune slice")...)},
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
 		input: "Hello, World!",
@@ -1265,10 +1266,10 @@ var FprintWriteTests = []struct {
 			KV: []plog.KV{
 				plog.StringFunc("time", func() plog.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
-					return plog.String(t.String())
+					return pfmt.String(t.String())
 				}),
 			},
-			Keys: [4]encoding.TextMarshaler{plog.String("message")},
+			Keys: [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "Hello, World!",
 		want: `{
@@ -1282,7 +1283,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.LstdFlags,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
 		},
 		input: "path/to/file1:23: Hello, World!",
 		want: `{
@@ -1295,7 +1296,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 			Trunc:  120,
 		},
 		input: "path/to/file1:23: Hello, World!",
@@ -1310,7 +1311,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 		},
@@ -1325,7 +1326,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("!")}},
 		},
@@ -1340,7 +1341,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("World"), []byte("Work")}},
 		},
@@ -1355,7 +1356,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{[]byte("!"), []byte("!")}},
 		},
@@ -1369,7 +1370,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output:  &bytes.Buffer{},
-			Keys:    [4]encoding.TextMarshaler{plog.String("message")},
+			Keys:    [4]encoding.TextMarshaler{pfmt.String("message")},
 			Trunc:   120,
 			Replace: [][2][]byte{[2][]byte{}},
 		},
@@ -1384,7 +1385,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 			Trunc:  120,
 			Marks:  [3][]byte{[]byte("…"), []byte("_EMPTY_")},
 		},
@@ -1401,7 +1402,7 @@ var FprintWriteTests = []struct {
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
 			Flag:   log.Llongfile,
-			Keys:   [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 			Trunc:  120,
 			Marks:  [3][]byte{[]byte("…"), []byte("_EMPTY_"), []byte("_BLANK_")},
 		},
@@ -1423,7 +1424,7 @@ var FprintWriteTests = []struct {
 				plog.StringString("host", "example.tld"),
 				plog.StringFunc("timestamp", func() plog.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
-					return plog.Int64(t.Unix())
+					return pfmt.Int64(t.Unix())
 				}),
 			)
 			return l
@@ -1448,7 +1449,7 @@ var FprintWriteTests = []struct {
 				plog.StringString("host", "example.tld"),
 				plog.StringFunc("timestamp", func() plog.KV {
 					t := time.Date(2020, time.October, 15, 18, 9, 0, 0, time.UTC)
-					return plog.Int64(t.Unix())
+					return pfmt.Int64(t.Unix())
 				}),
 			)
 			return l
@@ -1468,7 +1469,7 @@ var FprintWriteTests = []struct {
 func TestFprintWrite(t *testing.T) {
 	for _, tt := range FprintWriteTests {
 		tt := tt
-		t.Run(tt.line+"/"+"io writer via fmt fprint "+tt.name, func(t *testing.T) {
+		t.Run(tt.line+"/io writer via fmt fprint "+tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			l, ok := tt.log.(*plog.Log)
@@ -1525,7 +1526,7 @@ func BenchmarkPlog(b *testing.B) {
 var dummy = func() plog.Logger {
 	return &plog.Log{
 		Output:  &bytes.Buffer{},
-		Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt"), plog.String("trail"), plog.String("file")},
+		Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt"), pfmt.String("trail"), pfmt.String("file")},
 		Key:     plog.Original,
 		Trunc:   120,
 		Marks:   [3][]byte{[]byte("…"), []byte("_EMPTY_"), []byte("_BLANK_")},
@@ -1923,7 +1924,7 @@ func TestSeverityLevel(t *testing.T) {
 func TestEncode(t *testing.T) {
 	l0 := &plog.Log{
 		Output:  &bytes.Buffer{},
-		Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+		Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 		Marks:   [3][]byte{[]byte("…")},
 		Trunc:   12,
 		Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},

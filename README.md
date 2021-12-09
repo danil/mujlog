@@ -33,7 +33,7 @@ import (
 func main() {
     l := &plog.Log{
         Output:  os.Stdout,
-        Keys:    [4]encoding.TextMarshaler{plog.String("message"), plog.String("excerpt")},
+        Keys:    [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
         Trunc:   12,
         Marks:   [3][]byte{[]byte("…")},
         Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
@@ -101,7 +101,7 @@ import (
 func main() {
     l := plog.Log{
         Output: os.Stdout,
-        Keys:   [4]encoding.TextMarshaler{plog.String("message")},
+        Keys:   [4]encoding.TextMarshaler{pfmt.String("message")},
     }
     log.SetFlags(0)
     log.SetOutput(l)
