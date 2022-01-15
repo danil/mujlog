@@ -29,7 +29,7 @@ func (p testprinter) Errorf(msg string, args ...interface{}) {
 	p.t.Errorf(p.link+"\n"+msg, args...)
 }
 
-type marshalTests struct {
+type marshalTest struct {
 	line      string
 	input     map[string]json.Marshaler
 	want      string
@@ -38,7 +38,7 @@ type marshalTests struct {
 	wantError error
 }
 
-func testMarshal(t *testing.T, tests []marshalTests) {
+func testMarshal(t *testing.T, tests []marshalTest) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.line+"/"+fmt.Sprint(tt.input), func(t *testing.T) {

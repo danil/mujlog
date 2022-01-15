@@ -12,45 +12,45 @@ import (
 	"github.com/pprint/plog"
 )
 
-var MarshalJSONTests = []marshalTests{
-	{
-		line:     line(),
-		input:    map[string]json.Marshaler{"kv slice": pfmt.JSON(plog.StringString("foo", "bar"), plog.StringInt("xyz", 42))},
-		want:     `foo "bar" xyz 42`,
-		wantText: `foo "bar" xyz 42`,
-		wantJSON: `{
+func TestMarshalJSON(t *testing.T) {
+	tests := []marshalTest{
+		{
+			line:     line(),
+			input:    map[string]json.Marshaler{"kv slice": pfmt.JSON(plog.StringString("foo", "bar"), plog.StringInt("xyz", 42))},
+			want:     `foo "bar" xyz 42`,
+			wantText: `foo "bar" xyz 42`,
+			wantJSON: `{
 			"kv slice":{"foo":"bar","xyz":42}
 		}`,
-	},
-	{
-		line:     line(),
-		input:    map[string]json.Marshaler{"without jsons": pfmt.JSON()},
-		want:     "",
-		wantText: "",
-		wantJSON: `{
+		},
+		{
+			line:     line(),
+			input:    map[string]json.Marshaler{"without jsons": pfmt.JSON()},
+			want:     "",
+			wantText: "",
+			wantJSON: `{
 			"without jsons":null
 		}`,
-	},
-	{
-		line:     line(),
-		input:    map[string]json.Marshaler{"slice of empty jsons": pfmt.JSON(pfmt.String(""), pfmt.String(""))},
-		want:     ``,
-		wantText: ``,
-		wantJSON: `{
+		},
+		{
+			line:     line(),
+			input:    map[string]json.Marshaler{"slice of empty jsons": pfmt.JSON(pfmt.String(""), pfmt.String(""))},
+			want:     ``,
+			wantText: ``,
+			wantJSON: `{
 			"slice of empty jsons":{}
 		}`,
-	},
-	{
-		line:     line(),
-		input:    map[string]json.Marshaler{"slice of json nils": pfmt.JSON(nil, nil)},
-		want:     "",
-		wantText: "",
-		wantJSON: `{
+		},
+		{
+			line:     line(),
+			input:    map[string]json.Marshaler{"slice of json nils": pfmt.JSON(nil, nil)},
+			want:     "",
+			wantText: "",
+			wantJSON: `{
 			"slice of json nils":{}
 		}`,
-	},
-}
+		},
+	}
 
-func TestMarshalJSON(t *testing.T) {
-	testMarshal(t, MarshalJSONTests)
+	testMarshal(t, tests)
 }

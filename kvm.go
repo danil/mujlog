@@ -26,28 +26,28 @@ func StringBool(k string, v bool) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Bool(v)}
 }
 
-func StringBools(k string, v ...bool) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Bools(v...)}
+func StringBools(k string, v []bool) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Bools(v)}
 }
 
 func StringBoolp(k string, v *bool) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Boolp(v)}
 }
 
-func StringBytes(k string, v ...byte) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Bytes(v...)}
+func StringBytes(k string, v []byte) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Bytes(v)}
 }
 
-func StringBytess(k string, v ...[]byte) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Bytess(v...)}
+func StringBytess(k string, v [][]byte) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Bytess(v)}
 }
 
 func StringBytesp(k string, v *[]byte) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Bytesp(v)}
 }
 
-func StringBytessp(k string, v ...*[]byte) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Bytesps(v...)}
+func StringBytessp(k string, v []*[]byte) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Bytesps(v)}
 }
 
 func StringComplex128(k string, v complex128) kvm {
@@ -70,8 +70,8 @@ func StringError(k string, v error) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Error(v)}
 }
 
-func StringErrors(k string, v ...error) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Errors(v...)}
+func StringErrors(k string, v []error) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Errors(v)}
 }
 
 func StringFloat32(k string, v float32) kvm {
@@ -130,8 +130,8 @@ func StringInt8p(k string, v *int8) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.Int8p(v)}
 }
 
-func StringRunes(k string, v ...rune) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Runes(v...)}
+func StringRunes(k string, v []rune) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Runes(v)}
 }
 
 func StringRunesp(k string, v *[]rune) kvm {
@@ -142,8 +142,8 @@ func StringString(k string, v string) kvm {
 	return kvm{K: pfmt.String(k), V: pfmt.String(v)}
 }
 
-func StringStrings(k string, v ...string) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Strings(v...)}
+func StringStrings(k string, v []string) kvm {
+	return kvm{K: pfmt.String(k), V: pfmt.Strings(v)}
 }
 
 func StringStringp(k string, v *string) kvm {
@@ -238,8 +238,8 @@ func TextBoolp(k encoding.TextMarshaler, v *bool) kvm {
 	return kvm{K: k, V: pfmt.Boolp(v)}
 }
 
-func TextBytes(k encoding.TextMarshaler, v ...byte) kvm {
-	return kvm{K: k, V: pfmt.Bytes(v...)}
+func TextBytes(k encoding.TextMarshaler, v []byte) kvm {
+	return kvm{K: k, V: pfmt.Bytes(v)}
 }
 
 func TextBytesp(k encoding.TextMarshaler, v *[]byte) kvm {
@@ -322,8 +322,8 @@ func TextInt8p(k encoding.TextMarshaler, v *int8) kvm {
 	return kvm{K: k, V: pfmt.Int8p(v)}
 }
 
-func TextRunes(k encoding.TextMarshaler, v ...rune) kvm {
-	return kvm{K: k, V: pfmt.Runes(v...)}
+func TextRunes(k encoding.TextMarshaler, v []rune) kvm {
+	return kvm{K: k, V: pfmt.Runes(v)}
 }
 
 func TextRunesp(k encoding.TextMarshaler, v *[]rune) kvm {

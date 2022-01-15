@@ -272,25 +272,25 @@ func (l Log) excerpt(dst map[string]json.Marshaler, excerpt []byte, src ...byte)
 
 	if bytes.Equal(src, excerpt) && src != nil {
 		if l.Key == Excerpt {
-			dst[excerptKey] = pfmt.Bytes(src...)
+			dst[excerptKey] = pfmt.Bytes(src)
 
 		} else {
 			if dst[originalKey] == nil {
-				dst[originalKey] = pfmt.Bytes(src...)
+				dst[originalKey] = pfmt.Bytes(src)
 			} else if len(src) != 0 {
-				dst[trailKey] = pfmt.Bytes(src...)
+				dst[trailKey] = pfmt.Bytes(src)
 			}
 		}
 
 	} else if !bytes.Equal(src, excerpt) {
 		if dst[originalKey] == nil {
-			dst[originalKey] = pfmt.Bytes(src...)
+			dst[originalKey] = pfmt.Bytes(src)
 		} else if dst[originalKey] != nil && len(src) != 0 {
-			dst[trailKey] = pfmt.Bytes(src...)
+			dst[trailKey] = pfmt.Bytes(src)
 		}
 
 		if dst[excerptKey] == nil && len(excerpt) != 0 {
-			dst[excerptKey] = pfmt.Bytes(excerpt...)
+			dst[excerptKey] = pfmt.Bytes(excerpt)
 		}
 	}
 
@@ -307,7 +307,7 @@ func (l Log) excerpt(dst map[string]json.Marshaler, excerpt []byte, src ...byte)
 	}
 
 	if file != 0 {
-		dst[fileKey] = pfmt.Bytes(src[:file]...)
+		dst[fileKey] = pfmt.Bytes(src[:file])
 	}
 
 	return nil

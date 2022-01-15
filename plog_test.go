@@ -738,7 +738,7 @@ var WriteTests = []struct {
 		name: `bytes is nil and bytes "message" key with json`,
 		line: line(),
 		log:  dummy(),
-		kv:   []pfmt.KV{plog.StringBytes("message", []byte(`{"foo":"bar"}`)...)},
+		kv:   []pfmt.KV{plog.StringBytes("message", []byte(`{"foo":"bar"}`))},
 		want: `{
 			"message":"{\"foo\":\"bar\"}"
 		}`,
@@ -1173,7 +1173,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []pfmt.KV{plog.StringBytes("excerpt", []byte("Explicit byte slice")...)},
+			KV:     []pfmt.KV{plog.StringBytes("excerpt", []byte("Explicit byte slice"))},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1248,7 +1248,7 @@ var FprintWriteTests = []struct {
 		line: line(),
 		log: &plog.Log{
 			Output: &bytes.Buffer{},
-			KV:     []pfmt.KV{plog.StringRunes("excerpt", []rune("Explicit rune slice")...)},
+			KV:     []pfmt.KV{plog.StringRunes("excerpt", []rune("Explicit rune slice"))},
 			Keys:   [4]encoding.TextMarshaler{pfmt.String("message"), pfmt.String("excerpt")},
 			Trunc:  120,
 		},
@@ -1549,108 +1549,100 @@ func TestLogWriteTrailingNewLine(t *testing.T) {
 	}
 }
 
-var TruncateTests = []struct {
-	name      string
-	line      string
-	log       plog.Logger
-	input     []byte
-	want      []byte
-	benchmark bool
-}{
-	{
-		name: "do nothing",
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-		},
-		line:  line(),
-		input: []byte("Hello,\nWorld!"),
-		want:  []byte("Hello,\nWorld!"),
-	},
-	{
-		name: "truncate last character",
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Trunc:  12,
-		},
-		line:  line(),
-		input: []byte("Hello, World!"),
-		want:  []byte("Hello, World"),
-	},
-	{
-		name: "truncate last character and places ellipsis instead",
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Trunc:  12,
-			Marks:  [3][]byte{[]byte("…")},
-		},
-		line:  line(),
-		input: []byte("Hello, World!"),
-		want:  []byte("Hello, World…"),
-	},
-	{
-		name: "replace new lines by spaces",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
-		},
-		line:  line(),
-		input: []byte("Hello\n,\nWorld\n!"),
-		want:  []byte("Hello , World !"),
-	},
-	{
-		name: "replace new lines by empty string",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte("")}},
-		},
-		line:  line(),
-		input: []byte("Hello\n,\nWorld\n!"),
-		want:  []byte("Hello,World!"),
-	},
-	{
-		name: "remove new lines",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("\n")}},
-		},
-		line:  line(),
-		input: []byte("Hello\n,\nWorld\n!"),
-		want:  []byte("Hello,World!"),
-	},
-	{
-		name: "replace three characters by one",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("foo"), []byte("f")}, [2][]byte{[]byte("bar"), []byte("b")}},
-		},
-		line:  line(),
-		input: []byte("foobar"),
-		want:  []byte("fb"),
-	},
-	{
-		name: "replace one characters by three",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("f"), []byte("foo")}, [2][]byte{[]byte("b"), []byte("bar")}},
-		},
-		line:  line(),
-		input: []byte("fb"),
-		want:  []byte("foobar"),
-	},
-	{
-		name: "remove three characters",
-		log: &plog.Log{
-			Output:  &bytes.Buffer{},
-			Replace: [][2][]byte{[2][]byte{[]byte("foo")}, [2][]byte{[]byte("bar")}},
-		},
-		line:  line(),
-		input: []byte("foobar foobar"),
-		want:  []byte(" "),
-	},
-}
-
 func TestTruncate(t *testing.T) {
-	for _, tt := range TruncateTests {
+	tests := []struct {
+		name      string
+		line      string
+		log       plog.Logger
+		input     []byte
+		want      []byte
+		benchmark bool
+	}{
+		{
+			name: "do nothing",
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+			},
+			line:  line(),
+			input: []byte("Hello,\nWorld!"),
+			want:  []byte("Hello,\nWorld!"),
+		}, {
+			name: "truncate last character",
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Trunc:  12,
+			},
+			line:  line(),
+			input: []byte("Hello, World!"),
+			want:  []byte("Hello, World"),
+		}, {
+			name: "truncate last character and places ellipsis instead",
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Trunc:  12,
+				Marks:  [3][]byte{[]byte("…")},
+			},
+			line:  line(),
+			input: []byte("Hello, World!"),
+			want:  []byte("Hello, World…"),
+		}, {
+			name: "replace new lines by spaces",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
+			},
+			line:  line(),
+			input: []byte("Hello\n,\nWorld\n!"),
+			want:  []byte("Hello , World !"),
+		}, {
+			name: "replace new lines by empty string",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte("")}},
+			},
+			line:  line(),
+			input: []byte("Hello\n,\nWorld\n!"),
+			want:  []byte("Hello,World!"),
+		}, {
+			name: "remove new lines",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("\n")}},
+			},
+			line:  line(),
+			input: []byte("Hello\n,\nWorld\n!"),
+			want:  []byte("Hello,World!"),
+		}, {
+			name: "replace three characters by one",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("foo"), []byte("f")}, [2][]byte{[]byte("bar"), []byte("b")}},
+			},
+			line:  line(),
+			input: []byte("foobar"),
+			want:  []byte("fb"),
+		}, {
+			name: "replace one characters by three",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("f"), []byte("foo")}, [2][]byte{[]byte("b"), []byte("bar")}},
+			},
+			line:  line(),
+			input: []byte("fb"),
+			want:  []byte("foobar"),
+		}, {
+			name: "remove three characters",
+			log: &plog.Log{
+				Output:  &bytes.Buffer{},
+				Replace: [][2][]byte{[2][]byte{[]byte("foo")}, [2][]byte{[]byte("bar")}},
+			},
+			line:  line(),
+			input: []byte("foobar foobar"),
+			want:  []byte(" "),
+		},
+	}
+
+	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.line+"/truncate "+tt.name, func(t *testing.T) {
 			t.Parallel()
@@ -1683,112 +1675,107 @@ func TestTruncate(t *testing.T) {
 	}
 }
 
-var NewTests = []struct {
-	name      string
-	line      string
-	log       plog.Logger
-	kv        []pfmt.KV
-	want      string
-	benchmark bool
-}{
-	{
-		name: "one kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			KV: []pfmt.KV{
-				plog.StringString("foo", "bar"),
+func TestNew(t *testing.T) {
+	tests := []struct {
+		name      string
+		line      string
+		log       plog.Logger
+		kv        []pfmt.KV
+		want      string
+		benchmark bool
+	}{
+		{
+			name: "one kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				KV: []pfmt.KV{
+					plog.StringString("foo", "bar"),
+				},
 			},
-		},
-		want: `{
+			want: `{
 			"foo":"bar"
 		}`,
-	},
-	{
-		name: "two kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			KV: []pfmt.KV{
+		}, {
+			name: "two kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				KV: []pfmt.KV{
+					plog.StringString("foo", "bar"),
+					plog.StringString("baz", "xyz"),
+				},
+			},
+			want: `{
+			"foo":"bar",
+			"baz":"xyz"
+		}`,
+		}, {
+			name: "one additional kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+			},
+			kv: []pfmt.KV{
+				plog.StringString("baz", "xyz"),
+			},
+			want: `{
+			"baz":"xyz"
+		}`,
+		}, {
+			name: "two additional kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+			},
+			kv: []pfmt.KV{
 				plog.StringString("foo", "bar"),
 				plog.StringString("baz", "xyz"),
 			},
-		},
-		want: `{
+			want: `{
 			"foo":"bar",
 			"baz":"xyz"
 		}`,
-	},
-	{
-		name: "one additional kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-		},
-		kv: []pfmt.KV{
-			plog.StringString("baz", "xyz"),
-		},
-		want: `{
-			"baz":"xyz"
-		}`,
-	},
-	{
-		name: "two additional kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-		},
-		kv: []pfmt.KV{
-			plog.StringString("foo", "bar"),
-			plog.StringString("baz", "xyz"),
-		},
-		want: `{
-			"foo":"bar",
-			"baz":"xyz"
-		}`,
-	},
-	{
-		name: "one kv with additional one kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			KV: []pfmt.KV{
-				plog.StringString("foo", "bar"),
+		}, {
+			name: "one kv with additional one kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				KV: []pfmt.KV{
+					plog.StringString("foo", "bar"),
+				},
 			},
-		},
-		kv: []pfmt.KV{
-			plog.StringString("baz", "xyz"),
-		},
-		want: `{
+			kv: []pfmt.KV{
+				plog.StringString("baz", "xyz"),
+			},
+			want: `{
 			"foo":"bar",
 			"baz":"xyz"
 		}`,
-	},
-	{
-		name: "two kv with two additional kv",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			KV: []pfmt.KV{
-				plog.StringString("foo", "bar"),
-				plog.StringString("abc", "dfg"),
+		}, {
+			name: "two kv with two additional kv",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				KV: []pfmt.KV{
+					plog.StringString("foo", "bar"),
+					plog.StringString("abc", "dfg"),
+				},
 			},
-		},
-		kv: []pfmt.KV{
-			plog.StringString("baz", "xyz"),
-			plog.StringString("hjk", "lmn"),
-		},
-		want: `{
+			kv: []pfmt.KV{
+				plog.StringString("baz", "xyz"),
+				plog.StringString("hjk", "lmn"),
+			},
+			want: `{
 			"foo":"bar",
 			"abc":"dfg",
 			"baz":"xyz",
 			"hjk":"lmn"
 		}`,
-	},
-}
+		},
+	}
 
-func TestNew(t *testing.T) {
-	for _, tt := range NewTests {
+	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.line+"/with "+tt.name, func(t *testing.T) {
 			t.Parallel()
@@ -1819,74 +1806,71 @@ func TestNew(t *testing.T) {
 	}
 }
 
-var SeverityLevelTests = []struct {
-	name      string
-	line      string
-	log       plog.Logger
-	levels    []string
-	kv        []pfmt.KV
-	want      string
-	benchmark bool
-}{
-	{
-		name: "just level 7",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Level:  func(level string) io.Writer { return nil },
-		},
-		levels: []string{"7"},
-		want: `{
+func TestSeverityLevel(t *testing.T) {
+	tests := []struct {
+		name      string
+		line      string
+		log       plog.Logger
+		levels    []string
+		kv        []pfmt.KV
+		want      string
+		benchmark bool
+	}{
+		{
+			name: "just level 7",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Level:  func(level string) io.Writer { return nil },
+			},
+			levels: []string{"7"},
+			want: `{
 			"level":"7"
 		}`,
-	},
-	{
-		name: "just level 7 next to the key-value pair",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Level:  func(level string) io.Writer { return nil },
-			KV: []pfmt.KV{
-				plog.StringString("foo", "bar"),
+		}, {
+			name: "just level 7 next to the key-value pair",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Level:  func(level string) io.Writer { return nil },
+				KV: []pfmt.KV{
+					plog.StringString("foo", "bar"),
+				},
 			},
-		},
-		levels: []string{"7"},
-		want: `{
+			levels: []string{"7"},
+			want: `{
 			"foo":"bar",
 			"level":"7"
 		}`,
-	},
-	{
-		name: "two consecutive levels call 7 and 6",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Level:  func(level string) io.Writer { return nil },
-		},
-		levels: []string{"7", "6"},
-		want: `{
+		}, {
+			name: "two consecutive levels call 7 and 6",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Level:  func(level string) io.Writer { return nil },
+			},
+			levels: []string{"7", "6"},
+			want: `{
 			"level":"6"
 		}`,
-	},
-	{
-		name: "level 7 overwrites level 42 from key-value pair",
-		line: line(),
-		log: &plog.Log{
-			Output: &bytes.Buffer{},
-			Level:  func(level string) io.Writer { return nil },
-			KV: []pfmt.KV{
-				plog.StringString("level", "42"),
+		}, {
+			name: "level 7 overwrites level 42 from key-value pair",
+			line: line(),
+			log: &plog.Log{
+				Output: &bytes.Buffer{},
+				Level:  func(level string) io.Writer { return nil },
+				KV: []pfmt.KV{
+					plog.StringString("level", "42"),
+				},
 			},
-		},
-		levels: []string{"7"},
-		want: `{
+			levels: []string{"7"},
+			want: `{
 			"level":"7"
 		}`,
-	},
-}
+		},
+	}
 
-func TestSeverityLevel(t *testing.T) {
-	for _, tt := range SeverityLevelTests {
+	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.line+"/with "+tt.name, func(t *testing.T) {
 			t.Parallel()
