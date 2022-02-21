@@ -1,4 +1,4 @@
-// Copyright 2021 The Go Authors. All rights reserved.
+// Copyright 2022 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -44,6 +44,19 @@ var WriteTests = []struct {
 		input: nil,
 		want: `{
 	    "foo":"bar"
+		}`,
+	},
+	{
+		name: `kv slice`,
+		line: line(),
+		log: &plog.Log{
+			Output: &bytes.Buffer{},
+			KV:     []pfmt.KV{plog.StringString("foo", "bar"), plog.StringInt("xyz", 42)},
+		},
+		input: nil,
+		want: `{
+      "foo":"bar",
+      "xyz":42
 		}`,
 	},
 	{

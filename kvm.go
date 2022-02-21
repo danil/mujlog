@@ -1,4 +1,4 @@
-// Copyright 2021 The Go Authors. All rights reserved.
+// Copyright 2022 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -67,11 +67,11 @@ func StringComplex64p(k string, v *complex64) kvm {
 }
 
 func StringError(k string, v error) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Error(v)}
+	return kvm{K: pfmt.String(k), V: pfmt.Err(v)}
 }
 
 func StringErrors(k string, v []error) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Errors(v)}
+	return kvm{K: pfmt.String(k), V: pfmt.Errs(v)}
 }
 
 func StringFloat32(k string, v float32) kvm {
@@ -215,7 +215,7 @@ func StringTimep(k string, v *time.Time) kvm {
 }
 
 func StringFunc(k string, v func() pfmt.KV) kvm {
-	return kvm{K: pfmt.String(k), V: pfmt.Func(v)}
+	return kvm{K: pfmt.String(k), V: pfmt.KVFunc(v)}
 }
 
 func StringRaw(k string, v []byte) kvm {
@@ -263,7 +263,7 @@ func TextComplex64p(k encoding.TextMarshaler, v *complex64) kvm {
 }
 
 func TextError(k encoding.TextMarshaler, v error) kvm {
-	return kvm{K: k, V: pfmt.Error(v)}
+	return kvm{K: k, V: pfmt.Err(v)}
 }
 
 func TextFloat32(k encoding.TextMarshaler, v float32) kvm {

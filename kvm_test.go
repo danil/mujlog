@@ -1,4 +1,4 @@
-// Copyright 2021 The Go Authors. All rights reserved.
+// Copyright 2022 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -365,7 +365,9 @@ func TestKV(t *testing.T) {
 		}, {
 			line:  line(),
 			input: plog.StringReflect("reflect complex128", complex(1, 23)),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex128":"1+23i"
+		}`,
 		}, {
 			line: line(),
 			input: func() pfmt.KV {
@@ -396,7 +398,9 @@ func TestKV(t *testing.T) {
 				var c complex128 = complex(1, 23)
 				return plog.StringReflect("reflect complex128 pointer", &c)
 			}(),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex128 pointer":"1+23i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.StringComplex64("complex64", complex(3, 21)),
@@ -412,7 +416,9 @@ func TestKV(t *testing.T) {
 		}, {
 			line:  line(),
 			input: plog.StringReflect("reflect complex64", complex(3, 21)),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex64":"3+21i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.StringError("error", errors.New("something went wrong")),
@@ -485,7 +491,9 @@ func TestKV(t *testing.T) {
 				var c complex64 = complex(1, 23)
 				return plog.StringReflect("reflect complex64 pointer", &c)
 			}(),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
+			want: `{
+			"reflect complex64 pointer":"1+23i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.StringFloat32("float32", 4.2),
@@ -1974,7 +1982,9 @@ func TestKV(t *testing.T) {
 		}, {
 			line:  line(),
 			input: plog.TextReflect(pfmt.String("reflect complex128"), complex(1, 23)),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex128":"1+23i"
+		}`,
 		}, {
 			line: line(),
 			input: func() pfmt.KV {
@@ -2005,7 +2015,9 @@ func TestKV(t *testing.T) {
 				var c complex128 = complex(1, 23)
 				return plog.TextReflect(pfmt.String("reflect complex128 pointer"), &c)
 			}(),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex128 pointer":"1+23i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.TextComplex64(pfmt.String("complex64"), complex(3, 21)),
@@ -2021,7 +2033,9 @@ func TestKV(t *testing.T) {
 		}, {
 			line:  line(),
 			input: plog.TextReflect(pfmt.String("reflect complex64"), complex(3, 21)),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex128"),
+			want: `{
+			"reflect complex64":"3+21i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.TextError(pfmt.String("error"), errors.New("something went wrong")),
@@ -2076,7 +2090,9 @@ func TestKV(t *testing.T) {
 				var c complex64 = complex(1, 23)
 				return plog.TextReflect(pfmt.String("reflect complex64 pointer"), &c)
 			}(),
-			error: errors.New("json: error calling MarshalJSON for type json.Marshaler: json: unsupported type: complex64"),
+			want: `{
+			"reflect complex64 pointer":"1+23i"
+		}`,
 		}, {
 			line:  line(),
 			input: plog.TextFloat32(pfmt.String("float32"), 4.2),
