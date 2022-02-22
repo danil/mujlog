@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/json-iterator/go v1.1.12
 	github.com/kinbiko/jsonassert v1.0.2
-	github.com/pprint/pfmt v0.1.11
+	github.com/pprint/pfmt v0.1.12
 )
 
 require (
