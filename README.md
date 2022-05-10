@@ -1,11 +1,10 @@
 # plog
 
-[![Build Status](https://cloud.drone.io/api/badges/pprint/plog/status.svg)](https://cloud.drone.io/pprint/plog)
-[![Go Reference](https://pkg.go.dev/badge/github.com/pprint/plog.svg)](https://pkg.go.dev/github.com/pprint/plog)
+[![Build Status](https://cloud.drone.io/api/badges/gorelib/plog/status.svg)](https://cloud.drone.io/gorelib/plog)
+[![Go Reference](https://pkg.go.dev/badge/github.com/gorelib/plog.svg)](https://pkg.go.dev/github.com/gorelib/plog)
 
 JSON logging for Go.  
-Source files are distributed under the BSD-style license
-found in the [LICENSE](./LICENSE) file.
+Source files are distributed under the BSD-style license.
 
 ## About
 
@@ -14,7 +13,7 @@ its extremely slow and allocates a lots of memory)
 
 ## Install
 
-    go get github.com/pprint/plog@latest
+    go get github.com/gorelib/plog@latest
 
 ## Usage
 
@@ -27,7 +26,7 @@ import (
     "os"
     "log"
 
-    "github.com/pprint/plog"
+    "github.com/gorelib/plog"
 )
 
 func main() {
@@ -63,7 +62,7 @@ import (
     "log"
     "os"
 
-    "github.com/pprint/plog"
+    "github.com/gorelib/plog"
 )
 
 func main() {
@@ -95,7 +94,7 @@ import (
     "log"
     "os"
 
-    "github.com/pprint/plog"
+    "github.com/gorelib/plog"
 )
 
 func main() {
@@ -133,12 +132,12 @@ Output 2:
 $ go test -benchmem -bench=. ./...
 goos: linux
 goarch: amd64
-pkg: github.com/pprint/plog
+pkg: github.com/gorelib/plog
 cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
 BenchmarkPlog/plog_test.go:76/io.Writer-8         	  357313	      3128 ns/op	    1712 B/op	      53 allocs/op
 BenchmarkPlog/plog_test.go:1124/fmt.Fprint_io.Writer-8         	  166581	      7016 ns/op	    3602 B/op	      61 allocs/op
 PASS
-ok  	github.com/pprint/plog	2.447s
+ok  	github.com/gorelib/plog	2.447s
 PASS
-ok  	github.com/pprint/plog/pencode	0.003s
+ok  	github.com/gorelib/plog/pencode	0.003s
 ```

@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gorelib/pfmt"
+	"github.com/gorelib/plog"
 	"github.com/kinbiko/jsonassert"
-	"github.com/pprint/pfmt"
-	"github.com/pprint/plog"
 )
 
 func TestKV(t *testing.T) {

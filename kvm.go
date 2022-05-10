@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pprint/pfmt"
+	"github.com/gorelib/pfmt"
 )
 
 // kvm is a key-value pair implements json/text marshaler.
