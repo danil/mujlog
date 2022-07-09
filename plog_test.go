@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gorelib/pfmt"
-	"github.com/gorelib/plog"
 	"github.com/kinbiko/jsonassert"
+	"github.com/pfmt/pfmt"
+	"github.com/pfmt/plog"
 )
 
 var WriteTests = []struct {

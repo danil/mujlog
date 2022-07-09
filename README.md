@@ -1,7 +1,7 @@
 # plog
 
-[![Build Status](https://cloud.drone.io/api/badges/gorelib/plog/status.svg)](https://cloud.drone.io/gorelib/plog)
-[![Go Reference](https://pkg.go.dev/badge/github.com/gorelib/plog.svg)](https://pkg.go.dev/github.com/gorelib/plog)
+[![Build Status](https://cloud.drone.io/api/badges/pfmt/plog/status.svg)](https://cloud.drone.io/pfmt/plog)
+[![Go Reference](https://pkg.go.dev/badge/github.com/pfmt/plog.svg)](https://pkg.go.dev/github.com/pfmt/plog)
 
 JSON logging for Go.  
 Source files are distributed under the BSD-style license.
@@ -22,7 +22,7 @@ import (
     "os"
     "log"
 
-    "github.com/gorelib/plog"
+    "github.com/pfmt/plog"
 )
 
 func main() {
@@ -58,7 +58,7 @@ import (
     "log"
     "os"
 
-    "github.com/gorelib/plog"
+    "github.com/pfmt/plog"
 )
 
 func main() {
@@ -90,7 +90,7 @@ import (
     "log"
     "os"
 
-    "github.com/gorelib/plog"
+    "github.com/pfmt/plog"
 )
 
 func main() {
@@ -128,10 +128,10 @@ Output 2:
 $ go test -count=1 -race -bench ./... 
 goos: linux
 goarch: amd64
-pkg: github.com/gorelib/plog
+pkg: github.com/pfmt/plog
 cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
-BenchmarkPlog/plog_test.go:90/io.Writer-8         	   42229	     27608 ns/op
-BenchmarkPlog/plog_test.go:1138/fmt.Fprint_io.Writer-8         	   15640	     76490 ns/op
+BenchmarkPlog/plog_test.go:90/io.Writer-8         	   40026	     27957 ns/op
+BenchmarkPlog/plog_test.go:1138/fmt.Fprint_io.Writer-8         	   15207	     75703 ns/op
 PASS
-ok  	github.com/gorelib/plog	3.547s
+ok  	github.com/pfmt/plog	3.506s
 ```

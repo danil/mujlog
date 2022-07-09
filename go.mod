@@ -1,11 +1,11 @@
-module github.com/gorelib/plog
+module github.com/pfmt/plog
 
 go 1.17
 
 require (
-	github.com/gorelib/pfmt v0.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kinbiko/jsonassert v1.0.2
+	github.com/pfmt/pfmt v0.3.0
 )
 
 require (

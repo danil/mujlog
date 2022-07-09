@@ -16,8 +16,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/gorelib/pfmt"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pfmt/pfmt"
 )
 
 const (
