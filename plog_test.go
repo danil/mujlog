@@ -1676,13 +1676,13 @@ func TestTruncate(t *testing.T) {
 
 			n, err := l0.Truncate(excerpt, tt.input)
 			if err != nil {
-				t.Fatalf("unwant write error: %s", err)
+				t.Fatalf("write error: %s", err)
 			}
 
 			excerpt = excerpt[:n]
 
 			if !bytes.Equal(excerpt, tt.want) {
-				t.Errorf("unwant excerpt, want: %q, get: %q %s", tt.want, excerpt, tt.line)
+				t.Errorf("\nwant excerpt: %q\n got excerpt: %q\ntest: %s", tt.want, excerpt, tt.line)
 			}
 		})
 	}

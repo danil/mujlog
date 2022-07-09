@@ -11,10 +11,6 @@ Source files are distributed under the BSD-style license.
 The software is considered to be at a alpha level of readiness -
 its extremely slow and allocates a lots of memory)
 
-## Install
-
-    go get github.com/gorelib/plog@latest
-
 ## Usage
 
 Set plog as global logger
@@ -128,16 +124,14 @@ Output 2:
 
 ## Benchmark
 
-```
-$ go test -benchmem -bench=. ./...
+```sh
+$ go test -count=1 -race -bench ./... 
 goos: linux
 goarch: amd64
 pkg: github.com/gorelib/plog
 cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
-BenchmarkPlog/plog_test.go:76/io.Writer-8         	  357313	      3128 ns/op	    1712 B/op	      53 allocs/op
-BenchmarkPlog/plog_test.go:1124/fmt.Fprint_io.Writer-8         	  166581	      7016 ns/op	    3602 B/op	      61 allocs/op
+BenchmarkPlog/plog_test.go:90/io.Writer-8         	   42229	     27608 ns/op
+BenchmarkPlog/plog_test.go:1138/fmt.Fprint_io.Writer-8         	   15640	     76490 ns/op
 PASS
-ok  	github.com/gorelib/plog	2.447s
-PASS
-ok  	github.com/gorelib/plog/pencode	0.003s
+ok  	github.com/gorelib/plog	3.547s
 ```

@@ -33,6 +33,14 @@ const (
 	Blank
 )
 
+func New(opts ...Option) Log {
+	var l Log
+	for _, opt := range opts {
+		opt(&l)
+	}
+	return l
+}
+
 // Log is a JSON logger/writer.
 type Log struct {
 	Output  io.Writer                             // Output is a destination for output.
@@ -40,7 +48,7 @@ type Log struct {
 	KV      []pfmt.KV                             // KV is a key-values.
 	Level   func(level string) (output io.Writer) // Level function receives severity level and returns a output writer for a severity level.
 	Keys    [4]encoding.TextMarshaler             // Keys: 0 = original message; 1 = message excerpt; 2 = message trail; 3 = file path.
-	Key     uint8                                 // Key is a default/sticky message key: all except 1 = original message; 1 = message excerpt.
+	Key     uint8                                 // Key is a default/sticky message key: all except 0 = original message; 1 = message excerpt.
 	Trunc   int                                   // Trunc is a maximum length of an excerpt, after which it is truncated.
 	Marks   [3][]byte                             // Marks: 0 = truncate; 1 = empty; 2 = blank.
 	Replace [][2][]byte                           // Replace ia a pairs of byte slices to replace in the message excerpt.
@@ -450,3 +458,88 @@ func GELF() *Log {
 		Replace: [][2][]byte{[2][]byte{[]byte("\n"), []byte(" ")}},
 	}
 }
+
+// Option changes log configuration.
+type Option func(*Log)
+
+// WithOutput sets a destination for output
+func WithOutput(output io.Writer) Option {
+	return func(l *Log) { l.Output = output }
+}
+
+// WithFlag sets a log properties.
+func WithFlag(f int) Option {
+	return func(l *Log) { l.Flag = f }
+}
+
+// WithKV sets a key-values.
+func WithKV(kv ...pfmt.KV) Option {
+	return func(l *Log) { l.KV = kv }
+}
+
+// WithLevel sets a level function receives severity level and returns a output writer for a severity level.
+func WithLevel(level func(level string) (output io.Writer)) Option {
+	return func(l *Log) { l.Level = level }
+}
+
+// WithOriginalKey sets a key name of a original message.
+func WithOriginalKey(key string) Option {
+	return func(l *Log) { l.Keys[0] = pfmt.String(key) }
+}
+
+// WithExceptKey sets a key name of a message except.
+func WithExceptKey(key string) Option {
+	return func(l *Log) { l.Keys[1] = pfmt.String(key) }
+}
+
+// WithTrailKey sets a key name of a message trail.
+func WithTrailKey(key string) Option {
+	return func(l *Log) { l.Keys[2] = pfmt.String(key) }
+}
+
+// WithFilePathKey sets a key name of a log file path.
+func WithFilePathKey(key string) Option {
+	return func(l *Log) { l.Keys[3] = pfmt.String(key) }
+}
+
+// WithOriginal uses original message key by default (switches to sticky original message).
+func WithOriginal() Option {
+	return func(l *Log) { l.Key = 0 }
+}
+
+// WithExcerptMessage uses message except key by default (switches to sticky message excerpt).
+func WithExcerptMessage() Option {
+	return func(l *Log) { l.Key = 1 }
+}
+
+// WithExcerptLen sets a maximum length of an excerpt, truncate message after maximum length.
+func WithExcerptLen(length int) Option {
+	return func(l *Log) { l.Trunc = length }
+}
+
+// WithTruncateLabel sets a truncate mark, for example ....
+func WithTruncateLabel(label []byte) Option {
+	return func(l *Log) { l.Marks[0] = label }
+}
+
+// WithEmptyLabel sets a empty mark, for example EMPTY.
+func WithEmptyLabel(label []byte) Option {
+	return func(l *Log) { l.Marks[1] = label }
+}
+
+// WithBlankLabel sets a blank mark, for example BLANK.
+func WithBlankLabel(label []byte) Option {
+	return func(l *Log) { l.Marks[2] = label }
+}
+
+// WithReplace add find and replace pair.
+func WithReplace(find, replace []byte) Option {
+	return func(l *Log) { l.Replace = append(l.Replace, [2][]byte{find, replace}) }
+}
+
+// WithoutReplace disables find and replace.
+func WithoutReplace() Option {
+	return func(l *Log) { l.Replace = nil }
+}
+
+// Replace [][2][]byte                           // Replace ia a pairs of byte slices to replace in the message excerpt.
