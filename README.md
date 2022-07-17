@@ -3,7 +3,7 @@
 [![Build Status](https://cloud.drone.io/api/badges/pfmt/plog/status.svg)](https://cloud.drone.io/pfmt/plog)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pfmt/plog.svg)](https://pkg.go.dev/github.com/pfmt/plog)
 
-JSON logging for Go.  
+JSON logger for Go.  
 Source files are distributed under the BSD-style license.
 
 ## About
